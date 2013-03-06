@@ -48,9 +48,10 @@ if __name__ == '__main__':
     try:
         if vsat.check_bb():
             bb_stat = vsat.grab(command = 'bb stat', stop_pattern = '''END Statistics for BB link to CPA 11''')
-            bb_link = vsat.grab(command = 'bb link', stop_pattern = '''*********** End BB Link to CPA 11 Status info *****************''')
-            
             print "%s" % bb_stat
+        if vsat.check_bb():
+            bb_link = vsat.grab(command = 'bb link', stop_pattern = '''*********** End BB Link to CPA 11 Status info *****************''')
             print "%s" % bb_link
+            
     except Exception as e:
         print "%s" % e
