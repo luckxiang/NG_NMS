@@ -16,7 +16,7 @@ class Grab:
 
     def __init__(self, ip, port, timeout):
         '''
-        Constructor: Initialize ip, port, timeout
+        Constructor: Initialize ip, port
         '''
         self.ip = ip
         self.port = port
@@ -26,7 +26,10 @@ class Grab:
         '''
         Connect to VSAT over telnet with ip, port, timeout.
         '''
-        self.tn = telnetlib.Telnet(self.ip, self.port, self.timeout)
+        try:
+            self.tn = telnetlib.Telnet(self.ip, self.port, self.timeout)
+        except Exception as e:
+            print e
         return self.tn
     
     def disconnect(self):
@@ -41,10 +44,7 @@ class Grab:
         '''
         print "Telnet:\nIP: %s\nPORT %s\nCOMMAND: %s\nSTOP: %s\n" % (self.ip, self.port, command, stop_pattern)
        
-        try:
-            tn = self.connect()
-        except Exception as e:
-            print "%s" % e
+        tn = self.connect()
 
         tn.write(command + "\r\n")
         output = tn.read_until(stop_pattern, self.timeout)
@@ -70,7 +70,46 @@ class Grab:
                 return True
 
         except Exception as e:
-            print "BB seems to be down?\nError: - %s" % e
+            print "BB down?\nError: - %s" % e
+            
+    def ftp_selftest(self, ftptype, duration):
+        '''
+        Start ftp selftest.
+        '''
+        try:
+            if ftptype == 'inbound':
+                command = 'ip selftest ftpup 1 %s' % duration
+            elif ftptype == 'outbound':
+                command = 'ip selftest ftpdown %s' % duration
+        except Exception as e:
+            print e
+        
+        stop_pattern = '>'
+        tn = self.connect()
+        tn.write(command + "\r\n")
+        tn.read_until(stop_pattern, self.timeout)
+                
+        self.disconnect()
+        
+    def get_stats(self):
+        '''
+        Get VSAT output statistics.
+        '''
+        try:
+            if self.check_bb():
+                command = 'bb stat'
+                stop_pattern = '''END Statistics for BB link'''
+                bb_stat = self.grab(command, stop_pattern)
+                print "%s" % bb_stat
+                command = 'bb link'
+                stop_pattern = '''*********** End BB Link'''
+                bb_link = self.grab(command, stop_pattern)
+                print "%s" % bb_link
+                # return bb_stat and bb_link
+                return "%s\r\n%s" % (bb_stat, bb_link)
+        except Exception as e:
+            print "%s" % e
+        
         
         
         
