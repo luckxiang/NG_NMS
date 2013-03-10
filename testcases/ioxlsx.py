@@ -3,6 +3,8 @@ Created on Mar 9, 2013
 
 @author: me
 '''
+import csv
+from openpyxl import load_workbook
 
 class Xlsx:
     '''
@@ -10,26 +12,23 @@ class Xlsx:
     '''
 
 
-    def __init__(self, xlsxfile, csvfile):
+    def __init__(self, xlsxfile):
         '''
         Constructor
         '''
         self.xlsxfile = xlsxfile
-        self.csvfile = csvfile
         
-    def openTS(self):
+    def export_sheet_to_csv(self, sheetname, csvfile):
         '''
         Open Test Cases file
         '''
-        
-        import csv
-        with open(self.csvfile, 'wb') as f:
+
+        with open(csvfile, 'wb') as f:
             writer = csv.writer(f)
 
-            from openpyxl import load_workbook
             workbook = load_workbook(filename = self.xlsxfile, use_iterators = True)
             print workbook.get_sheet_names()
-            worksheet = workbook.get_sheet_by_name(name = 'Matrix')
+            worksheet = workbook.get_sheet_by_name(name = sheetname)
             
             
             for row in worksheet.iter_rows():
@@ -40,12 +39,9 @@ class Xlsx:
                         cell_value = int(cell_value)
                     except:
                         pass
-                    print cell_value,
                     row_list.append(cell_value)
-                print
                 writer.writerow(row_list)
 
 if __name__ == "__main__":
     
-    test = Xlsx("../data/TestMatrix.xlsx", "../data/some.csv")
-    test.openTS()
+    pass

@@ -105,8 +105,13 @@ class Grab:
                 stop_pattern = '''*********** End BB Link'''
                 bb_link = self.grab(command, stop_pattern)
                 print "%s" % bb_link
+                command = 'rsp cpu get statistics'
+                stop_pattern = '>'
+                cpu_stats = self.grab(command, stop_pattern)
+                print "%s" % cpu_stats
+                
                 # return bb_stat and bb_link
-                return "%s\r\n%s" % (bb_stat, bb_link)
+                return "%s\r\n%s\r\n%s" % (bb_stat, bb_link, cpu_stats)
         except Exception as e:
             print "%s" % e
         

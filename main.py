@@ -17,17 +17,20 @@ Automated Testing flow:
 9.     Go to again to P.1 until go through all Test Cases.
 '''
 
-# TODO: Read configuration files
-import ConfigParser
-config = ConfigParser.RawConfigParser()
-config.read('./confs/test.cfg')
+# Device under test: ip, port, timeout, number_of_tries
+# TODO: put this value in excel config file.
+from testcases import excel2csv
+data = excel2csv.Excel('./data/test1.xlsx')
+data.export_sheet_to_csv('CONFIGS', './configs/vsat.csv')
+data.export_sheet_to_csv('TESTCASES', './configs/testcases.csv')
 
-# Device Uder Test
-device_under_test_ip = config.get('vsat', 'ip')
-device_under_test_port = config.get('vsat', 'port')
-command = config.get('command', 'bb_links')
-stop_pattern = 'sec)'
-timeout = 20
+configs = data.read_configs('./configs/vsat.csv')
+device_under_test_ip = configs.get('VSAT IP')
+device_under_test_port = configs.get('VSAT PORT')
+timeout = configs.get('TIMEOUT')
+number_of_tries = configs.get('NUMBER OF TRIES')
+
+print "%s %s %s %s" % (device_under_test_ip, device_under_test_port, timeout, number_of_tries)
 
 from selftest import statistics
 vsat = statistics.Grab(device_under_test_ip, device_under_test_port, timeout)
@@ -45,38 +48,35 @@ vsat = statistics.Grab(device_under_test_ip, device_under_test_port, timeout)
 
 if __name__ == '__main__':
     
-    import time   
+    pass
     
-    # TODO: put this value in excel config file.
-    number_of_tries = 10
+#     import time   
+# 
+#     with open("./data/some.csv") as f:
+#         for line in f:
+#             next(f)
+#             for param in line.split(',')[1:12]:
+#                 # TODO: set working environment
+#                 print param,
+#             # Checking bb status before starting SELFTEST
+#             counter = 0
+#             while True:
+#                 if counter == number_of_tries:
+#                     print "Exceeded number of tries per test case!"
+#                     break
+#                 if vsat.check_bb():
+#                     duration = line.split(',')[12]
+#                     for ftptype in ['inbound', 'outbound']:
+#                         vsat.ftp_selftest(ftptype, duration)
+#                         time.sleep(duration/2)
+#                         output = vsat.get_stats()
+#                         # TODO: grab statistics from output
+#                         # TODO: save data to csv file.
+#                         time.sleep((duration/2) + 10)
+#                     break
+#                 counter = counter + 1
+#                 time.sleep(10)
 
-    with open("./data/some.csv") as f:
-        for line in f:
-            next(f)
-            for param in line.split(',')[1:12]:
-                # TODO: set working environment
-                print param,
-            # TODO: check bb status
-            counter = 0
-            while True:
-                if counter == number_of_tries:
-                    print "Exceeded number of tries per test case!"
-                    break
-                if vsat.check_bb():
-                    # TODO: start selftest
-                    duration = line.split(',')[12]
-                    for ftptype in ['inbound', 'outbound']:
-                        vsat.ftp_selftest(ftptype, duration)
-                        time.sleep(duration/2)
-                        # TODO: grab output
-                        output = vsat.get_stats()
-                        # TODO: save data
-                        time.sleep((duration/2) + 10)
-                    break
-                counter = counter + 1
-                time.sleep(10)
-
-        print "Success!"
 
         
 
