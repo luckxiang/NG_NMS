@@ -75,7 +75,6 @@ if __name__ == '__main__':
                         # TODO: save data to csv file.
                         time.sleep((duration/2) + 10)
                     break
-
                 counter = counter + 1
                 time.sleep(10)
 
