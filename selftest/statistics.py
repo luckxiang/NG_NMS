@@ -28,9 +28,9 @@ class Grab:
         '''
         try:
             self.tn = telnetlib.Telnet(self.ip, self.port, self.timeout)
+            return self.tn
         except Exception as e:
-            print e
-        return self.tn
+            print e        
     
     def disconnect(self):
         '''
@@ -43,14 +43,17 @@ class Grab:
         Get statistics over telnet with command until stop_pattern.
         '''
         print "Telnet:\nIP: %s\nPORT %s\nCOMMAND: %s\nSTOP: %s\n" % (self.ip, self.port, command, stop_pattern)
-       
-        tn = self.connect()
 
-        tn.write(command + "\r\n")
-        output = tn.read_until(stop_pattern, self.timeout)
-        
-        self.disconnect()
-        return output
+        try:       
+            tn = self.connect()
+    
+            tn.write(command + "\r\n")
+            output = tn.read_until(stop_pattern, self.timeout)
+            
+            self.disconnect()
+            return output
+        except Exception as e:
+            print e
     
     def check_bb(self):
         '''
@@ -58,17 +61,16 @@ class Grab:
         '''
         import re
         
-        command = 'bb links'
-        stop_pattern = 'sec)'
-        
-        output = self.grab(command, stop_pattern)
         try:
+            command = 'bb links'
+            stop_pattern = 'sec)'
+            
+            output = self.grab(command, stop_pattern)
             rez = re.search("Total Backbone Links UP = 0.", output)
             if rez:
                 return False
             else:
                 return True
-
         except Exception as e:
             print "BB down?\nError: - %s" % e
             
@@ -110,7 +112,7 @@ class Grab:
                 cpu_stats = self.grab(command, stop_pattern)
                 print "%s" % cpu_stats
                 
-                # return bb_stat and bb_link
+                # TODO: return parsed bb_stat and bb_link, cpu_stats
                 return "%s\r\n%s\r\n%s" % (bb_stat, bb_link, cpu_stats)
         except Exception as e:
             print "%s" % e

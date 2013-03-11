@@ -22,7 +22,7 @@ Automated Testing flow:
 from testcases import excel2csv
 data = excel2csv.Excel('./data/test1.xlsx')
 data.export_sheet_to_csv('CONFIGS', './configs/vsat.csv')
-data.export_sheet_to_csv('TESTCASES', './configs/testcases.csv')
+data.export_sheet_to_csv('TESTCASES', './data/testcases.csv')
 
 configs = data.read_configs('./configs/vsat.csv')
 device_under_test_ip = configs.get('VSAT IP')
@@ -50,32 +50,34 @@ if __name__ == '__main__':
     
     pass
     
-#     import time   
-# 
-#     with open("./data/some.csv") as f:
-#         for line in f:
-#             next(f)
-#             for param in line.split(',')[1:12]:
-#                 # TODO: set working environment
-#                 print param,
-#             # Checking bb status before starting SELFTEST
-#             counter = 0
-#             while True:
-#                 if counter == number_of_tries:
-#                     print "Exceeded number of tries per test case!"
-#                     break
-#                 if vsat.check_bb():
-#                     duration = line.split(',')[12]
-#                     for ftptype in ['inbound', 'outbound']:
-#                         vsat.ftp_selftest(ftptype, duration)
-#                         time.sleep(duration/2)
-#                         output = vsat.get_stats()
-#                         # TODO: grab statistics from output
-#                         # TODO: save data to csv file.
-#                         time.sleep((duration/2) + 10)
-#                     break
-#                 counter = counter + 1
-#                 time.sleep(10)
+    import time   
+ 
+    with open("./data/some.csv") as f:
+        for line in f:
+            print line
+            for param in line.split(',')[1:12]:
+                # TODO: set working environment
+                print param,
+            # Checking bb status before starting SELFTEST
+            counter = 0
+            while True:
+                if counter == number_of_tries:
+                    print "Exceeded number of tries per test case!"
+                    break
+                if vsat.check_bb():
+                    duration = line.split(',')[12]
+                    for ftptype in ['inbound', 'outbound']:
+                        vsat.ftp_selftest(ftptype, duration)
+                        time.sleep(duration/2)
+                        # TODO: grab statistics from output
+                        output = vsat.get_stats()  
+                        print output                      
+                        # TODO: save data to csv file.
+                        time.sleep((duration/2) + 10)
+                    break
+
+                counter = counter + 1
+                time.sleep(10)
 
 
         
