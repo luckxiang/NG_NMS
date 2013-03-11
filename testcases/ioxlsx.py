@@ -27,7 +27,6 @@ class Xlsx:
             writer = csv.writer(f)
 
             workbook = load_workbook(filename = self.xlsxfile, use_iterators = True)
-            print workbook.get_sheet_names()
             worksheet = workbook.get_sheet_by_name(name = sheetname)
             
             

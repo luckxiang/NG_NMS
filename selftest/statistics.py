@@ -5,6 +5,8 @@ Created on Mar 6, 2013
 '''
 
 import telnetlib
+import logging
+import re
 
 class Grab:
     '''
@@ -28,9 +30,10 @@ class Grab:
         '''
         try:
             self.tn = telnetlib.Telnet(self.ip, self.port, self.timeout)
-            return self.tn
+            return self.tn 
         except Exception as e:
-            print e        
+            logging.exception('TELNET:')
+            print e
     
     def disconnect(self):
         '''
@@ -42,8 +45,6 @@ class Grab:
         '''
         Get statistics over telnet with command until stop_pattern.
         '''
-        print "Telnet:\nIP: %s\nPORT %s\nCOMMAND: %s\nSTOP: %s\n" % (self.ip, self.port, command, stop_pattern)
-
         try:       
             tn = self.connect()
     
@@ -53,14 +54,13 @@ class Grab:
             self.disconnect()
             return output
         except Exception as e:
+            logging.exception('GRAB:')
             print e
     
     def check_bb(self):
         '''
         Check if bb status is up.
         '''
-        import re
-        
         try:
             command = 'bb links'
             stop_pattern = 'sec)'
@@ -72,7 +72,8 @@ class Grab:
             else:
                 return True
         except Exception as e:
-            print "BB down?\nError: - %s" % e
+            logging.exception('BB STATUS:')
+            print e
             
     def ftp_selftest(self, ftptype, duration):
         '''
@@ -99,21 +100,46 @@ class Grab:
         '''
         try:
             if self.check_bb():
-                command = 'bb stat'
-                stop_pattern = '''END Statistics for BB link'''
-                bb_stat = self.grab(command, stop_pattern)
-                print "%s" % bb_stat
+                output = {}
                 command = 'bb link'
                 stop_pattern = '''*********** End BB Link'''
                 bb_link = self.grab(command, stop_pattern)
-                print "%s" % bb_link
+                for line in bb_link.split('\n'):
+                    if not line.strip():
+                        continue
+                    iotraffic = re.match(r'^Current:.*$', line.strip('\r\n'))
+                    if iotraffic:
+                        iotraffic = iotraffic.group(0)
+                        ib_bit_rate, ob_bit_rate = iotraffic.split('.')[0:2]
+                        output['max_ib_bit_rate'] = re.search(r'\d+', ib_bit_rate).group(0) 
+                        output['max_ob_bit_rate'] = re.search(r'\d+', ob_bit_rate).group(0)
+
+                command = 'bb stat'
+                stop_pattern = '''END Statistics for BB link'''
+                bb_stat = self.grab(command, stop_pattern)
+                for line in bb_stat.split('\n'):
+                    if not line.strip():
+                        continue
+                    worlds = line.strip('\r\n')
+                    worlds = worlds.split()
+                    if worlds[0] == 'RETRANSMITTED':
+                        output['nr_of_retrans_ob_pcks'] = worlds[1]
+                        output['nr_of_retrans_ib_pcks'] = worlds[2]
+                
                 command = 'rsp cpu get statistics'
-                stop_pattern = '>'
+                stop_pattern = '''>'''
                 cpu_stats = self.grab(command, stop_pattern)
-                print "%s" % cpu_stats
+                for line in cpu_stats.split('\n'):
+                    if not line.strip():
+                        continue
+                    cpu_load = re.match(r'^CPU utilization.*$', line.strip('\r\n'))
+                    if cpu_load:
+                        cpu_load = cpu_load.group(0)
+                        cpu_value = re.search(r'\$\d+\$', cpu_load)
+                        output['cpu_load'] = cpu_value.group(0)
                 
                 # TODO: return parsed bb_stat and bb_link, cpu_stats
-                return "%s\r\n%s\r\n%s" % (bb_stat, bb_link, cpu_stats)
+                return output
         except Exception as e:
             print "%s" % e
         

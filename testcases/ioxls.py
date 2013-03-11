@@ -44,7 +44,7 @@ class Xls:
                     except:
                         pass
                     row_list.append(cell_value)
-                print 'Row: %d %s' % (curr_row, row_list)
+                #print 'Row: %d %s' % (curr_row, row_list)
                 writer.writerow(row_list)
                 
 if __name__ == "__main__":
