@@ -10,7 +10,7 @@ class Excel(object):
     '''
     Export excel and export to csv format.
     '''
-    excell = None
+    excel = None
 
     def __init__(self, xlfile):
             '''
@@ -21,17 +21,17 @@ class Excel(object):
             excell_type = os.path.basename(xlfile)
             extention = excell_type.split('.')[1]
             if extention == 'xls':
-                from testcases import ioxls
-                self.excell = ioxls.Xls(self.xlfile)
+                from converter import ioxls
+                self.excel = ioxls.Xls(self.xlfile)
             elif extention == 'xlsx':
-                from testcases import ioxlsx
-                self.excell = ioxlsx.Xlsx(self.xlfile)
+                from converter import ioxlsx
+                self.excel = ioxlsx.Xlsx(self.xlfile)
 
     def export_sheet_to_csv(self, sheetname, csvfile):
         '''
         Export excel sheet to csv file.
         '''
-        self.excell.export_sheet_to_csv(sheetname, csvfile)
+        self.excel.export_sheet_to_csv(sheetname, csvfile)
                     
     def read_configs(self, csvfile):
         '''

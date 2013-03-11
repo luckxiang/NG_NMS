@@ -22,7 +22,7 @@ import sys
 
 # Device under test: ip, port, timeout, number_of_tries
 # TODO: put this value in excel config file.
-from testcases import excel2csv
+from converter import excel2csv
 data = excel2csv.Excel('./data/test1.xls')
 data.export_sheet_to_csv('CONFIGS', './configs/vsat.csv')
 data.export_sheet_to_csv('TESTCASES', './data/testcases.csv')
@@ -74,10 +74,10 @@ def main():
                     
                     print "SELFTEST duration: %d seconds\n" % duration
                     print "TODO: start ftp SELFTEST\n"
-        #                     for ftptype in ['inbound', 'outbound']:
-        #                         vsat.ftp_selftest(ftptype, duration)
-        #                         time.sleep(duration/2)
-                        # TODO: grab statistics from output
+#                     for ftptype in ['inbound', 'outbound']:
+#                         vsat.ftp_selftest(ftptype, duration)
+#                         time.sleep(duration/2)
+                    # TODO: grab statistics from output
                     first_time_half = duration/2
                     print "\nWaiting %d seconds before getting statistics ... \n\n" % first_time_half, 
                     show_time_counter(int(first_time_half))

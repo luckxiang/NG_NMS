@@ -123,8 +123,8 @@ class Grab:
                     worlds = line.strip('\r\n')
                     worlds = worlds.split()
                     if worlds[0] == 'RETRANSMITTED':
-                        output['nr_of_retrans_ob_pcks'] = worlds[1]
-                        output['nr_of_retrans_ib_pcks'] = worlds[2]
+                        output['nr_of_retrans_ob_pckts'] = worlds[1].lstrip('0')
+                        output['nr_of_retrans_ib_pckts'] = worlds[2].lstrip('0')
                 
                 command = 'rsp cpu get statistics'
                 stop_pattern = '''>'''
@@ -138,7 +138,6 @@ class Grab:
                         cpu_value = re.search(r'\$\d+\$', cpu_load)
                         output['cpu_load'] = cpu_value.group(0)
                 
-                # TODO: return parsed bb_stat and bb_link, cpu_stats
                 return output
         except Exception as e:
             print "%s" % e

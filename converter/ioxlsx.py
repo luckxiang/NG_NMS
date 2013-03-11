@@ -29,7 +29,6 @@ class Xlsx:
             workbook = load_workbook(filename = self.xlsxfile, use_iterators = True)
             worksheet = workbook.get_sheet_by_name(name = sheetname)
             
-            
             for row in worksheet.iter_rows():
                 row_list = []
                 for cell in row:
