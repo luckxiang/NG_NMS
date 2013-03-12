@@ -4,6 +4,9 @@ Created on Mar 6, 2013
 @author: me
 '''
 from string import upper
+import time 
+import sys
+
 '''
 Automated Testing flow:
 
@@ -15,12 +18,9 @@ Automated Testing flow:
 6.    Go to again to P.1 until go through all Test Cases.
 '''
 
-import time 
-import sys
-
 # Device under test: ip, port, timeout, number_of_tries
 # TODO: put this value in excel config file.
-from converter import excel2csv
+from xlparser import excel2csv
 data = excel2csv.Excel('./data/test1.xls')
 data.export_sheet_to_csv('CONFIGS', './configs/vsat.csv')
 data.export_sheet_to_csv('TESTCASES', './data/testcases.csv')

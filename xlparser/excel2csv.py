@@ -21,10 +21,10 @@ class Excel:
             excell_type = os.path.basename(xlfile)
             extention = excell_type.split('.')[1]
             if extention == 'xls':
-                from converter import ioxls
+                from xlparser import ioxls
                 self.excel = ioxls.Xls(self.xlfile)
             elif extention == 'xlsx':
-                from converter import ioxlsx
+                from xlparser import ioxlsx
                 self.excel = ioxlsx.Xlsx(self.xlfile)
 
     def export_sheet_to_csv(self, sheetname, csvfile):
