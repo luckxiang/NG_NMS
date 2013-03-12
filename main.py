@@ -18,26 +18,18 @@ Automated Testing flow:
 6.    Go to again to P.1 until go through all Test Cases.
 '''
 
-# Device under test: ip, port, timeout, number_of_tries
-# TODO: put this value in excel config file.
-from xlparser import excel2csv
-data = excel2csv.Excel('./data/test1.xls')
-data.export_sheet_to_csv('CONFIGS', './configs/vsat.csv')
-data.export_sheet_to_csv('TESTCASES', './data/testcases.csv')
+def testcases(xlfile):
+    '''
+    Parse file with testcases and return all needed data.
+    '''
+    from xlparser import excel
+    data = excel.Parser(xlfile)
+    # return test cases and HUB, VSAT connection parameters
+    return data
 
-configs = data.read_configs('./configs/vsat.csv')
-device_under_test_ip = configs.get('VSAT IP')
-device_under_test_port = int(configs.get('VSAT PORT'))
-timeout = int(configs.get('TIMEOUT'))
-try_again_timeout = 10
-number_of_tries = int(configs.get('NUMBER OF TRIES'))
-
-
-print "IP: %s \nPORT: %s \nTIMEOUT: %s \nNUMBER OF TRIES: %s\n" % (device_under_test_ip, device_under_test_port, timeout, number_of_tries)
-
-from selftest import statistics
-vsat = statistics.Grab(device_under_test_ip, device_under_test_port, timeout)
-#vsat = statistics.Grab("192.168.140.76", 1016, 20)
+# TODO: do multiple vsat testing.
+from vsat import console
+vsat = console.Vsat("192.168.140.76", 1016, 20)
 
 def show_time_counter(time_interval):
     '''

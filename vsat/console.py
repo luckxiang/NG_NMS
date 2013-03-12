@@ -8,9 +8,9 @@ import telnetlib
 import logging
 import re
 
-class Grab:
+class Vsat:
     '''
-    To grab VSAT statistics over telnet session.
+    Get VSAT statistics over telnet session.
     '''
     
     # store telnet session.
