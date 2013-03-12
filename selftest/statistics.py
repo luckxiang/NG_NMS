@@ -88,7 +88,7 @@ class Grab:
         
         stop_pattern = '>'
         tn = self.connect()
-        print "COMMAND: %s" % command
+        print "COMMAND:\> %s" % command
         tn.write('\r\n')
         tn.write(command + "\r\n")
         tn.read_until(stop_pattern, self.timeout)

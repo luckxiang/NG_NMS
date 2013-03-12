@@ -1,5 +1,3 @@
-C:\Documents and Settings\VitalieG>cd git\ngnms
-
 C:\Documents and Settings\VitalieG\git\ngnms>python main.py
 IP: 192.168.140.76
 PORT: 1016
@@ -81,3 +79,77 @@ nr_of_retrans_ib_pckts  =  00000000
 nr_of_retrans_ob_pckts  =  00000000
 
 Waiting 25 seconds to finish INBOUND selftest!
+
+        Counter:  24
+
+------------------------- TEST: 2 OUTBOUND -------------------------
+
+Starting selftest for OUTBOUND with duration 30 seconds!
+COMMAND: ip selftest ftpdown 30
+Waiting 15 seconds before getting statistics! ...
+
+        Counter:  14
+
+Next, getting statistics from VSAT!
+
+cpu_load  =  $14$
+max_ib_bit_rate  =  0
+max_ob_bit_rate  =  0
+nr_of_retrans_ib_pckts  =  00000000
+nr_of_retrans_ob_pckts  =  00000000
+
+Waiting 25 seconds to finish OUTBOUND selftest!
+
+        Counter:  24
+
+======================================================================
+                          TESTCASE: 3
+======================================================================
+
+Test: 3 X 45000 QPSK2/5 8PSK3/4 0 2560 QPSK1/2 2 default 4 30
+VSAT bb links status: UP!
+
+        Counter:  4
+
+------------------------- TEST: 3 INBOUND -------------------------
+
+Starting selftest for INBOUND with duration 30 seconds!
+COMMAND: ip selftest ftpup 1 30
+Waiting 15 seconds before getting statistics! ...
+
+        Counter:  14
+
+Next, getting statistics from VSAT!
+
+cpu_load  =  $14$
+max_ib_bit_rate  =  0
+max_ob_bit_rate  =  0
+nr_of_retrans_ib_pckts  =  00000000
+nr_of_retrans_ob_pckts  =  00000000
+
+Waiting 25 seconds to finish INBOUND selftest!
+
+        Counter:  24
+
+------------------------- TEST: 3 OUTBOUND -------------------------
+
+Starting selftest for OUTBOUND with duration 30 seconds!
+COMMAND: ip selftest ftpdown 30
+Waiting 15 seconds before getting statistics! ...
+
+        Counter:  14
+
+Next, getting statistics from VSAT!
+
+cpu_load  =  $15$
+max_ib_bit_rate  =  0
+max_ob_bit_rate  =  0
+nr_of_retrans_ib_pckts  =  00000000
+nr_of_retrans_ob_pckts  =  00000000
+
+Waiting 25 seconds to finish OUTBOUND selftest!
+
+        Counter:  24
+
+
+C:\Documents and Settings\VitalieG\git\ngnms>

@@ -7,15 +7,12 @@ from string import upper
 '''
 Automated Testing flow:
 
-1.     Using REST API we export the configuration file {JSON format with OID}.
-2.     From our Excel file with Test Cases we read one line that contains Test Case To Run.
-3.     Changing the value of needed OID with needed values.
-4.     Using REST API, we import configuration file to NGNMS.
-5.     Checking NGNMS is ready for statistics result.
-6.     Starting SELFTEST Mode.
-7.     Over telnet protocol, we collect result data.
-8.     Storing data into Excel file.
-9.     Go to again to P.1 until go through all Test Cases.
+1.    Using REST API - set working point NGNMS.
+2.    Check working point before start SELFTEST.
+3.    Starting SELFTEST Mode.
+4.    Over telnet protocol, we collect result data.
+5.    Storing data into Excel file.
+6.    Go to again to P.1 until go through all Test Cases.
 '''
 
 import time 
@@ -46,7 +43,7 @@ def show_time_counter(time_interval):
     '''
     Show time counter.
     '''
-    for second in xrange(1,time_interval):
+    for second in xrange(1,time_interval+1):
         print "\tCounter: ",
         print '{0}\r'.format(second),
         time.sleep(1)
@@ -56,12 +53,12 @@ def main():
     '''
     Main program.
     '''
-    with open("./data/some.csv") as f:
+    with open("./data/some_3_cases.csv") as f:
         for line in f:
             print "======="*10
             print " "*25,"TESTCASE: %s" % line.split(',')[0]
             print "======="*10
-            print "\nTest:",
+            print "\nTest:\>",
             for param in line.split(',')[0:12]:
                 # TODO: set working environment
                 print param,
@@ -84,7 +81,6 @@ def main():
                         print "-"*25, 'TEST:',line.split(',')[0],upper(ftptype), "-"*25
                         print "\nStarting selftest for %s with duration %d seconds!" % (upper(ftptype), duration)
                         vsat.ftp_selftest(ftptype, duration)
-                        # TODO: grab statistics from output
                         first_time_half = duration/2
                         print "Waiting %d seconds before getting statistics! ...\n\n" % first_time_half, 
                         show_time_counter(int(first_time_half))
@@ -93,7 +89,8 @@ def main():
                         for key in sorted(output.keys()):
                             print key,' = ',output[key]                      
                         # TODO: save data to csv file.
-                        next_time_half = (duration/2)+10
+                        # TODO: fix last test case wait time!
+                        next_time_half = duration/2
                         print "\nWaiting %d seconds to finish %s selftest!\n" % (next_time_half, upper(ftptype))
                         show_time_counter(int(next_time_half))
                     print
@@ -103,15 +100,9 @@ def main():
                 print "Counter: %d Number of tries: %d" % (counter, number_of_tries)
                 show_time_counter(try_again_timeout)
 
-# TODO: Using REST API - exporting the configuration {JSON format with OID}.
-# TODO: Read Test Cases from Excel file line by line
-# TODO: Change the value of needed OID with new values.
-# TODO: Using REST API - import configuration file to NGNMS
-# TODO: Checking if NGNMS load new configuration files and ready to start SELFTEST.
-# TODO: Starting SELFTEST mode.
-# TODO: Get statistics over telnet protocol from devices: VSATs.
+# TODO: Using REST API - set working point NGNMS.
+# TOOD: Check working point before start SELFTEST.
 # TODO: Storing data into Excel file.
-# TODO: Test Task.
 
 if __name__ == '__main__':
     '''
