@@ -3,6 +3,7 @@ Created on Mar 6, 2013
 
 @author: me
 '''
+from string import upper
 '''
 Automated Testing flow:
 
@@ -45,7 +46,7 @@ def show_time_counter(time_interval):
     '''
     Show time counter.
     '''
-    for second in xrange(time_interval+1):
+    for second in xrange(1,time_interval):
         print "\tCounter: ",
         print '{0}\r'.format(second),
         time.sleep(1)
@@ -57,6 +58,9 @@ def main():
     '''
     with open("./data/some.csv") as f:
         for line in f:
+            print "======="*10
+            print " "*25,"TESTCASE: %s" % line.split(',')[0]
+            print "======="*10
             print "\nTest:",
             for param in line.split(',')[0:12]:
                 # TODO: set working environment
@@ -70,26 +74,31 @@ def main():
                     sys.exit(0)
                 if vsat.check_bb():
                     duration = line.split(',')[11]
-                    duration = float(duration)
+                    duration = int(duration)
+                    print "VSAT bb links status: UP!\n"
+                    wait_bb_links_to_finish = 5
+                    show_time_counter(wait_bb_links_to_finish)
                     
-                    print "SELFTEST duration: %d seconds\n" % duration
-                    print "TODO: start ftp SELFTEST\n"
-#                     for ftptype in ['inbound', 'outbound']:
-#                         vsat.ftp_selftest(ftptype, duration)
-#                         time.sleep(duration/2)
-                    # TODO: grab statistics from output
-                    first_time_half = duration/2
-                    print "\nWaiting %d seconds before getting statistics ... \n\n" % first_time_half, 
-                    show_time_counter(int(first_time_half))
-                    print "\nNext, getting statistics from VSAT ...\n"
-                    output = vsat.get_stats()  
-                    print output                      
+                    for ftptype in ['inbound', 'outbound']:
+                        print
+                        print "-"*25, 'TEST:',line.split(',')[0],upper(ftptype), "-"*25
+                        print "\nStarting selftest for %s with duration %d seconds!" % (upper(ftptype), duration)
+                        vsat.ftp_selftest(ftptype, duration)
+                        # TODO: grab statistics from output
+                        first_time_half = duration/2
+                        print "Waiting %d seconds before getting statistics! ...\n\n" % first_time_half, 
+                        show_time_counter(int(first_time_half))
+                        print "\nNext, getting statistics from VSAT!\n"
+                        output = vsat.get_stats()
+                        for key in sorted(output.keys()):
+                            print key,' = ',output[key]                      
                         # TODO: save data to csv file.
-        #                         time.sleep((duration/2) + 10)
-                    next_time_half = (duration/2)+10
-                    print "\n\nWaiting %d seconds before starting next testcase ...\n" % next_time_half
-                    show_time_counter(int(next_time_half))
+                        next_time_half = (duration/2)+10
+                        print "\nWaiting %d seconds to finish %s selftest!\n" % (next_time_half, upper(ftptype))
+                        show_time_counter(int(next_time_half))
+                    print
                     break
+                print "\nVSAT bb links status: DOWN!\n"
                 counter = counter + 1
                 print "Counter: %d Number of tries: %d" % (counter, number_of_tries)
                 show_time_counter(try_again_timeout)

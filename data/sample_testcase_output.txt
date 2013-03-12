@@ -1,0 +1,83 @@
+C:\Documents and Settings\VitalieG>cd git\ngnms
+
+C:\Documents and Settings\VitalieG\git\ngnms>python main.py
+IP: 192.168.140.76
+PORT: 1016
+TIMEOUT: 20
+NUMBER OF TRIES: 2
+
+======================================================================
+                          TESTCASE: 1
+======================================================================
+
+Test: 1 X 45000 QPSK1/2 8PSK3/5 0 128 QPSK1/2 30 default 2 30
+VSAT bb links status: UP!
+
+        Counter:  4
+
+------------------------- TEST: 1 INBOUND -------------------------
+
+Starting selftest for INBOUND with duration 30 seconds!
+COMMAND: ip selftest ftpup 1 30
+Waiting 15 seconds before getting statistics! ...
+
+        Counter:  14
+
+Next, getting statistics from VSAT!
+
+cpu_load  =  $15$
+max_ib_bit_rate  =  0
+max_ob_bit_rate  =  0
+nr_of_retrans_ib_pckts  =  00000000
+nr_of_retrans_ob_pckts  =  00000000
+
+Waiting 25 seconds to finish INBOUND selftest!
+
+        Counter:  24
+
+------------------------- TEST: 1 OUTBOUND -------------------------
+
+Starting selftest for OUTBOUND with duration 30 seconds!
+COMMAND: ip selftest ftpdown 30
+Waiting 15 seconds before getting statistics! ...
+
+        Counter:  14
+
+Next, getting statistics from VSAT!
+
+cpu_load  =  $14$
+max_ib_bit_rate  =  0
+max_ob_bit_rate  =  0
+nr_of_retrans_ib_pckts  =  00000000
+nr_of_retrans_ob_pckts  =  00000000
+
+Waiting 25 seconds to finish OUTBOUND selftest!
+
+        Counter:  24
+
+======================================================================
+                          TESTCASE: 2
+======================================================================
+
+Test: 2 X 45000 QPSK1/3 8PSK2/3 0 128 QPSK1/2 30 default 4 30
+VSAT bb links status: UP!
+
+        Counter:  4
+
+------------------------- TEST: 2 INBOUND -------------------------
+
+Starting selftest for INBOUND with duration 30 seconds!
+COMMAND: ip selftest ftpup 1 30
+Waiting 15 seconds before getting statistics! ...
+
+        Counter:  14
+
+Next, getting statistics from VSAT!
+
+cpu_load  =  $15$
+max_ib_bit_rate  =  0
+max_ob_bit_rate  =  0
+nr_of_retrans_ib_pckts  =  00000000
+nr_of_retrans_ob_pckts  =  00000000
+
+Waiting 25 seconds to finish INBOUND selftest!

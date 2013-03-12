@@ -6,7 +6,7 @@ Created on Mar 9, 2013
 
 import os
 
-class Excel(object):
+class Excel:
     '''
     Export excel and export to csv format.
     '''

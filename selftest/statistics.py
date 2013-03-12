@@ -47,7 +47,6 @@ class Grab:
         '''
         try:       
             tn = self.connect()
-    
             tn.write(command + "\r\n")
             output = tn.read_until(stop_pattern, self.timeout)
             
@@ -89,6 +88,8 @@ class Grab:
         
         stop_pattern = '>'
         tn = self.connect()
+        print "COMMAND: %s" % command
+        tn.write('\r\n')
         tn.write(command + "\r\n")
         tn.read_until(stop_pattern, self.timeout)
                 
@@ -123,8 +124,8 @@ class Grab:
                     worlds = line.strip('\r\n')
                     worlds = worlds.split()
                     if worlds[0] == 'RETRANSMITTED':
-                        output['nr_of_retrans_ob_pckts'] = worlds[1].lstrip('0')
-                        output['nr_of_retrans_ib_pckts'] = worlds[2].lstrip('0')
+                        output['nr_of_retrans_ob_pckts'] = worlds[1]
+                        output['nr_of_retrans_ib_pckts'] = worlds[2]
                 
                 command = 'rsp cpu get statistics'
                 stop_pattern = '''>'''
