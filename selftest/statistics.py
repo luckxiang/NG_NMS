@@ -121,11 +121,11 @@ class Grab:
                 for line in bb_stat.split('\n'):
                     if not line.strip():
                         continue
-                    worlds = line.strip('\r\n')
-                    worlds = worlds.split()
-                    if worlds[0] == 'RETRANSMITTED':
-                        output['nr_of_retrans_ob_pckts'] = worlds[1]
-                        output['nr_of_retrans_ib_pckts'] = worlds[2]
+                    words = line.strip('\r\n')
+                    words = words.split()
+                    if words[0] == 'RETRANSMITTED':
+                        output['nr_of_retrans_ob_pckts'] = words[1]
+                        output['nr_of_retrans_ib_pckts'] = words[2]
                 
                 command = 'rsp cpu get statistics'
                 stop_pattern = '''>'''
