@@ -3,43 +3,70 @@ Created on Mar 9, 2013
 
 @author: me
 '''
-import csv
-from openpyxl import load_workbook
+import openpyxl
 
 class Xlsx:
     '''
-    classdocs
+    Excel XLSX file reader.
     '''
-
+    logger = False
 
     def __init__(self, xlsxfile):
         '''
-        Constructor
+        Get excel XLSX file.
         '''
         self.xlsxfile = xlsxfile
         
-    def export_sheet_to_csv(self, sheetname, csvfile):
+    def get_testcases(self):
         '''
         Open Test Cases file
         '''
-
-        with open(csvfile, 'wb') as f:
-            writer = csv.writer(f)
-
-            workbook = load_workbook(filename = self.xlsxfile, use_iterators = True)
-            worksheet = workbook.get_sheet_by_name(name = sheetname)
-            
+        workbook = openpyxl.load_workbook(filename = self.xlsxfile, use_iterators = True)
+        worksheets = workbook.get_sheet_names()
+        testcases = {}
+        for sheet in worksheets:
+            worksheet = workbook.get_sheet_by_name(sheet)
+            # print "--"*10, 'SHEET:', sheet, "--"*10
+            testcases[sheet] = {}
+            header = []
             for row in worksheet.iter_rows():
-                row_list = []
+                curr_row = row[0][0] - 1
+                # print 'Row:', curr_row
+                testcases[sheet][curr_row] = {}
+                # getting sheet header.
+                if curr_row == 0:
+                    for cell in row:
+                        header.append(cell.internal_value)
+                title = 0
                 for cell in row:
-                    try:
-                        cell_value = cell.internal_value
-                        cell_value = int(cell_value)
-                    except:
-                        pass
-                    row_list.append(cell_value)
-                writer.writerow(row_list)
+                    # print ' '*4, cell.data_type,':', cell.internal_value
+                    testcases[sheet][curr_row][header[title]] = cell.internal_value
+                    title = title + 1
+            # print len(header), header
+        # print testcases
+        if self.logger:
+            self.display(testcases)
+              
+        return testcases
+        
+    def display(self, testcases):
+        '''
+        Display testcases.
+        '''
+        for sheet in testcases.keys():
+            print
+            print "-"*20, 'SHEET:', sheet, "-"*20
+            for row in testcases[sheet].keys():
+                # print row, ' - ', testcases[sheet][row]
+                print
+                print 'Row:', row
+                for cell in testcases[sheet][row].keys():
+                    # print ' '*4, cell, '=', testcases[sheet][row][cell]
+                    print ' '*5, '{0:35} = {1:40}'.format(str(cell), str(testcases[sheet][row][cell]))
+                    
 
 if __name__ == "__main__":
     
-    pass
+    data = Xlsx('../data/test.xlsx')
+    data.logger = True
+    data.get_testcases()

@@ -24,8 +24,9 @@ def testcases(xlfile):
     '''
     from xlparser import excel
     data = excel.Parser(xlfile)
+    testcases = data.get_testcases()
     # return test cases and HUB, VSAT connection parameters
-    return data
+    return testcases
 
 # TODO: do multiple vsat testing.
 from vsat import console
