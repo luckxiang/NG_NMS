@@ -24,6 +24,7 @@ class Xlsx:
         workbook = openpyxl.load_workbook(filename = self.xlsxfile, use_iterators = True)
         worksheets = workbook.get_sheet_names()
         testcases = {}
+        headers = {}
         for sheet in worksheets:
             worksheet = workbook.get_sheet_by_name(sheet)
             # print "--"*10, 'SHEET:', sheet, "--"*10
@@ -37,23 +38,26 @@ class Xlsx:
                 if curr_row == 0:
                     for cell in row:
                         header.append(cell.internal_value)
+                        headers[sheet] = header
                 title = 0
                 for cell in row:
                     # print ' '*4, cell.data_type,':', cell.internal_value
                     testcases[sheet][curr_row][header[title]] = cell.internal_value
                     title = title + 1
-            # print len(header), header
-        # print testcases
+        # adding sorted headers to testcases.
+        testcases['headers'] = headers
         if self.logger:
             self.display(testcases)
-              
+        # return all testcases information.
         return testcases
         
     def display(self, testcases):
         '''
         Display testcases.
         '''
-        for sheet in testcases.keys():
+        for sheet in sorted(testcases.keys()):
+            if sheet == 'headers':
+                continue
             print
             print "-"*20, 'SHEET:', sheet, "-"*20
             for row in testcases[sheet].keys():

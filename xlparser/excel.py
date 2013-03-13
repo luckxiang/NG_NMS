@@ -41,25 +41,10 @@ class Parser:
         
         # print testcases
         if self.logger:
-            self.display(testcases)
+            self.excel.display(testcases)
         print
         # return all data from excel file.
         return testcases
-    
-    def display(self, testcases):
-        '''
-        Display testcases.
-        '''
-        for sheet in testcases.keys():
-            print
-            print "-"*20, 'SHEET:', sheet, "-"*20
-            for row in testcases[sheet].keys():
-                # print row, ' - ', testcases[sheet][row]
-                print
-                print 'Row:', row
-                for cell in testcases[sheet][row].keys():
-                    # print ' '*4, cell, '=', testcases[sheet][row][cell]
-                    print ' '*5, '{0:35} = {1:40}'.format(str(cell), str(testcases[sheet][row][cell]))
 
 if __name__ == "__main__":
     
@@ -71,4 +56,7 @@ if __name__ == "__main__":
     data = Parser('../data/test.xlsx')
     data.logger = True
     data.get_testcases()
+    
+    
+    
     

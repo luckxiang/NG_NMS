@@ -24,13 +24,14 @@ class Xls:
         workbook = xlrd.open_workbook(self.xlsfile)
         worksheets = workbook.sheet_names()
         testcases = {}
-        for sheet_name in worksheets:
+        headers = {}
+        for sheet in worksheets:
             header = []
-            worksheet = workbook.sheet_by_name(sheet_name)
-            # print "--"*10, 'SHEET:',sheet_name, "--"*10
+            worksheet = workbook.sheet_by_name(sheet)
+            # print "--"*10, 'SHEET:',sheet, "--"*10
             # print '# Cell Types: 0=Empty, 1=Text, 2=Number, 3=Date, 4=Boolean, 5=Error, 6=Blank'
                         
-            testcases[sheet_name] = {}
+            testcases[sheet] = {}
             num_rows = worksheet.nrows - 1
             num_cells = worksheet.ncols - 1
             curr_row = -1
@@ -38,7 +39,7 @@ class Xls:
                 curr_row += 1
                 # row = worksheet.row(curr_row)
                 # print row
-                testcases[sheet_name][curr_row] = {}
+                testcases[sheet][curr_row] = {}
                 if curr_row == 0:
                     curr_cell = -1
                     while curr_cell < num_cells:
@@ -47,6 +48,7 @@ class Xls:
                         # cell_type = worksheet.cell_type(curr_row, curr_cell)
                         cell_value = worksheet.cell_value(curr_row, curr_cell)
                         header.append(cell_value)
+                        headers[sheet] = header
                 # print 'Row:', curr_row
                 curr_cell = -1
                 while curr_cell < num_cells:
@@ -57,8 +59,10 @@ class Xls:
                     # print '    ', cell_type, ':', cell_value
                     if cell_value == '':
                         cell_value = None
-                    testcases[sheet_name][curr_row][header[curr_cell]] = cell_value
-
+                    testcases[sheet][curr_row][header[curr_cell]] = cell_value
+        
+        # add ordered headers to testcases            
+        testcases['headers'] = headers
         # print testcases
         if self.logger:
             self.display(testcases)
@@ -69,7 +73,9 @@ class Xls:
         '''
         Display testcases.
         '''
-        for sheet in testcases.keys():
+        for sheet in sorted(testcases.keys()):
+            if sheet == 'headers':
+                continue
             print
             print "-"*20, 'SHEET:', sheet, "-"*20
             for row in testcases[sheet].keys():
