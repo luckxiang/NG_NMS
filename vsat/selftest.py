@@ -188,22 +188,25 @@ class Selftest:
         for sheet in sorted(active_testcases.keys()):
             if sheet == 'headers' or not active_testcases[sheet]:
                 continue
+            print
             print "X"*65
             print " "*22, 'SHEET:',sheet
             print "X"*65
+            print
             for row in sorted(active_testcases[sheet].keys()):
                 print "-"*20, 'SHEET %s ROW:' % upper(sheet), row, "-"*20
                 # print slowly.
                 time.sleep(page_time_step)
                 for cell in active_testcases['headers'][sheet]:
                     print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(active_testcases[sheet][row][cell]))
-            print
+                print
 #         return active_testcases
 
 def show_time_counter(time_interval):
     '''
     Show time counter.
     '''
+    print
     for second in xrange(1,time_interval+1):
         print "\tCounter: ",
         print '{0}\r'.format(second),
@@ -218,7 +221,6 @@ def show_all_testcases(xlfile):
     vsat = Selftest(xlfile);
     vsat.get_testcases()
     vsat.display()
-    print
 
 def show_active_testcases(xlfile):
     '''
@@ -227,7 +229,6 @@ def show_active_testcases(xlfile):
     vsat = Selftest(xlfile);
     vsat.get_testcases()
     vsat.summary()
-    print
 
 def run_active_testcases(xlfile):
     '''
@@ -236,9 +237,6 @@ def run_active_testcases(xlfile):
     vsat = Selftest(xlfile);
     vsat.get_testcases()
     vsat.run_active_testcases()
-    print
-
-    
 
 def show_vsat_testcases(xlfile):
     '''
@@ -247,7 +245,6 @@ def show_vsat_testcases(xlfile):
     vsat = Selftest(xlfile);
     vsat.get_testcases()
     vsat.check_availability()
-    print
 
     
 if __name__ == '__main__':
