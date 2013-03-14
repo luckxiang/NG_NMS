@@ -5,10 +5,9 @@ Created on Mar 6, 2013
 '''
 
 import telnetlib
-import logging
 import re
 
-class Vsat:
+class Grab:
     '''
     Get VSAT statistics over telnet session.
     '''
@@ -30,9 +29,8 @@ class Vsat:
         '''
         try:
             self.tn = telnetlib.Telnet(self.ip, self.port, self.timeout)
-            return self.tn 
+            return self.tn
         except Exception as e:
-            logging.exception('TELNET:')
             print e
     
     def disconnect(self):
@@ -53,7 +51,6 @@ class Vsat:
             self.disconnect()
             return output
         except Exception as e:
-            logging.exception('GRAB:')
             print e
     
     def check_bb(self):
@@ -66,12 +63,12 @@ class Vsat:
             
             output = self.grab(command, stop_pattern)
             rez = re.search("Total Backbone Links UP = 0.", output)
+
             if rez:
                 return False
             else:
                 return True
         except Exception as e:
-            logging.exception('BB STATUS:')
             print e
             
     def ftp_selftest(self, ftptype, duration):
@@ -92,7 +89,6 @@ class Vsat:
         tn.write('\r\n')
         tn.write(command + "\r\n")
         tn.read_until(stop_pattern, self.timeout)
-                
         self.disconnect()
         
     def get_stats(self):

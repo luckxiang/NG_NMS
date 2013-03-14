@@ -3,13 +3,21 @@ Created on Mar 6, 2013
 
 @author: me
 '''
+
 import time
 from string import upper
+from vsat import vconsole as console
+
+# time for one step in stdout print.
+page_time_step = 0.35
 
 class Selftest:
     '''
     Run selftest mode for VSAT.
     '''
+    
+    testcases = None
+    
     def __init__(self,xlfile):
         '''
         Get excel file.
@@ -22,47 +30,233 @@ class Selftest:
         '''
         from xlparser import excel
         data = excel.Parser(self.xlfile)
-        testcases = data.get_testcases()
+        self.testcases = data.get_testcases()
         # return test cases and HUB, VSAT connection parameters
-        return testcases
+        return self.testcases
     
-    def show_time_counter(self, time_interval):
+    def display(self):
         '''
-        Show time counter.
+        Display all info in excel file.
         '''
-        for second in xrange(1,time_interval+1):
-            print "\tCounter: ",
-            print '{0}\r'.format(second),
-            time.sleep(1)
-        print
-        
+        for sheet in sorted(self.testcases.keys()):
+            if sheet == 'headers':
+                continue
+            print "X"*65
+            print " "*22, 'SHEET:',sheet
+            print "X"*65
+            for row in self.testcases[sheet].keys():
+                if row == 0:
+                    continue
+                print
+                print "-"*20, 'SHEET %s ROW:' % upper(sheet), row, "-"*20
+                # print slowly.
+                time.sleep(page_time_step)
+                for cell in self.testcases['headers'][sheet]:
+                    print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(self.testcases[sheet][row][cell]))
+            print
+            
+    def summary(self):
+        '''
+        Create only enabled rows and summary.
+        '''
+        enabled_testcases = {}
+        for sheet in sorted(self.testcases.keys()):
+            enabled_testcases[sheet] = {}
+            if sheet == 'headers':
+                enabled_testcases[sheet] = self.testcases[sheet]
+                continue
+            print "H"*65
+            print " "*22, 'SHEET:',sheet
+            print "H"*65
+            print
+            enabled_rows = 0
+            disabled_rows = 0
+            for row in self.testcases[sheet].keys():
+                if row == 0:
+                    continue
+                enabled_testcases[sheet][row] = {}
+                if ('Active' in self.testcases[sheet][row].keys() and  
+                    upper(str(self.testcases[sheet][row].get('Active'))) != 'X'):
+                    disabled_rows += 1
+                    continue
+                else:
+                    enabled_rows += 1
+                    enabled_testcases[sheet][row] = self.testcases[sheet][row]
+                print
+                print "-"*20, 'SHEET %s ROW:' % upper(sheet), row, "-"*20
+                time.sleep(page_time_step)
+                for cell in self.testcases['headers'][sheet]:
+                    print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(self.testcases[sheet][row][cell]))
+            print
+            print '*'*34
+            print upper('%s summary:' % sheet)
+            print ' '*5, "{0:20} = {1:20}".format('Enabled rows:', str(enabled_rows))
+            print ' '*5, "{0:20} = {1:20}".format('Disabled rows:', str(disabled_rows))
+            print ' '*5, "{0:20} = {1:20}".format('Total rows:', str(enabled_rows + disabled_rows))
+            print '*'*34
+            print
+        # return enabled rows only.
+        # return enabled_testcases
+
+    def get_active_testcases(self):
+        '''
+        Get active testcases.
+        '''
+        enabled_testcases = {}
+        for sheet in sorted(self.testcases.keys()):
+            if sheet == 'headers':
+                # get all sheets headers.
+                enabled_testcases[sheet] = self.testcases[sheet]
+                continue
+            enabled_testcases[sheet] = {}
+            for row in self.testcases[sheet].keys():
+                if row == 0:
+                    continue
+                if ('Active' in self.testcases[sheet][row].keys() and upper(str(self.testcases[sheet][row].get('Active'))) == 'X'):
+                    enabled_testcases[sheet][row] = self.testcases[sheet][row]
+                    
+        # return active testcases only.
+        return enabled_testcases
 
 
-# TODO: Using REST API - set working point NGNMS.
-# TOOD: Check working point before start SELFTEST.
-# TODO: Storing data into Excel file.
 
+    def check_availability(self):
+        '''
+        Check VSAT's availability.
+        '''
+        for sheet in self.testcases.keys():
+            if sheet == 'C-VSAT':
+                vsat = self.testcases[sheet]
+                print "*"*60
+                print " "*10,"Checking connection to VSAT's:"
+                print "*"*60
+                vsats_status = {}
+                vsats_status['SUCCESS!'] = {}
+                vsats_status['FAILED!'] = {}
+                for host in vsat.keys():
+                    if host == 0 or vsat[host].get('Active') != 'X':
+                        continue
+                    VSAT_NAME = vsat[host].get('Name')
+                    VSAT_ID = int(vsat[host].get('ID'))
+                    IP = vsat[host].get('Console IP')
+                    PORT = int(vsat[host].get('Console PORT'))
+                    CONNECTION_TIMEOUT = int(vsat[host].get('Connection timeout'))
+                    NUMBER_OF_TRIES = int(vsat[host].get('Number of tries'))
+                    TRIES_TIMEOUT = int(vsat[host].get('Tries timeout'))
+                    
+                    print "%s ID:%s ip:%s port:%s TIMEOUT:%s" % (VSAT_NAME, VSAT_ID, IP, PORT, CONNECTION_TIMEOUT)
+                    session = console.Grab(IP, PORT, CONNECTION_TIMEOUT)
+                    time.sleep(page_time_step)
+                    for next_step in xrange(1,NUMBER_OF_TRIES + 1):
+                        print "Checking connection ..."
+                        connected = session.connect()
+                        if connected:
+                            vsats_status['SUCCESS!'][host] = vsat[host]
+                            print "-> SUCCESS!"
+                            print
+                            break
+                        else:
+                            vsats_status['FAILED!'][host] = vsat[host]
+                            print "Attempt number: %s" % next_step
+                            print "-> FAILED!"
+                            print
+                        if next_step != NUMBER_OF_TRIES:
+                            print "Retrying to connect in %s sec ..." % TRIES_TIMEOUT
+                            show_time_counter(TRIES_TIMEOUT)
+                print
+                print "*"*60
+                print " "*10, "VSATs Summary:"
+                print "*"*60
+                for status in ['SUCCESS!', 'FAILED!']:
+                    for vsat in vsats_status[status].keys():
+                        name = vsats_status[status][vsat].get('Name')
+                        vsat_id = int(vsats_status[status][vsat].get('ID'))
+                        ip = vsats_status[status][vsat].get('Console IP')
+                        port = int(vsats_status[status][vsat].get('Console PORT'))
+                        print "Name:{0:8} id:{1:5} ip:{2:18} port:{3:5} <<->> {4:10}".format(name, str(vsat_id), ip, str(port), status)
+        # return vsats_status hash 
+        # with success and failed vsats.
+        return vsats_status
+    
+    def run_active_testcases(self):
+        '''
+        Run active testcases.
+        '''
+
+        active_testcases = self.get_active_testcases()
+          
+        for sheet in sorted(active_testcases.keys()):
+            if sheet == 'headers' or not active_testcases[sheet]:
+                continue
+            print "X"*65
+            print " "*22, 'SHEET:',sheet
+            print "X"*65
+            for row in sorted(active_testcases[sheet].keys()):
+                print "-"*20, 'SHEET %s ROW:' % upper(sheet), row, "-"*20
+                # print slowly.
+                time.sleep(page_time_step)
+                for cell in active_testcases['headers'][sheet]:
+                    print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(active_testcases[sheet][row][cell]))
+            print
+#         return active_testcases
+
+def show_time_counter(time_interval):
+    '''
+    Show time counter.
+    '''
+    for second in xrange(1,time_interval+1):
+        print "\tCounter: ",
+        print '{0}\r'.format(second),
+        time.sleep(1)
+    print
+
+
+def show_all_testcases(xlfile):
+    '''
+    Show all testcases.
+    '''
+    vsat = Selftest(xlfile);
+    vsat.get_testcases()
+    vsat.display()
+    print
+
+def show_active_testcases(xlfile):
+    '''
+    Show only active testcases.
+    '''
+    vsat = Selftest(xlfile);
+    vsat.get_testcases()
+    vsat.summary()
+    print
+
+def run_active_testcases(xlfile):
+    '''
+    Run testcases.
+    '''
+    vsat = Selftest(xlfile);
+    vsat.get_testcases()
+    vsat.run_active_testcases()
+    print
+
+    
+
+def show_vsat_testcases(xlfile):
+    '''
+    Show and check vsats testcases.
+    '''
+    vsat = Selftest(xlfile);
+    vsat.get_testcases()
+    vsat.check_availability()
+    print
+
+    
 if __name__ == '__main__':
     '''
     Run main program.
     '''
-    vsat = Selftest('../data/test.xls');
-    testcases = vsat.get_testcases()
+    pass
     
-    for sheet in sorted(testcases.keys()):
-        if sheet == 'headers':
-            continue
-        print "X"*65
-        print " "*22, 'SHEET:',sheet
-        print "X"*65
-        for row in testcases[sheet].keys():
-            if row == 0:
-                continue
-            print
-            print "-"*20, 'SHEET %s ROW:' % upper(sheet), row, "-"*20
-            for cell in testcases['headers'][sheet]:
-                print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(testcases[sheet][row][cell]))
-        print
+    
         
     
     
