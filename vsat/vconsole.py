@@ -122,7 +122,10 @@ class Grab:
                     if words[0] == 'RETRANSMITTED':
                         output['Number of OB retransmit packets'] = words[1]
                         output['Number of IB retransmit packets'] = words[2]
-                
+                    if words[0] == 'UNNUMBERED':
+                        output['Number of transmitted OB packets'] = words[1]
+                        output['Number of received IB packets'] = words[2]
+                        
                 command = 'rsp cpu get statistics'
                 stop_pattern = '''>'''
                 cpu_stats = self.grab(command, stop_pattern)
@@ -135,9 +138,6 @@ class Grab:
                         cpu_value = re.search(r'\$\d+\$', cpu_load)
                         output['VSAT CPU'] = cpu_value.group(0)
                 
-                # TODO: retransmit packets.
-                output['Number of transmitted OB packets'] = 'TODO!'
-                output['Number of received IB packets'] = 'TODO!'
                 return output
         except Exception as e:
             print "%s" % e

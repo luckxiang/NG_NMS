@@ -211,27 +211,53 @@ class Selftest:
                         connected = vsat.connect()
                         if connected and vsat.check_bb():
                             duration = int(active_testcases[sheet][row].get('Test duration'))
-                            for ftptype in ['inbound']:#, 'outbound']:
+                            for ftptype in ['inbound', 'outbound']:
                                 vsat.ftp_selftest(ftptype, duration)
                                 time.sleep(duration/2)
-                                # TODO: grab statistics from output
-                                output = vsat.get_stats()  
-                                # TODO: save data to csv file.
-                                time.sleep((duration/2) + 10)
+                                output = vsat.get_stats() 
+                                if ftptype == 'inbound':
+                                    nr_of_retransmited_ib_pckts = output['Number of IB retransmit packets']
+                                    nr_of_transmited_ib_pckts = output['Number of transmitted OB packets']
+                                    max_ob_bit_rate = output['Max IB bit rate']
+                                else:
+                                    output['Number of IB retransmit packets'] = nr_of_retransmited_ib_pckts
+                                    output['Number of transmitted IB packets'] = nr_of_transmited_ib_pckts
+                                    output['Max IB bit rate'] = max_ob_bit_rate
+                                time.sleep((duration/2) + 2)
                             break
                         counter = counter + 1
-                        time.sleep(10)
                 for cell in active_testcases['headers'][sheet]:
                     if sheet == 'D-TESTCASES' and cell in active_testcases['headers'][sheet][10:]:
                         active_testcases[sheet][row][cell] = output.get(cell)
                     print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(active_testcases[sheet][row][cell]))
                 print
+        # return active test cases results.
+        return active_testcases
+
+    def save_to_excel(self, result):
+        '''
+        Save result to excel file.
+        '''
+        print "Saving result to excel file!"
+        
+        from xlrd import open_workbook
+        from xlutils.copy import copy
+        
+        rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
+        wb = copy(rb)
+        sheet = 'D-TESTCASES'
+        for row in result[sheet].keys():
+            for cell in result['headers'][sheet][10:]:
+                wb.get_sheet(3).write(row, result['headers'][sheet].index(cell), result[sheet][row][cell])
+                #print row, result['headers'][sheet].index(cell), result[sheet][row][cell]
+
+        wb.save('data/output.xls')
+        print "DONE!"
 
 def show_time_counter(time_interval):
     '''
     Show time counter.
     '''
-    print
     for second in xrange(1,time_interval+1):
         print "\tCounter: ",
         print '{0}\r'.format(second),
@@ -261,7 +287,10 @@ def run_active_testcases(xlfile):
     '''
     vsat = Selftest(xlfile);
     vsat.get_testcases()
-    vsat.run_active_testcases()
+    # get result.
+    result = vsat.run_active_testcases()
+    # save result to excel file.
+    vsat.save_to_excel(result)
 
 def show_vsat_testcases(xlfile):
     '''
