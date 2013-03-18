@@ -55,7 +55,7 @@ class Selftest:
                     print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(self.testcases[sheet][row][cell]))
             print
             
-    def summary(self):
+    def show_active_testcases(self):
         '''
         Create only enabled rows and summary.
         '''
@@ -184,7 +184,9 @@ class Selftest:
         '''
 
         active_testcases = self.get_active_testcases()
-          
+        
+        number_of_tries = 2
+        
         for sheet in sorted(active_testcases.keys()):
             if sheet == 'headers' or not active_testcases[sheet]:
                 continue
@@ -197,10 +199,33 @@ class Selftest:
                 print "-"*20, 'SHEET %s ROW:' % upper(sheet), row, "-"*20
                 # print slowly.
                 time.sleep(page_time_step)
+                # Checking bb status before starting SELFTEST
+                if sheet == 'D-TESTCASES':
+                    counter = 0
+                    while True:
+                        if counter == number_of_tries:
+                            print "Exceeded number of tries per test case!"
+                            break
+                        from vsat import vconsole
+                        vsat = vconsole.Grab('192.168.140.76', 1016, 10)
+                        connected = vsat.connect()
+                        if connected and vsat.check_bb():
+                            duration = int(active_testcases[sheet][row].get('Test duration'))
+                            for ftptype in ['inbound']:#, 'outbound']:
+                                vsat.ftp_selftest(ftptype, duration)
+                                time.sleep(duration/2)
+                                # TODO: grab statistics from output
+                                output = vsat.get_stats()  
+                                # TODO: save data to csv file.
+                                time.sleep((duration/2) + 10)
+                            break
+                        counter = counter + 1
+                        time.sleep(10)
                 for cell in active_testcases['headers'][sheet]:
+                    if sheet == 'D-TESTCASES' and cell in active_testcases['headers'][sheet][10:]:
+                        active_testcases[sheet][row][cell] = output.get(cell)
                     print ' '*5,'{0:35} = {1:35}'.format(str(cell), str(active_testcases[sheet][row][cell]))
                 print
-#         return active_testcases
 
 def show_time_counter(time_interval):
     '''
@@ -228,7 +253,7 @@ def show_active_testcases(xlfile):
     '''
     vsat = Selftest(xlfile);
     vsat.get_testcases()
-    vsat.summary()
+    vsat.show_active_testcases()
 
 def run_active_testcases(xlfile):
     '''

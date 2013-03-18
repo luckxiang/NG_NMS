@@ -73,7 +73,6 @@ def main(argv=None):
         elif options.testcases == 'vsat':
             selftest.show_vsat_testcases(xlfile)
         elif options.run_active:
-            selftest.show_vsat_testcases(xlfile)
             selftest.run_active_testcases(xlfile)
 
         # ============ END MAIN BODY =============== #

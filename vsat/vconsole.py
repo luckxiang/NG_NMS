@@ -108,8 +108,8 @@ class Grab:
                     if iotraffic:
                         iotraffic = iotraffic.group(0)
                         ib_bit_rate, ob_bit_rate = iotraffic.split('.')[0:2]
-                        output['max_ib_bit_rate'] = re.search(r'\d+', ib_bit_rate).group(0) 
-                        output['max_ob_bit_rate'] = re.search(r'\d+', ob_bit_rate).group(0)
+                        output['Max IB bit rate'] = re.search(r'\d+', ib_bit_rate).group(0) 
+                        output['Max OB bit rate'] = re.search(r'\d+', ob_bit_rate).group(0)
 
                 command = 'bb stat'
                 stop_pattern = '''END Statistics for BB link'''
@@ -120,8 +120,8 @@ class Grab:
                     words = line.strip('\r\n')
                     words = words.split()
                     if words[0] == 'RETRANSMITTED':
-                        output['nr_of_retrans_ob_pckts'] = words[1]
-                        output['nr_of_retrans_ib_pckts'] = words[2]
+                        output['Number of OB retransmit packets'] = words[1]
+                        output['Number of IB retransmit packets'] = words[2]
                 
                 command = 'rsp cpu get statistics'
                 stop_pattern = '''>'''
@@ -133,8 +133,11 @@ class Grab:
                     if cpu_load:
                         cpu_load = cpu_load.group(0)
                         cpu_value = re.search(r'\$\d+\$', cpu_load)
-                        output['cpu_load'] = cpu_value.group(0)
+                        output['VSAT CPU'] = cpu_value.group(0)
                 
+                # TODO: retransmit packets.
+                output['Number of transmitted OB packets'] = 'TODO!'
+                output['Number of received IB packets'] = 'TODO!'
                 return output
         except Exception as e:
             print "%s" % e
