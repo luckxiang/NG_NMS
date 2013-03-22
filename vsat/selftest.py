@@ -247,17 +247,17 @@ class Selftest:
         rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
         wb = copy(rb)
         sheet = 'D-TESTCASES'
-        style0 = easyxf('font: name Times New Roman;'
+        styleOk = easyxf('font: name Times New Roman;'
                'borders: left thin, right thick, top thin, bottom thin;'
                'pattern: pattern solid, fore_colour light_green;'
                'alignment: horiz center, vert center')
-        style1 = easyxf('font: name Times New Roman;'
+        styleFail = easyxf('font: name Times New Roman;'
                'borders: left thin, right thick, top thin, bottom thin;'
                'pattern: pattern solid, fore_colour rose;'
                'alignment: horiz center, vert center')
         for row in result[sheet].keys():
             for cell in result['headers'][sheet][10:]:
-                wb.get_sheet(3).write(row, result['headers'][sheet].index(cell), result[sheet][row][cell], style0)
+                wb.get_sheet(3).write(row, result['headers'][sheet].index(cell), result[sheet][row][cell], styleOk)
 
         wb.save('data/output.xls')
         print "DONE!"
