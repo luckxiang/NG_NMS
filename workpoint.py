@@ -10,7 +10,6 @@ c.setopt(pycurl.TIMEOUT, 10)
 c.setopt(pycurl.FOLLOWLOCATION, 1)
 c.setopt(c.POSTFIELDS, 'j_username=admin&j_password=manager')
 c.setopt(pycurl.COOKIEJAR, 'data/ngnms.cookie')
-#c.setopt(c.COOKIEFILE, '')
 
 c.setopt(c.VERBOSE, True)
 c.setopt(pycurl.SSL_VERIFYPEER, 0);
