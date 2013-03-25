@@ -6,7 +6,7 @@ Created on Mar 6, 2013
 
 import time
 from string import upper
-from vsat import vconsole as console
+from vsat import console
 
 # time for one step in stdout print.
 page_time_step = 0.35
@@ -206,8 +206,7 @@ class Selftest:
                         if counter == number_of_tries:
                             print "Exceeded number of tries per test case!"
                             break
-                        from vsat import vconsole
-                        vsat = vconsole.Grab('192.168.140.76', 1016, 10)
+                        vsat = console.Grab('192.168.140.76', 1016, 10)
                         connected = vsat.connect()
                         if connected and vsat.check_bb():
                             duration = int(active_testcases[sheet][row].get('Test duration'))
@@ -315,16 +314,3 @@ if __name__ == '__main__':
     '''
     pass
     
-    
-        
-    
-    
-    
-    
-  
-  
-
-
-
-        
-
