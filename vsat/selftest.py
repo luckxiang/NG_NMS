@@ -307,7 +307,7 @@ def show_vsat_testcases(xlfile):
     vsat.get_testcases()
     vsat.check_availability()
 
-    
+
 if __name__ == '__main__':
     '''
     Run main program.

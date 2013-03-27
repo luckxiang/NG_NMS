@@ -39,7 +39,7 @@ class Ngnms:
         c.setopt(pycurl.POSTFIELDS, 'j_username={ngnms_user}&j_password={ngnms_password}'.format(**self.ngnms_login))
         c.setopt(pycurl.COOKIEJAR, '../data/ngnms.cookie')
         
-        # c.setopt(c.VERBOSE, True)
+        c.setopt(c.VERBOSE, True)
 
         c.setopt(pycurl.SSL_VERIFYPEER, 0);
         session = c
@@ -80,7 +80,7 @@ class Ngnms:
         except Exception as e:
             print e
 
-        headers = ['Content-Type: application/json']
+        headers = ['Content-Type: application/json', 'Expect:']
         c.setopt(pycurl.HTTPHEADER, headers)
         c.setopt(pycurl.PUT, 1)
         c.setopt(pycurl.READFUNCTION, indata.read)
@@ -149,12 +149,20 @@ class Ngnms:
         # getting data ngnms network segment configuration
         ngnms_data = eval(data)
 
+        for item in ngnms_data:
+            print item
         # parse and update data.
         ngnms_data = self.change_values(ngnms_data)
-
-        ngnms_data = repr(ngnms_data)
+#         for item in ngnms_data:
+#             if item.get('oid') == self.working_point.get('OB symbol rate'):
+#                 item['value'] = '45000000'
+        print '='*40
+        for item in ngnms_data:
+            print item
+        ngnms_data = str(ngnms_data).replace("'", '"')
+        print ngnms_data
         # TODO: put data to NGNMS
-        self.put_config('{url}/{id}'.format(**folder), ngnms_data)
+        # self.put_config('{url}/{id}'.format(**folder), ngnms_data)
 
 if __name__ == '__main__':
     '''

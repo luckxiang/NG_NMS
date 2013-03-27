@@ -141,11 +141,9 @@ class Grab:
                 return output
         except Exception as e:
             print "%s" % e
-        
-        
-        
-        
-        
-        
-        
-        
+
+if __name__ == '__main__':
+    '''
+    Main program.
+    '''
+    pass
