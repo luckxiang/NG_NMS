@@ -4,6 +4,7 @@ Created on Mar 9, 2013
 @author: me
 '''
 import xlrd
+import sys
 
 class Xls:
     '''
@@ -21,6 +22,13 @@ class Xls:
         '''
         Open Test Cases file
         '''
+        # check if file exist.
+        try:
+            with open(self.xlsfile): pass
+        except Exception as e:
+            print e
+            sys.exit()
+
         workbook = xlrd.open_workbook(self.xlsfile)
         worksheets = workbook.sheet_names()
         testcases = {}
@@ -87,6 +95,12 @@ class Xls:
                     print ' '*5, '{0:35} = {1:40}'.format(str(cell), str(testcases[sheet][row][cell]))
                     
 if __name__ == "__main__":
+    '''
+    Main program.
+    '''
+    data = Xls('../data/demo.xls')
+    data.logger = True
+    data.get_testcases()
     
     data = Xls('../data/test.xls')
     data.logger = True
