@@ -8,7 +8,6 @@ import sys
 from string import upper
 from time import sleep
 
-row_print_speed = 0.35
 
 class Xls:
     '''
@@ -77,35 +76,35 @@ class Xls:
                 for counter in xrange(4):
                     temp[index + counter] = '%s %s' % (name, counter + 1)
 
-        # sort active and inactive test cases.
-        active = {}
-        inactive = {}
+        # sort enabled and disabled test cases.
+        enabled = {}
+        disabled = {}
         for sheet in testcases.keys():
-            active[sheet] = {}
-            inactive[sheet] = {}
+            enabled[sheet] = {}
+            disabled[sheet] = {}
             for row in testcases[sheet]:
                 if testcases[sheet][row][0] is not '':
-                    active[sheet][row] = []
+                    enabled[sheet][row] = []
                 else:
-                    inactive[sheet][row] = []
+                    disabled[sheet][row] = []
                 for cell in testcases[sheet][row]:
                     if testcases[sheet][row][0] is not '':
-                        active[sheet][row].append(cell)
+                        enabled[sheet][row].append(cell)
                     else:
-                        inactive[sheet][row].append(cell)
+                        disabled[sheet][row].append(cell)
         
-        # combine into states of active and inactive test cases.
-        states = {'active':active, 'inactive':inactive}
+        # combine into states of enabled and disabled test cases.
+        states = {'enabled':enabled, 'disabled':disabled}
         testcases = (header, states)
 
         # display output
         if self.logger:
             self.display(testcases)
         
-        # return headers, active and inactive test cases.
+        # return headers, enabled and disabled test cases.
         return testcases
 
-    def display(self, testcases, statename = None, sheetname = None):
+    def display(self, testcases, statename = None, sheetname = None, name = None):
         '''
         Display testcases.
         '''
@@ -121,10 +120,10 @@ class Xls:
             print 'H'*60
             print upper(state).rjust(30)
             print 'H'*60
-            if sheetname == None:
-                sheets_keys = states[state].keys()
-            else:
+            if sheetname != None and sheetname in header.keys():
                 sheets_keys = [sheetname]
+            else:
+                sheets_keys = states[state].keys()
                 
             for sheet in sheets_keys:
                 print 'x'*60
@@ -132,12 +131,18 @@ class Xls:
                 print 'x'*60
                 for row in sorted(states[state][sheet]):
                     current_case = states[state][sheet][row][1]
+
+                    # adjusting selecting test case.
+                    if sheet == 'TESTCASES': current_case = int(current_case)
+                    if name != None and '%s' % name != '%s' % current_case:
+                        print '{0}: {1}'.format(sheet, current_case)
+                        continue
                     print '-'*60
                     print upper('%s : %s : %s' % (sheet, current_case, state)).rjust(38)
                     print '-'*60
-                    sleep(row_print_speed)
                     for key, value in zip(header[sheet][0], states[state][sheet][row]):
                         print '{0:40} = {1:20}'.format(key, str(value))
+                    print '-'*60
 
 if __name__ == "__main__":
     '''
@@ -147,16 +152,7 @@ if __name__ == "__main__":
     #data.logger = True
     testcases = data.get_testcases()
     data.display(testcases)
-#     header, states = testcases
-#     for state in states.keys():
-#         for sheet in states[state].keys():
-#             for row in states[state][sheet].keys():
-#                 # print row, state, sheet, states[state][sheet][row]
-#                 print state,
-#                 for cell in states[state][sheet][row]:
-#                     print cell,
-#                 print
-    
+
     data = Xls('../data/test.xls')
     data.logger = True
     data.get_testcases()

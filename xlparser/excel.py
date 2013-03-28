@@ -52,36 +52,36 @@ class Parser:
         print "\tINFO: Excel file %s!" % (self.xlfile)
         print "="*60
         testcases = self.excel.get_testcases()
-        
-        # display all test cases
-        if self.logger:
-            self.excel.display(testcases)
-        print
 
         # return all data from excel file.
         return testcases
 
-    def display(self, testcases, state = None, sheet = None):
+    def display(self, testcases, state = None, sheet = None, name = None):
         '''
         Display sheets content.
         '''
-        self.excel.display(testcases, state, sheet)
+        self.excel.display(testcases, state, sheet, name)
 
 if __name__ == "__main__":
     '''
     Main program.
     '''
+    state = 'disabled'
+    sheet = 'VSAT'
+    name = 'V1'
     data = Parser('../data/demo.xls')
-    data.logger = True
-    data.get_testcases()
-
-    data = Parser('../data/test.xls')
-    data.logger = True
-    data.get_testcases()
-
-    data = Parser('../data/test.xlsx')
-    data.logger = True
-    data.get_testcases()
+    testcases = data.get_testcases()
+    data.display(testcases, state, sheet, name)
+#     data.logger = True
+#     data.get_testcases()
+# 
+#     data = Parser('../data/test.xls')
+#     data.logger = True
+#     data.get_testcases()
+# 
+#     data = Parser('../data/test.xlsx')
+#     data.logger = True
+#     data.get_testcases()
     
     
     

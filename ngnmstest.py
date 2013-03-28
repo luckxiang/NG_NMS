@@ -18,6 +18,7 @@ import os
 
 from vsat import selftest
 from optparse import OptionParser
+from string import upper
 
 __all__ = []
 __version__ = 0.1
@@ -50,12 +51,13 @@ def main(argv=None):
     try:
         # setup option parser
         parser = OptionParser(version=program_version_string, epilog=program_longdesc, description=program_license)
-        parser.add_option('-c', '--check', dest='devices', type='choice', choices=['hub', 'vsat'], help='''check [hub, vsat]'s status.''')
+        parser.add_option('-c', '--check', dest='device', type='choice', choices=['hub', 'vsat'], help='''check [hub, vsat]'s status.''')
+        parser.add_option('-n', '--name', dest='name', default=None , help='vsat name to check.')
         parser.add_option('-s', '--show', dest='info', type='choice', choices=['all', 'hub', 'vsat', 'testcases'], help='''show [all, hub, vsat, testcases]'s info.''')
         parser.add_option('-d', '--disabled', dest='disabled', action='store_true', default=False, help='''show disabled rows only.''')
         parser.add_option('-i', '--in-file', dest='infile', default='data/demo.xls', help='''testcases input file [default: data/demo.xls]''')
         parser.add_option('-o', '--out-file', dest='outfile', default='data/output.xls', help='''save result to file [default: data/output.xls]''')
-        parser.add_option('-r', '--run', dest='run', default='first' , help='run one or all active test cases [default: first]')
+        parser.add_option('-r', '--run', dest='run', action='store_true', default=False, help='run one or [default:enabled] test cases')
         
         # set defaults
         # parser.set_defaults(infile="test.xls")
@@ -76,35 +78,71 @@ def main(argv=None):
             print e
             print
             sys.exit()
-        
-        print options.disabled
-        state = 'active'
-        if options.disabled:
-            state = 'inactive'
 
-        if options.devices == 'hub':
-            print "TODO: check hub"
-        elif options.devices == 'vsat':
-            print "TODO: check vsat"
+        # default state.
+        state = 'enabled'
+        if options.disabled:
+            state = 'disabled'
+
+        if options.device == 'hub':
+            print 'TODO: check hub'
+            selftest.check(xlfile, state, options.device)
+
+        elif options.device == 'vsat':
+            if options.name != None:
+                states = ['enabled', 'disabled']
+            else:
+                states = [state]
+            for state in states:
+                selftest.check(xlfile, state, options.device, options.name)
+
         elif options.info == 'all':
-            print "TODO: info all"
             selftest.show(xlfile, state)
+
         elif options.info == 'hub':
             print "TODO: info hub"
-            selftest.show(xlfile, state, sheet = 'HUB')
+            if options.name != None:
+                states = ['enabled', 'disabled']
+            else:
+                states = [state]
+                
+            for state in states:
+                selftest.show(xlfile, state, upper(options.info), options.name)
+
         elif options.info == 'vsat':
             print "TODO: info vsat"
-            selftest.show(xlfile, state, sheet = 'VSAT')
+            if options.name != None:
+                states = ['enabled', 'disabled']
+            else:
+                states = [state]
+                
+            for state in states:
+                selftest.show(xlfile, state, upper(options.info), options.name)
+
         elif options.info == 'testcases':
             print "TODO: info testcases"
-            selftest.show(xlfile, state, sheet = 'TESTCASES')
-        elif options.run == 'first':
-            print "TODO: -r, --run first active case"
-        elif options.run != 'first':
+            if options.name != None:
+                states = ['enabled', 'disabled']
+            else:
+                states = [state]
+                
+            for state in states:
+                selftest.show(xlfile, state, upper(options.info), options.name)
+
+        elif options.run:
             print "TODO: case validation %s" % options.run
-            print "TODO: -r, --run %s test cases" %options.run
+            print "TODO: -r, --run: %s" %options.run
+            if options.name != None:
+                states = ['enabled', 'disabled']
+            else:
+                states = [state]
+                
+            for state in states:
+                selftest.run(xlfile, state, options.name)
         else:
-            print "Hm, need more arguments? :p"
+            print 
+            print "Help: %s -h|--help" % program_name
+            print
 
 
 

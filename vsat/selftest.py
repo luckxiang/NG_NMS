@@ -5,6 +5,8 @@ Created on Mar 6, 2013
 '''
 
 import time
+from vsat import console
+from string import upper
 
 class Selftest:
     '''
@@ -12,6 +14,8 @@ class Selftest:
     '''
     
     data = None
+    number_of_tries = 3
+    tries_timeout = 2
     
     def __init__(self,xlfile):
         '''
@@ -27,11 +31,79 @@ class Selftest:
         '''
         return self.data.get_testcases()
     
-    def display(self, testcases, state = None, sheet = None):
+    def display(self, testcases, state = None, sheet = None, name = None):
         '''
         Display info from excel file.
         '''
-        self.data.display(testcases, state, sheet);
+        self.data.display(testcases, state, sheet, name);
+
+    def check(self, state = None, device = None, vsatname = None):
+        '''
+        Check device availability.
+        '''
+        if device == 'vsat': self.vsat_status(state, vsatname)
+
+        
+    def vsat_status(self, state = None, vsatname = None):
+        '''
+        Check vsat.
+        '''
+        testcases = self.data.get_testcases()
+        header, states = testcases
+
+        if state == None:
+            state = 'enabled'
+
+        sheet = 'VSAT'
+        vsats = states[state][sheet]
+        header = header[sheet][0]
+        print 'H'*60
+        print upper(state).rjust(30)
+        print 'H'*60
+        for host in vsats:
+            vsat = vsats[host]
+            if vsatname != None and vsatname != vsat[1]:
+                print '{0:5}: {1:10}'.format(sheet, vsat[1])
+                continue
+            print '-'*50
+            print "-- %s : %s --".rjust(30) % (vsat[1], upper(state))
+            print '-'*50
+            for key, value in zip(header, vsats[host]):
+                print "{0:20} = {1:20}".format(key, str(value))
+            ip = vsat[header.index('Console IP')]
+            port = int(vsat[header.index('Console PORT')])
+            connection_timeout = int(vsat[header.index('Connection timeout')])
+            number_of_tries = self.number_of_tries
+            tries_timeout = self.tries_timeout
+ 
+            # checking vsats.
+            session = console.Grab(ip, port, connection_timeout)
+            for next_step in xrange(1,number_of_tries + 1):
+                print
+                print "Checking connection ..."
+                connected = session.connect()
+                if connected:
+                    print "-> SUCCESS!"
+                    print
+                    break
+                else:
+                    print "Attempt number: %s" % next_step
+                    print "-> FAILED!"
+                    print
+                if next_step != number_of_tries:
+                    print "Retrying to connect in %s sec ..." % tries_timeout
+                    self.show_time_counter(tries_timeout)
+            print '-'*60
+
+    def show_time_counter(self, time_interval):
+        '''
+        Show time counter.
+        '''
+        for second in xrange(1,time_interval+1):
+            print "\tCounter: ",
+            print '{0}\r'.format(second),
+            time.sleep(1)
+        print
 
     def save_to_excel(self, result):
         '''
@@ -61,25 +133,26 @@ class Selftest:
         wb.save('data/output.xls')
         print "DONE!"
 
-def show_time_counter(time_interval):
+def show(xlfile, state=None, sheet=None, name = None):
     '''
-    Show time counter.
+    Display all, vsat, hub, testcases with enabled or disabled state.
     '''
-    for second in xrange(1,time_interval+1):
-        print "\tCounter: ",
-        print '{0}\r'.format(second),
-        time.sleep(1)
-    print
+    ngnms = Selftest(xlfile);
+    testcases = ngnms.get_testcases()
+    ngnms.display(testcases, state, sheet, name)
 
-
-def show(xlfile,state=None, sheet=None):
+def check(xlfile, state = None, device = None, name = None):
     '''
-    Show all testcases.
+    Check device availability.
     '''
-    vsat = Selftest(xlfile);
-    testcases = vsat.get_testcases()
-    vsat.display(testcases, state, sheet)
-
+    ngnms = Selftest(xlfile)
+    ngnms.check(state, device, name)
+    
+def run(xlfile, state = None, name = None):
+    '''
+    Run testcase(s}.
+    '''
+    print 'Todo: run testcase: ', state, name
 
 if __name__ == '__main__':
     '''
