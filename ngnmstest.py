@@ -120,7 +120,6 @@ def main(argv=None):
                 selftest.show(xlfile, state, upper(options.info), options.name)
 
         elif options.info == 'testcases':
-            print "TODO: info testcases"
             if options.name != None:
                 states = ['enabled', 'disabled']
             else:
@@ -130,7 +129,6 @@ def main(argv=None):
                 selftest.show(xlfile, state, upper(options.info), options.name)
 
         elif options.run:
-            print "TODO: case validation %s" % options.run
             print "TODO: -r, --run: %s" %options.run
             if options.name != None:
                 states = ['enabled', 'disabled']
