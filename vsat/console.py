@@ -62,29 +62,34 @@ class Grab:
             stop_pattern = 'sec)'
             
             output = self.grab(command, stop_pattern)
-            rez = re.search("Total Backbone Links UP = 0.", output)
-
-            if rez:
-                return False
+            print
+            print 'Checking link status ... '
+            print
+            link_status = False
+            for line in output.split('\r'):
+                if 'UP' in line.split():
+                    link_status = line.strip().rstrip('.')
+                    print link_status
+                    return int(link_status.split()[5])
             else:
-                return True
+                print output
+            # return default.
+            return link_status
         except Exception as e:
             print e
-            
+
     def ftp_selftest(self, ftptype, duration):
         '''
         Start ftp selftest.
         '''
-        try:
-            if ftptype == 'inbound':
-                command = 'ip selftest ftpup 1 %s' % duration
-            elif ftptype == 'outbound':
-                command = 'ip selftest ftpdown %s' % duration
-        except Exception as e:
-            print e
-        
+        if ftptype == 'inbound':
+            command = 'ip selftest ftpup 1 %s' % duration
+        elif ftptype == 'outbound':
+            command = 'ip selftest ftpdown %s' % duration
+
         stop_pattern = '>'
         tn = self.connect()
+        print
         print "COMMAND:\> %s" % command
         tn.write('\r\n')
         tn.write(command + "\r\n")

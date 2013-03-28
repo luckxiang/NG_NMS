@@ -70,11 +70,11 @@ class Xls:
                 counter = 0
                 for line in xrange(1,5):
                     for col in xrange(1,3):
-                        temp[index + counter] = '%s %s%s' % (name, line, col)
+                        temp[index + counter] = '%s_%s%s' % (name, line, col)
                         counter += 1
             else:
                 for counter in xrange(4):
-                    temp[index + counter] = '%s %s' % (name, counter + 1)
+                    temp[index + counter] = '%s_%s' % (name, counter + 1)
 
         # sort enabled and disabled test cases.
         enabled = {}
