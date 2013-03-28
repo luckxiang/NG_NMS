@@ -110,7 +110,6 @@ def main(argv=None):
                 selftest.show(xlfile, state, upper(options.info), options.name)
 
         elif options.info == 'vsat':
-            print "TODO: info vsat"
             if options.name != None:
                 states = ['enabled', 'disabled']
             else:
