@@ -66,22 +66,16 @@ if __name__ == "__main__":
     '''
     Main program.
     '''
-    state = 'disabled'
-    sheet = 'VSAT'
-    name = 'V1'
-    data = Parser('../data/demo.xls')
+
+
+    data = Parser('../data/test.xls')
+    data.logger = True
     testcases = data.get_testcases()
-    data.display(testcases, state, sheet, name)
-#     data.logger = True
-#     data.get_testcases()
-# 
-#     data = Parser('../data/test.xls')
-#     data.logger = True
-#     data.get_testcases()
-# 
-#     data = Parser('../data/test.xlsx')
-#     data.logger = True
-#     data.get_testcases()
+    data.display(testcases)
+ 
+    data = Parser('../data/test.xlsx')
+    data.logger = True
+    data.get_testcases()
     
     
     

@@ -49,7 +49,7 @@ class Selftest:
         Check vsat.
         '''
         testcases = self.data.get_testcases()
-        header, states = testcases
+        header, states, cases = testcases
 
         if state == None:
             state = 'enabled'
@@ -105,19 +105,28 @@ class Selftest:
             time.sleep(1)
         print
 
-    def save_to_excel(self, result):
+    def save_to_excel(self, testcases, state = None, name = None):
         '''
         Save result to excel file.
         '''
         print "Saving result to excel file!"
         
+        header, states = testcases
+        
+        if state == None:
+            states_keys = states.keys()
+        else:
+            states_keys = [state]
+        # force just for test cases sheet.
+        sheet = 'TESTCASES'
+
         from xlrd import open_workbook
         from xlutils.copy import copy
         from xlwt import easyxf
         
         rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
         wb = copy(rb)
-        sheet = 'D-TESTCASES'
+        
         styleOk = easyxf('font: name Times New Roman;'
                'borders: left thin, right thick, top thin, bottom thin;'
                'pattern: pattern solid, fore_colour light_green;'
@@ -126,12 +135,21 @@ class Selftest:
                'borders: left thin, right thick, top thin, bottom thin;'
                'pattern: pattern solid, fore_colour rose;'
                'alignment: horiz center, vert center')
-        for row in result[sheet].keys():
-            for cell in result['headers'][sheet][10:]:
-                wb.get_sheet(3).write(row, result['headers'][sheet].index(cell), result[sheet][row][cell], styleOk)
-
-        wb.save('data/output.xls')
-        print "DONE!"
+        for state in states_keys:
+            for row in states[state][sheet].keys():
+                for cell in header[sheet][0][33:]:
+                    wb.get_sheet_by_name(sheet).write(row, states[state][sheet].index(cell), states[state][sheet][row][cell], styleOk)
+        try:
+            wb.save('data/output.xls')
+        except Exception as e:
+            print e
+        
+        print
+        print '-'*60
+        print
+        print "\t\tGood job!\n\t\tCongratulations! @};-\n\t\tWell done!\n"
+        print
+        print '-'*60
 
 def show(xlfile, state=None, sheet=None, name = None):
     '''
@@ -158,5 +176,18 @@ if __name__ == '__main__':
     '''
     Run main program.
     '''
+    xlfile = '../data/demo.xls'
+    data = Selftest(xlfile)
+    testcases = data.get_testcases()
+    header, states, cases = testcases
+    for state in cases.keys():
+        for sheet in cases[state].keys():
+            for row in cases[state][sheet].keys():
+                for cell in cases[state][sheet][row]:
+                    print cell,cases[state][sheet][row][cell]
+                print
+            
+        
+            
     pass
     

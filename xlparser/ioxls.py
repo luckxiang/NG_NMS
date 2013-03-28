@@ -92,11 +92,23 @@ class Xls:
                         enabled[sheet][row].append(cell)
                     else:
                         disabled[sheet][row].append(cell)
+
         
         # combine into states of enabled and disabled test cases.
         states = {'enabled':enabled, 'disabled':disabled}
-        testcases = (header, states)
 
+        # create test cases hash
+        cases = {}
+        for state in states.keys():
+            cases[state] = {}
+            for sheet in header.keys():
+                cases[state][sheet] = {}
+                for row in states[state][sheet]:
+                    cases[state][sheet][row] = {}
+                    for key, value in zip(header[sheet][0], states[state][sheet][row]):
+                        cases[state][sheet][row][key] = value
+        
+        testcases = (header, states, cases)
         # display output
         if self.logger:
             self.display(testcases)
@@ -109,10 +121,10 @@ class Xls:
         Display testcases.
         '''
 
-        header, states = testcases
+        header, states, cases = testcases
 
         if statename == None:
-            states_keys = states.keys()
+            states_keys = reversed(states.keys())
         else:
             states_keys = [statename]
 
