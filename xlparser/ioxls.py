@@ -6,8 +6,6 @@ Created on Mar 9, 2013
 import xlrd
 import sys
 from string import upper
-from time import sleep
-
 
 class Xls:
     '''

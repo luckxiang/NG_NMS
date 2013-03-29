@@ -79,6 +79,9 @@ def main(argv=None):
             print
             sys.exit()
 
+        # outfile.
+        selftest.output_xlfile = options.outfile
+
         # default state.
         state = 'enabled'
         if options.disabled:
@@ -123,19 +126,14 @@ def main(argv=None):
                 states = ['enabled', 'disabled']
             else:
                 states = [state]
-                
-            for state in states:
-                selftest.show(xlfile, state, upper(options.info), options.name)
+            selftest.show(xlfile, states, upper(options.info), options.name)
 
         elif options.run:
-            print "TODO: -r, --run: %s" %options.run
             if options.name != None:
                 states = ['enabled', 'disabled']
             else:
                 states = [state]
-                
-            for state in states:
-                selftest.run(xlfile, state, options.name)
+            selftest.run(xlfile, states, options.name)
         else:
             print 
             print "Help: %s -h|--help" % program_name

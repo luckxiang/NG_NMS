@@ -8,6 +8,7 @@ import time
 from vsat import console
 from string import upper
 
+output_xlfile = 'data/output.xls'
 class Selftest:
     '''
     Run selftest mode for VSAT.
@@ -16,7 +17,7 @@ class Selftest:
     data = None
     number_of_tries = 3
     tries_timeout = 2
-    
+
     def __init__(self,xlfile):
         '''
         Get excel file.
@@ -80,22 +81,22 @@ class Selftest:
             session = console.Grab(ip, port, connection_timeout)
             for next_step in xrange(1,number_of_tries + 1):
                 print
-                print "Checking connection ..."
+                print "step:\> Checking connection ..."
+                print "status:",
                 connected = session.connect()
                 if connected:
                     print "-> SUCCESS!"
-                    if session.check_bb():
-                        print '->Link UP!'
+                    link_status, message = session.check_bb()
+                    if link_status:
+                        print 'status: ->Link UP!'
                     else:
-                        print '->Link DOWN!'
-                    print
+                        print 'status: ->Link DOWN!'
                     break
                 else:
-                    print "Attempt number: %s" % next_step
+                    print "status: Attempt number: %s" % next_step,
                     print "-> FAILED!"
-                    print
                 if next_step != number_of_tries:
-                    print "Retrying to connect in %s sec ..." % tries_timeout
+                    print
                     self.show_time_counter(tries_timeout)
             print '-'*60
 
@@ -103,13 +104,9 @@ class Selftest:
         '''
         Show time counter.
         '''
-        print
         for second in xrange(1,time_interval+1):
-            print "\t\tCounter: ",
-            print '{0}\r'.format(second),
+            print 'step:\> Please wait {0} sec: [{1}]\r'.format(time_interval, second),
             time.sleep(1)
-        print
-        print
 
     def run(self, testcases, state = None, name = None):
         '''
@@ -119,20 +116,40 @@ class Selftest:
         number_of_tries = 2
         # force just TESTCASES sheet.
         sheet = 'TESTCASES'
-        
+        # Status change to True when exist data to save.
+        status = False
         if state == None:
             states_keys = states.keys()
         else:
-            states_keys = [state]
+            states_keys = state
 
+        # TODO: check ngnms server.
+        print 'TODO: check ngnms and vsat'
+        
+        # getting first active VSAT.
+        for vsat in cases['enabled']['VSAT'].keys():
+            if states['enabled']['VSAT'][vsat][0] != '':
+                vsat_data = cases['enabled']['VSAT'][vsat]
+                vsat_ip = vsat_data.get('Console IP')
+                vsat_port = int(vsat_data.get('Console PORT'))
+                vsat_timeout = int(vsat_data.get('Connection timeout'))
+                tries_timeout = int(vsat_data.get('Number of tries'))
+                number_of_tries = int(vsat_data.get('Tries timeout'))
+                vsatname = vsat_data.get('Name')
+            break
+
+        # Checking VSAT.
+        self.vsat_status(None, vsatname)
+        result_data = {}
         for state in states_keys:
             print 'H'*60
             print upper(state).rjust(30)
             print 'H'*60
             print
             
+            result_data[state] = {}
             for row in sorted(states[state][sheet]):
-                counter = 0
+                counter = 1
                 current_case = states[state][sheet][row][1]
 
                 # adjusting selecting test case.
@@ -146,16 +163,19 @@ class Selftest:
                     print ' '*20, '{0}: {1}'.format(sheet, current_case)
                     print '-'*60
                     print
-                    
+                # TODO: set ngnms working point
+                print 'step:\> TODO: set ngnms working point!'
+                print 'step:\> TODO: check ready ngnms working point!'
                 while counter <= number_of_tries:
-                    vsat = console.Grab('192.168.140.76', 1010, 10)
+                    print 'info:\> connecting to ... ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
+                    vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
                     connected = vsat.connect()
-                    if connected and vsat.check_bb():
+                    link_status, message = vsat.check_bb()
+                    if connected and link_status:
                         duration = int(cases[state][sheet][row].get('Test duration'))
                         for ftptype in ['inbound', 'outbound']:
                             vsat.ftp_selftest(ftptype, duration)
-                            print
-                            print 'TEST %s:\> %s: START!' % (current_case, upper(ftptype))
+                            print 'step:\> %s -> start!' % ftptype
                             self.show_time_counter(duration/2)
                             output = vsat.get_stats()
                             if ftptype == 'inbound':
@@ -166,16 +186,22 @@ class Selftest:
                                 output['Number of IB retransmit packets'] = nr_of_retransmited_ib_pckts
                                 output['Number of transmitted IB packets'] = nr_of_transmited_ib_pckts
                                 output['Max IB bit rate'] = max_ob_bit_rate
-                            # TODO: time wait.
-                            print 'TEST %s:\> %s: DONE!' % (current_case, upper(ftptype))
-                            self.show_time_counter((duration/2) + 2)
+                            print 'status: %s -> done!' % ftptype
+                            if ftptype != 'outbound': self.show_time_counter((duration/2) + 2)
                         break
+                    else:
+                        print 'ERROR: VSAT not OK!'
+                        self.show_time_counter(tries_timeout)
                     counter = counter + 1
                 else:
-                    print "Exceeded number of tries per test case!"
+                    print "info:\> Exceeded [%s] number of tries per test case!" % number_of_tries
+                    continue
                 print
-                
+                print '-'*25,'TEST: %s' % current_case, '-'*24
+                result_data[state][row] = cases[state][sheet][row]
                 for key in header[sheet][0]:
+                    # print step to screen.
+                    time.sleep(0.1)
                     if key in output.keys():
                         cases[state][sheet][row][key] = output[key]
                     if key == 'Max OB bit rate':
@@ -183,56 +209,71 @@ class Selftest:
                         print '-'*25,'OUTPUT: %s' % current_case, '-'*24
                         print
                     print '{0:38} = {1:30}'.format(key, str(cases[state][sheet][row][key]))
+                    # Check if we have data to save
+                    status = True
                 print
                 print '-'*60
                 print
+        # saving data to file
+        if status:
+            print
+            print "info:\> Saving result to [%s] excel file!" % output_xlfile
+            print 
+            self.save_row_to_excel(header[sheet][0], result_data)
 
         # TODO: retunr save data to excel file.
 
-    def save_to_excel(self, testcases, state = None, name = None):
+    def save_row_to_excel(self, header, output):
         '''
         Save result to excel file.
         '''
-        print "Saving result to excel file!"
-        
-        header, states = testcases
-        
-        if state == None:
-            states_keys = states.keys()
-        else:
-            states_keys = [state]
-        # force just for test cases sheet.
-        sheet = 'TESTCASES'
-
         from xlrd import open_workbook
         from xlutils.copy import copy
         from xlwt import easyxf
-        
+
         rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
         wb = copy(rb)
-        
-        styleOk = easyxf('font: name Times New Roman;'
+        styleEnabled = easyxf('font: name Times New Roman;'
                'borders: left thin, right thick, top thin, bottom thin;'
                'pattern: pattern solid, fore_colour light_green;'
                'alignment: horiz center, vert center')
-        styleFail = easyxf('font: name Times New Roman;'
+        styleDisabled = easyxf('font: name Times New Roman;'
                'borders: left thin, right thick, top thin, bottom thin;'
-               'pattern: pattern solid, fore_colour rose;'
+               'pattern: pattern solid, fore_colour pale_blue;'
                'alignment: horiz center, vert center')
-        for state in states_keys:
-            for row in states[state][sheet].keys():
-                for cell in header[sheet][0][33:]:
-                    wb.get_sheet_by_name(sheet).write(row, states[state][sheet].index(cell), states[state][sheet][row][cell], styleOk)
-        try:
-            wb.save('data/output.xls')
-        except Exception as e:
-            print e
-        
+        for state in output.keys():
+            # Set row style.
+            if state == 'enabled':
+                style = styleEnabled
+            elif state == 'disabled':
+                style = styleDisabled
+            for row in output[state].keys():
+                for cell in header[32:]:
+                        wb.get_sheet(1).write(row, header.index(cell), output[state][row].get(cell), style)
+
+        # Check if file is closed.
+        while True:
+                try:
+                    wb.save(output_xlfile)
+                except Exception as e:
+                    print e
+                    # file already exists, try again
+                    print
+                    print 'Please close file first [%s], then continue: ' % output_xlfile,
+                    raw_input('-> [ENTER]')
+                    continue
+                print
+                print 'H'*60
+                print '\nSUCCESS!: Successfully saved data to file: [%s]!\n' % output_xlfile
+                print 'H'*60
+                break
+
+        # Success! We are the beast from the beasts,
+        # In the blackest than blackest and deeper source code forest! 
+        # NOTE: Joke! :p /* I just finished this project */
         print
         print '-'*60
-        print
-        print "\t\tGood job!\n\t\tCongratulations! @};-\n\t\tWell done!\n"
-        print
+        print "\n\t\tGood job!\n\t\tCongratulations! @};-\n\t\tWell done!\n"
         print '-'*60
 
 def show(xlfile, state=None, sheet=None, name = None):

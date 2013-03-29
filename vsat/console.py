@@ -6,6 +6,7 @@ Created on Mar 6, 2013
 
 import telnetlib
 import re
+import sys
 
 class Grab:
     '''
@@ -32,6 +33,10 @@ class Grab:
             return self.tn
         except Exception as e:
             print e
+            print
+            print 'VSAT: ip: {0} port:{1}'.format(self.ip, self.port)
+            print 'HINT: ngnmstest.py --check vsat --name <vsat_name>'
+            sys.exit()
     
     def disconnect(self):
         '''
@@ -63,18 +68,16 @@ class Grab:
             
             output = self.grab(command, stop_pattern)
             print
-            print 'Checking link status ... '
-            print
+            print 'step:\> Checking link status!'
             link_status = False
             for line in output.split('\r'):
                 if 'UP' in line.split():
                     link_status = line.strip().rstrip('.')
-                    print link_status
-                    return int(link_status.split()[5])
-            else:
-                print output
-            # return default.
-            return link_status
+                    print 'status:',link_status
+                    # return link_status and bb link message.
+                    return (int(link_status.split()[5]), link_status)
+            # return link_status and bb link message.
+            return (link_status, output)
         except Exception as e:
             print e
 
@@ -90,7 +93,7 @@ class Grab:
         stop_pattern = '>'
         tn = self.connect()
         print
-        print "COMMAND:\> %s" % command
+        print "test:\> %s" % command
         tn.write('\r\n')
         tn.write(command + "\r\n")
         tn.read_until(stop_pattern, self.timeout)
@@ -113,8 +116,8 @@ class Grab:
                     if iotraffic:
                         iotraffic = iotraffic.group(0)
                         ib_bit_rate, ob_bit_rate = iotraffic.split('.')[0:2]
-                        output['Max IB bit rate'] = re.search(r'\d+', ib_bit_rate).group(0) 
-                        output['Max OB bit rate'] = re.search(r'\d+', ob_bit_rate).group(0)
+                        output['Max IB bit rate'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
+                        output['Max OB bit rate'] = int(re.search(r'\d+', ob_bit_rate).group(0))
 
                 command = 'bb stat'
                 stop_pattern = '''END Statistics for BB link'''
@@ -125,11 +128,11 @@ class Grab:
                     words = line.strip('\r\n')
                     words = words.split()
                     if words[0] == 'RETRANSMITTED':
-                        output['Number of OB retransmit packets'] = words[1]
-                        output['Number of IB retransmit packets'] = words[2]
+                        output['Number of OB retransmit packets'] = words[1].lstrip('0') or 0
+                        output['Number of IB retransmit packets'] = words[2].lstrip('0') or 0
                     if words[0] == 'UNNUMBERED':
-                        output['Number of transmitted OB packets'] = words[1]
-                        output['Number of received IB packets'] = words[2]
+                        output['Number of transmitted OB packets'] = words[1].lstrip('0') or 0
+                        output['Number of received IB packets'] = words[2].lstrip('0') or 0
                         
                 command = 'rsp cpu get statistics'
                 stop_pattern = '''>'''
