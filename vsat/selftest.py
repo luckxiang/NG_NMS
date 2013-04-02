@@ -7,6 +7,7 @@ Created on Mar 6, 2013
 import time
 from vsat import console
 from string import upper
+from ngnms import biaspoint
 
 output_xlfile = 'data/output.xls'
 class Selftest:
@@ -32,18 +33,35 @@ class Selftest:
         '''
         return self.data.get_testcases()
     
-    def display(self, testcases, state = None, sheet = None, name = None):
+    def display(self, testcases, sheet = None, name = None,  *state):
         '''
         Display info from excel file.
         '''
-        self.data.display(testcases, state, sheet, name);
+        self.data.display(testcases, sheet, name, *state);
 
     def check(self, state = None, device = None, vsatname = None):
         '''
         Check device availability.
         '''
         if device == 'vsat': self.vsat_status(state, vsatname)
+        if device == 'hub': self.check_ngnms()
 
+    def check_ngnms(self):
+        '''
+        Check ngnms hub status.
+        '''
+        data = Selftest(self.xlfile)
+        testcases = data.get_testcases()
+        header, states, cases = testcases
+        # getting first active network segment..
+        ngnms_info = {}
+        for hub in cases['enabled']['HUB'].keys():
+            if cases['enabled']['HUB'][hub].get('Active') != '':
+                ngnms_info = cases['enabled']['HUB'][hub]
+            break
+        ngnms = biaspoint.Ngnms(**ngnms_info)
+        ngnms.check_ngnms()
+        
         
     def vsat_status(self, state = None, vsatname = None):
         '''
@@ -123,9 +141,15 @@ class Selftest:
         else:
             states_keys = state
 
-        # TODO: check ngnms server.
-        print 'TODO: check ngnms and vsat'
-        
+        ngnms_info = {}
+        for hub in cases['enabled']['HUB'].keys():
+            if cases['enabled']['HUB'][hub].get('Active') != '':
+                ngnms_info = cases['enabled']['HUB'][hub]
+            break
+
+        # show ngnms network tree.
+        self.check(state = None, device = 'hub', vsatname = None)
+
         # getting first active VSAT.
         for vsat in cases['enabled']['VSAT'].keys():
             if states['enabled']['VSAT'][vsat][0] != '':
@@ -163,9 +187,13 @@ class Selftest:
                     print ' '*20, '{0}: {1}'.format(sheet, current_case)
                     print '-'*60
                     print
+
                 # TODO: set ngnms working point
-                print 'step:\> TODO: set ngnms working point!'
+                ngnms = biaspoint.Ngnms(**ngnms_info)
+                ngnms.set_ngnms_working_point()
+
                 print 'step:\> TODO: check ready ngnms working point!'
+                
                 while counter <= number_of_tries:
                     print 'info:\> connecting to ... ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
                     vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
@@ -184,7 +212,7 @@ class Selftest:
                                 max_ob_bit_rate = output['Max IB bit rate']
                             else:
                                 output['Number of IB retransmit packets'] = nr_of_retransmited_ib_pckts
-                                output['Number of transmitted IB packets'] = nr_of_transmited_ib_pckts
+                                output['Number of transmitted OB packets'] = nr_of_transmited_ib_pckts
                                 output['Max IB bit rate'] = max_ob_bit_rate
                             print 'status: %s -> done!' % ftptype
                             if ftptype != 'outbound': self.show_time_counter((duration/2) + 2)
@@ -276,13 +304,13 @@ class Selftest:
         print "\n\t\tGood job!\n\t\tCongratulations! @};-\n\t\tWell done!\n"
         print '-'*60
 
-def show(xlfile, state=None, sheet=None, name = None):
+def show(xlfile, sheet=None, name = None, *state):
     '''
     Display all, vsat, hub, testcases with enabled or disabled state.
     '''
     ngnms = Selftest(xlfile);
     testcases = ngnms.get_testcases()
-    ngnms.display(testcases, state, sheet, name)
+    ngnms.display(testcases, sheet, name, *state)
 
 def check(xlfile, state = None, device = None, name = None):
     '''
@@ -308,7 +336,8 @@ if __name__ == '__main__':
     testcases = data.get_testcases()
     state = 'enabled'
     name = '1'
-    data.run(testcases, state, name)
+#     data.run(testcases, state, name)
+    data.check(state = None, device = 'hub')
 
     
 

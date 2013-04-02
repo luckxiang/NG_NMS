@@ -9,7 +9,7 @@ import sys
 
 class Parser:
     '''
-    Export excel and export to csv format.
+    Export excel
     '''
     excel = None
     extention = None
@@ -56,11 +56,11 @@ class Parser:
         # return all data from excel file.
         return testcases
 
-    def display(self, testcases, state = None, sheet = None, name = None):
+    def display(self, testcases, sheet = None, name = None, *state):
         '''
         Display sheets content.
         '''
-        self.excel.display(testcases, state, sheet, name)
+        self.excel.display(testcases, sheet, name, *state)
 
 if __name__ == "__main__":
     '''

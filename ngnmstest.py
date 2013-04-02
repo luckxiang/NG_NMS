@@ -53,7 +53,7 @@ def main(argv=None):
         parser = OptionParser(version=program_version_string, epilog=program_longdesc, description=program_license)
         parser.add_option('-c', '--check', dest='device', type='choice', choices=['hub', 'vsat'], help='''check [hub, vsat]'s status.''')
         parser.add_option('-n', '--name', dest='name', default=None , help='vsat name to check.')
-        parser.add_option('-s', '--show', dest='info', type='choice', choices=['all', 'hub', 'vsat', 'testcases'], help='''show [all, hub, vsat, testcases]'s info.''')
+        parser.add_option('-s', '--show', dest='info', type='choice', choices=['all', 'hub', 'vsat', 'test'], help='''show [all, hub, vsat, test]'s info.''')
         parser.add_option('-d', '--disabled', dest='disabled', action='store_true', default=False, help='''show disabled rows only.''')
         parser.add_option('-i', '--in-file', dest='infile', default='data/demo.xls', help='''testcases input file [default: data/demo.xls]''')
         parser.add_option('-o', '--out-file', dest='outfile', default='data/output.xls', help='''save result to file [default: data/output.xls]''')
@@ -87,10 +87,11 @@ def main(argv=None):
         if options.disabled:
             state = 'disabled'
 
+        # check hub.
         if options.device == 'hub':
-            print 'TODO: check hub'
             selftest.check(xlfile, state, options.device)
 
+        # check vsat.
         elif options.device == 'vsat':
             if options.name != None:
                 states = ['enabled', 'disabled']
@@ -102,16 +103,17 @@ def main(argv=None):
         elif options.info == 'all':
             selftest.show(xlfile, state)
 
+        # show hub info.
         elif options.info == 'hub':
-            print "TODO: info hub"
             if options.name != None:
                 states = ['enabled', 'disabled']
             else:
                 states = [state]
                 
             for state in states:
-                selftest.show(xlfile, state, upper(options.info), options.name)
+                selftest.show(xlfile, upper(options.info), options.name, *states)
 
+        # show vsat info.
         elif options.info == 'vsat':
             if options.name != None:
                 states = ['enabled', 'disabled']
@@ -119,15 +121,20 @@ def main(argv=None):
                 states = [state]
                 
             for state in states:
-                selftest.show(xlfile, state, upper(options.info), options.name)
-
-        elif options.info == 'testcases':
+                selftest.show(xlfile, upper(options.info), options.name, *states)
+        
+        # show tests info.
+        elif options.info == 'test':
             if options.name != None:
                 states = ['enabled', 'disabled']
             else:
                 states = [state]
-            selftest.show(xlfile, states, upper(options.info), options.name)
+            try:
+                selftest.show(xlfile, 'TESTCASES', options.name, *states)
+            except Exception as e:
+                print e
 
+        # run tests.
         elif options.run:
             if options.name != None:
                 states = ['enabled', 'disabled']

@@ -114,17 +114,18 @@ class Xls:
         # return headers, enabled and disabled test cases.
         return testcases
 
-    def display(self, testcases, statename = None, sheetname = None, name = None):
+    def display(self, testcases, sheetname = None, name = None, *statename):
         '''
         Display testcases.
         '''
 
         header, states, cases = testcases
-
-        if statename == None:
+        
+        print statename
+        if len(statename) != 1:
             states_keys = reversed(states.keys())
         else:
-            states_keys = [statename]
+            states_keys = statename
 
         for state in states_keys:
             print 'H'*60
