@@ -63,6 +63,9 @@ class Grab:
         Check if bb status is up.
         '''
         try:
+            command = 'bb up'
+            stop_pattern = '>'
+            self.grab(command, stop_pattern)
             command = 'bb links'
             stop_pattern = 'sec)'
             
