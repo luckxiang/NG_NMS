@@ -54,6 +54,8 @@ class Xls:
                     testcases[sheet][current_row] = []
                 for current_cell in xrange(worksheet.ncols):
                     cell_value = worksheet.cell_value(current_row, current_cell)
+                    if isinstance(cell_value, float): 
+                        cell_value = str(int(cell_value))
                     if current_row == 0:
                         header[sheet][current_row].append(cell_value)
                         continue
@@ -68,7 +70,7 @@ class Xls:
                 counter = 0
                 for line in xrange(1,5):
                     for col in xrange(1,3):
-                        temp[index + counter] = '%s_%s%s' % (name, line, col)
+                        temp[index + counter] = '%s_%s.%s' % (name, line, col)
                         counter += 1
             else:
                 for counter in xrange(4):
@@ -104,6 +106,8 @@ class Xls:
                 for row in states[state][sheet]:
                     cases[state][sheet][row] = {}
                     for key, value in zip(header[sheet][0], states[state][sheet][row]):
+                        if isinstance(value, float): 
+                            value = str(int(value))
                         cases[state][sheet][row][key] = value
         
         testcases = (header, states, cases)

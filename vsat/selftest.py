@@ -177,7 +177,8 @@ class Selftest:
                 current_case = states[state][sheet][row][1]
 
                 # adjusting selecting test case.
-                if sheet == 'TESTCASES': current_case = int(current_case)
+                if sheet == 'TESTCASES': 
+                    current_case = int(current_case)
                 if name != None and '%s' % name != '%s' % current_case:
                     print '{0}: {1}'.format(sheet, current_case)
                     continue
@@ -189,8 +190,9 @@ class Selftest:
                     print
 
                 # TODO: set ngnms working point
+                testcase = cases[state][sheet][row]
                 ngnms = biaspoint.Ngnms(**ngnms_info)
-                ngnms.set_ngnms_working_point()
+                ngnms.set_ngnms_working_point(testcase)
 
                 print 'step:\> TODO: check ready ngnms working point!'
                 

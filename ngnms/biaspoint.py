@@ -25,9 +25,9 @@ class Ngnms:
         'IB mode code'                  : config.get('NGNMS OIDS', 'IB mode code'),
         'Dynamic/Static'                : config.get('NGNMS OIDS', 'Dynamic/Static'),
         'Number of Channels'            : config.get('NGNMS OIDS', 'Number of Channels'),
-        'Symbol Rate'                   : config.get('NGNMS OIDS', 'Symbol Rate'),
-        'IB number of ATM'              : config.get('NGNMS OIDS', 'IB number of ATM'),
-        'IB Preamble'                   : config.get('NGNMS OIDS', 'IB Preamble')
+        'Symbol Rate'                   : config.get('NGNMS OIDS', 'Symbol Rate')
+        #'IB number of ATM'              : config.get('NGNMS OIDS', 'IB number of ATM'),
+        #'IB Preamble'                   : config.get('NGNMS OIDS', 'IB Preamble')
         }
 
 #        self.ngnms_host = ngnms_info.get('URL')
@@ -122,21 +122,51 @@ class Ngnms:
         c.close()
         print response
 
-    def change_values(self, ngnms_data):
+    def change_values(self, ngnms_data, testcase):
         '''
         Changing data values.
         '''
-        names = ['OB symbol rate', 'OB mode code', 'RTN Channels Frequency Plan',
-                'IB symbol rate', 'IB mode code', 'Dynamic/Static',
-                'Number of Channels', 'Symbol Rate', 'IB number of ATM', 'IB Preamble']
-        for oid in ngnms_data:
-            for name in names:
-                if oid.get('oid') == self.working_point.get(name):
-                    oid['value'] = name
-                    print oid
-        return ngnms_data
+        from const import data
 
-    def set_ngnms_working_point(self):
+        # get only old values.
+        new_data = []
+        for line in ngnms_data:
+            if line.get('oid') not in [self.working_point.get(key) for key in self.working_point.keys()]:
+                new_data.append(line)
+
+        # add new values.
+        for key in sorted(testcase.keys()):
+            index = key.split('_')
+            if self.working_point.get(index[0]) != None:
+                line = {}
+                line['value'] = testcase.get(key)
+                line['oid'] = self.working_point.get(index[0])
+                if len(index) == 2:
+                    line['instance'] = index[1]
+                else:
+                    line['instance'] = '0'
+                if index[0] in data.keys():
+                    line['value'] = str(data.get(index[0]).get(testcase.get(key)))
+                new_data.append(line)
+
+        # print table with old and new values.
+        lenght = 99 
+        print '-'*lenght
+        print '|   {0:^30}   |   {1:^12} |   {2:^15}   |   {3:^15}   |'.format('OID', 'Instance', 'Old', 'New')
+        print '-'*lenght
+        for line in new_data:
+            for item in ngnms_data:
+                if line.get('oid') == item.get('oid') and line.get('instance') == item.get('instance'): 
+                    old_data = item.get('value')
+                    break
+                else:
+                    old_data = '-'
+            print '|   {0:30}   |   {1:12} |   {2:15}   |   {3:15}   |'.format(line.get('oid'), line.get('instance'), old_data, line.get('value'))
+        print '-'*lenght
+
+        return new_data
+
+    def set_ngnms_working_point(self, testcase):
         '''
         Set NGNMS working point
         '''
@@ -181,12 +211,8 @@ class Ngnms:
         
         # parse and update data.
         print 'step:\> changing values:'
-        ngnms_data = self.change_values(ngnms_data)
+        ngnms_data = self.change_values(ngnms_data, testcase)
 
-#         print '='*40
-#         for item in ngnms_data:
-#             print item
-#         print '='*40
         ngnms_data = str(ngnms_data).replace("'", '"')
 
         # TODO: put data to NGNMS
