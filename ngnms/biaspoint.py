@@ -98,9 +98,12 @@ class Ngnms:
         '''
         Upload data to NGNMS with PUT command.
         '''
+        print 'step:\> changing data on server ...'
         c = self.connect()
         indata = cStringIO.StringIO(ngnms_data)
         response = cStringIO.StringIO()
+        log = cStringIO.StringIO()
+        c.setopt(pycurl.WRITEFUNCTION, log.write)
         try:
             c.perform()
         except Exception as e:
@@ -116,18 +119,20 @@ class Ngnms:
         c.setopt(pycurl.WRITEFUNCTION, response.write)
         try:
             c.perform()
+            print 'status:', c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL)
         except Exception as e:
             print e
+            sys.exit()
+
         response = response.getvalue()
         c.close()
-        print response
+        print 'status:', c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL), 'response:', response
 
     def change_values(self, ngnms_data, testcase):
         '''
         Changing data values.
         '''
-        from const import data
-
+        from ngnms.ngnmsconst import data
         # get only old values.
         new_data = []
         for line in ngnms_data:
@@ -218,7 +223,10 @@ class Ngnms:
         ngnms_data = str(ngnms_data).replace("'", '"')
 
         # TODO: put data to NGNMS
-        # self.put_config('{url}/{id}'.format(**folder), ngnms_data)
+#         try:
+#             self.put_config('{url}/{id}'.format(**folder), ngnms_data)
+#         except Exception as e:
+#             print e
 
     def check_ngnms(self):
         '''

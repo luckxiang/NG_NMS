@@ -164,6 +164,7 @@ class Selftest:
 
         # Checking VSAT.
         self.vsat_status(None, vsatname)
+        
         result_data = {}
         for state in states_keys:
             print 'H'*60
@@ -244,14 +245,13 @@ class Selftest:
                 print
                 print '-'*60
                 print
+
         # saving data to file
         if status:
             print
             print "info:\> Saving result to [%s] excel file!" % output_xlfile
             print 
             self.save_row_to_excel(header[sheet][0], result_data)
-
-        # TODO: retunr save data to excel file.
 
     def save_row_to_excel(self, header, output):
         '''
@@ -340,14 +340,5 @@ if __name__ == '__main__':
     name = '1'
 #     data.run(testcases, state, name)
     data.check(state = None, device = 'hub')
-
-    
-
-#     for state in cases.keys():
-#         for sheet in cases[state].keys():
-#             for row in cases[state][sheet].keys():
-#                 for cell in cases[state][sheet][row]:
-#                     print cell,cases[state][sheet][row][cell]
-#                 print
     pass
     
