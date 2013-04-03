@@ -246,6 +246,7 @@ __Link DOWN example__
 __Example with no connection:__
 
 C:\Documents and Settings\VitalieG\git\ngnms>__ngnmstest.py --check vsat --name V3__
+
         ============================================================
                 INFO: Excel file data/demo.xls!
         ============================================================
