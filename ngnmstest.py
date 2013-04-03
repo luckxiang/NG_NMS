@@ -111,8 +111,7 @@ def main(argv=None):
             else:
                 states = [state]
                 
-            for state in states:
-                selftest.show(xlfile, upper(options.info), options.name, *states)
+            selftest.show(xlfile, upper(options.info), options.name, *states)
 
         # show vsat info.
         elif options.info == 'vsat':
@@ -120,9 +119,8 @@ def main(argv=None):
                 states = ['enabled', 'disabled']
             else:
                 states = [state]
-                
-            for state in states:
-                selftest.show(xlfile, upper(options.info), options.name, *states)
+
+            selftest.show(xlfile, upper(options.info), options.name, *states)
         
         # show tests info.
         elif options.info == 'test':

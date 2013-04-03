@@ -124,8 +124,7 @@ class Xls:
         '''
 
         header, states, cases = testcases
-        
-        print statename
+
         if len(statename) != 1:
             states_keys = reversed(states.keys())
         else:
