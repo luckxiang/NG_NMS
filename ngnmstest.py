@@ -101,7 +101,8 @@ def main(argv=None):
                 selftest.check(xlfile, state, options.device, options.name)
 
         elif options.info == 'all':
-            selftest.show(xlfile, state)
+            states = [state]
+            selftest.show(xlfile, None, None, *states)
 
         # show hub info.
         elif options.info == 'hub':
