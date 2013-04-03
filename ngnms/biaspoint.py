@@ -162,6 +162,8 @@ class Ngnms:
                 else:
                     old_data = '-'
             print '|   {0:30}   |   {1:12} |   {2:15}   |   {3:15}   |'.format(line.get('oid'), line.get('instance'), old_data, line.get('value'))
+            # line print speet do stdout.
+            sleep(0.1)
         print '-'*lenght
 
         return new_data
