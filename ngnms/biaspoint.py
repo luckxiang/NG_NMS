@@ -119,14 +119,15 @@ class Ngnms:
         c.setopt(pycurl.WRITEFUNCTION, response.write)
         try:
             c.perform()
-            print 'status:', c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL)
         except Exception as e:
             print e
             sys.exit()
 
         response = response.getvalue()
+        print 'status:', c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL)
+        print 'response:', response
         c.close()
-        print 'status:', c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL), 'response:', response
+        
 
     def change_values(self, ngnms_data, testcase):
         '''
@@ -223,10 +224,10 @@ class Ngnms:
         ngnms_data = str(ngnms_data).replace("'", '"')
 
         # TODO: put data to NGNMS
-#         try:
-#             self.put_config('{url}/{id}'.format(**folder), ngnms_data)
-#         except Exception as e:
-#             print e
+        try:
+            self.put_config('{url}/{id}'.format(**folder), ngnms_data)
+        except Exception as e:
+            print e
 
     def check_ngnms(self):
         '''

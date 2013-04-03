@@ -16,8 +16,6 @@ class Selftest:
     '''
     
     data = None
-    number_of_tries = 3
-    tries_timeout = 2
 
     def __init__(self,xlfile):
         '''
@@ -76,6 +74,7 @@ class Selftest:
         sheet = 'VSAT'
         vsats = states[state][sheet]
         header = header[sheet][0]
+        link_status = False
         print 'H'*60
         print upper(state).rjust(30)
         print 'H'*60
@@ -92,8 +91,8 @@ class Selftest:
             ip = vsat[header.index('Console IP')]
             port = int(vsat[header.index('Console PORT')])
             connection_timeout = int(vsat[header.index('Connection timeout')])
-            number_of_tries = self.number_of_tries
-            tries_timeout = self.tries_timeout
+            number_of_tries = int(vsat[header.index('Number of tries')])
+            tries_timeout = int(vsat[header.index('Tries timeout')])
  
             # checking vsats.
             session = console.Grab(ip, port, connection_timeout)
@@ -117,6 +116,7 @@ class Selftest:
                     print
                     self.show_time_counter(tries_timeout)
             print '-'*60
+        return link_status
 
     def show_time_counter(self, time_interval):
         '''
@@ -128,7 +128,7 @@ class Selftest:
 
     def run(self, testcases, state = None, name = None):
         '''
-        Run testcase(s).
+        Running test.
         '''
         header, states, cases = testcases
         number_of_tries = 2
@@ -141,6 +141,7 @@ class Selftest:
         else:
             states_keys = state
 
+        # getting ngnms first active hub info.
         ngnms_info = {}
         for hub in cases['enabled']['HUB'].keys():
             if cases['enabled']['HUB'][hub].get('Active') != '':
@@ -157,13 +158,16 @@ class Selftest:
                 vsat_ip = vsat_data.get('Console IP')
                 vsat_port = int(vsat_data.get('Console PORT'))
                 vsat_timeout = int(vsat_data.get('Connection timeout'))
-                tries_timeout = int(vsat_data.get('Number of tries'))
-                number_of_tries = int(vsat_data.get('Tries timeout'))
+                tries_timeout = int(vsat_data.get('Tries timeout'))
+                number_of_tries = int(vsat_data.get('Number of tries'))
                 vsatname = vsat_data.get('Name')
             break
 
-        # Checking VSAT.
-        self.vsat_status(None, vsatname)
+        # Checking VSAT, cicle if vsat bb link is down.
+        while not self.vsat_status(None, vsatname):
+            # waiting time is tries_timeout.
+            print 'status: waitting vsat link up ...'
+            self.show_time_counter(tries_timeout)
         
         result_data = {}
         for state in states_keys:
@@ -190,14 +194,16 @@ class Selftest:
                     print '-'*60
                     print
 
-                # TODO: set ngnms working point
+                # setting ngnms working point
                 testcase = cases[state][sheet][row]
                 ngnms = biaspoint.Ngnms(**ngnms_info)
                 ngnms.set_ngnms_working_point(testcase)
 
                 print 'step:\> TODO: check ready ngnms working point!'
-                
+
                 while counter <= number_of_tries:
+                    print 'status: waitting vsat link up ...'
+                    self.show_time_counter(tries_timeout)
                     print 'info:\> connecting to ... ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
                     vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
                     connected = vsat.connect()
