@@ -1,3 +1,4 @@
+# replace excel value keys.
 data = {
     'OB mode code':{
         'QPSK 1/4':       1,
@@ -62,4 +63,4 @@ data = {
         '1536': 1536000,
         '2048': 2048000,
         '2560': 2560000}
-    }
+}

@@ -7,6 +7,7 @@ Created on Mar 6, 2013
 import telnetlib
 import re
 import sys
+import time
 
 class Grab:
     '''
@@ -66,6 +67,7 @@ class Grab:
             command = 'bb up'
             stop_pattern = '>'
             self.grab(command, stop_pattern)
+            time.sleep(3)
             command = 'bb links'
             stop_pattern = 'sec)'
             

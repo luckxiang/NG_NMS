@@ -64,16 +64,16 @@ class Xls:
 
         # adjusting header
         temp = header['TESTCASES'][0]
-        for name in ['IB symbol rate', 'IB mode code', 'Number of Channels', 'Dynamic/Static', 'Symbol Rate']:
+        for name in ['Symbol Rate', 'IB symbol rate', 'IB mode code', 'Number of Channels']:
             index = temp.index(name)
             if name == 'Symbol Rate':
                 counter = 0
-                for line in xrange(1,5):
+                for line in xrange(1,2):
                     for col in xrange(1,3):
                         temp[index + counter] = '%s_%s.%s' % (name, line, col)
                         counter += 1
             else:
-                for counter in xrange(4):
+                for counter in xrange(1):
                     temp[index + counter] = '%s_%s' % (name, counter + 1)
 
         # sort enabled and disabled test cases.

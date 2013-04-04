@@ -20,6 +20,7 @@ class Ngnms:
         self.working_point = {
         'OB symbol rate'                : config.get('NGNMS OIDS', 'OB symbol rate'),
         'OB mode code'                  : config.get('NGNMS OIDS', 'OB mode code'),
+        'Most Efficient MODCOD'           : config.get('NGNMS OIDS', 'Most Efficient MODCOD'),
         'RTN Channels Frequency Plan'   : config.get('NGNMS OIDS', 'RTN Channels Frequency Plan'),
         'IB symbol rate'                : config.get('NGNMS OIDS', 'IB symbol rate'),
         'IB mode code'                  : config.get('NGNMS OIDS', 'IB mode code'),
@@ -134,11 +135,26 @@ class Ngnms:
         Changing data values.
         '''
         from ngnms.ngnmsconst import data
-        # get only old values.
+        from ngnms.ngnmsdebug import debug
+
+        # ngnms new data container.
         new_data = []
-        for line in ngnms_data:
-            if line.get('oid') not in [self.working_point.get(key) for key in self.working_point.keys()]:
-                new_data.append(line)
+
+        # enable/disable parsing debug oids.
+        if debug.get('status'):
+            # remove old debug data.
+            for line in ngnms_data:
+                if (line.get('oid') not in [debug.get('lines')[key].get('oid') for key in debug.get('lines').keys()] and
+                    line.get('oid') not in [self.working_point.get(key) for key in self.working_point.keys()]):
+                    new_data.append(line)
+            # adding new debug data.
+            for key in debug.get('lines').keys():
+                new_data.append(debug.get('lines')[key])
+        else:
+            # get only old values.
+            for line in ngnms_data:
+                if (line.get('oid') not in [self.working_point.get(key) for key in self.working_point.keys()]):
+                    new_data.append(line)
 
         # add new values.
         for key in sorted(testcase.keys()):
@@ -151,9 +167,27 @@ class Ngnms:
                     line['instance'] = index[1]
                 else:
                     line['instance'] = '0'
+                # replace testcase value with correct data.
                 if index[0] in data.keys():
                     line['value'] = str(data.get(index[0]).get(testcase.get(key)))
+                
                 new_data.append(line)
+                # adding Most Efficient MODCOD
+                if index[0] == 'OB mode code':
+                    modcod = {}
+                    modcod['oid'] = self.working_point.get('Most Efficient MODCOD')
+                    modcod['value'] = line.get('value')
+                    modcod['instance'] = line.get('instance')
+                    # adding most efficient modcod.
+                    new_data.append(modcod)
+                # adding dynamic/static
+                if index[0] == 'RTN Channels Frequency Plan':
+                    ds = {}
+                    ds['oid'] = self.working_point.get('Dynamic/Static')
+                    ds['value'] = line.get('value')
+                    ds['instance'] = '1'
+                    # adding most efficient modcod.
+                    new_data.append(ds)
 
         # print table with old and new values.
         lenght = 99 
@@ -233,7 +267,6 @@ class Ngnms:
         '''
         Set NGNMS working point
         '''
-        ngnms_data = self.ngnms_data
         network_url = self.ngnms_host + '/navigation/statustree/network'
         data = self.get_config(network_url)
         data = data.replace("false", "False")
