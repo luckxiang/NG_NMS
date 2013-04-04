@@ -90,6 +90,12 @@ class Grab:
         '''
         Start ftp selftest.
         '''
+        # resetting cpu stats.
+        command = 'rsp cpu get statistics 1'
+        stop_pattern = '''>'''
+        self.grab(command, stop_pattern)
+        time.sleep(3)
+        
         if ftptype == 'inbound':
             command = 'ip selftest ftpup 1 %s' % duration
         elif ftptype == 'outbound':

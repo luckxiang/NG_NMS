@@ -125,6 +125,7 @@ class Selftest:
         for second in xrange(1,time_interval+1):
             print 'step:\> Please wait {0} sec: [{1}]\r'.format(time_interval, second),
             time.sleep(1)
+        print
 
     def run(self, testcases, state = None, name = None):
         '''
@@ -178,7 +179,6 @@ class Selftest:
             
             result_data[state] = {}
             for row in sorted(states[state][sheet]):
-                counter = 1
                 current_case = states[state][sheet][row][1]
 
                 # adjusting selecting test case.
@@ -199,13 +199,27 @@ class Selftest:
                 ngnms = biaspoint.Ngnms(**ngnms_info)
                 ngnms.set_ngnms_working_point(testcase)
 
-                #print 'step:\> TODO: check ready ngnms working point!'
-
-                while counter <= number_of_tries:
+                for nextstep in xrange(1,number_of_tries + 1):
                     print 'status: waitting vsat link up ...'
                     self.show_time_counter(tries_timeout)
+
                     print 'info:\> connecting to ... ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
                     vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
+                    # changing 'rsp param set param 34' <ob_symbol_rate>
+                    command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
+                    stop_pattern = '>'
+                    print 'info:\> %s' % command
+                    vsat.grab(command, stop_pattern)
+
+                    # wait ...
+                    self.show_time_counter(5)
+                    
+                    # rebooting vsat..
+                    command = 'rsp board reset board'
+                    print 'info:\> %s' % command
+                    stop_pattern = '>'
+                    vsat.grab(command, stop_pattern)
+                    
                     connected = vsat.connect()
                     link_status, message = vsat.check_bb()
                     if connected and link_status:
@@ -219,17 +233,18 @@ class Selftest:
                                 nr_of_retransmited_ib_pckts = output['Number of IB retransmit packets']
                                 nr_of_transmited_ib_pckts = output['Number of transmitted OB packets']
                                 max_ob_bit_rate = output['Max IB bit rate']
+                                cpu_ib = output.get('VSAT CPU')
                             else:
                                 output['Number of IB retransmit packets'] = nr_of_retransmited_ib_pckts
                                 output['Number of transmitted OB packets'] = nr_of_transmited_ib_pckts
                                 output['Max IB bit rate'] = max_ob_bit_rate
+                                output['VSAT CPU'] = '%s|%s' % (cpu_ib, output.get('VSAT CPU'))
                             print 'status: %s -> done!' % ftptype
                             if ftptype != 'outbound': self.show_time_counter((duration/2) + 2)
                         break
                     else:
                         print 'ERROR: VSAT not OK!'
                         self.show_time_counter(tries_timeout)
-                    counter = counter + 1
                 else:
                     print "info:\> Exceeded [%s] number of tries per test case!" % number_of_tries
                     continue

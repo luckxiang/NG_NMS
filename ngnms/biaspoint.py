@@ -128,6 +128,7 @@ class Ngnms:
         response = response.getvalue()
         print 'status:', c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL)
         print 'response:', response
+        print
         c.close()
         
 
