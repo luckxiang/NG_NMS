@@ -31,25 +31,26 @@ class Ngnms:
         #'IB Preamble'                   : config.get('NGNMS OIDS', 'IB Preamble')
         }
 
-#        self.ngnms_host = ngnms_info.get('URL')
-#         self.ngnms_login = {'ngnms_user': ngnms_info.get('User'),
-#                             'ngnms_password': ngnms_info.get('Password')}
-#         print 'step:\> Connecting to:', self.ngnms_host
-#         print 'info:\> auth:', self.ngnms_login
+        host_name = ngnms_info.get('URL')
+        host_name = host_name.decode()
+        self.ngnms_host = host_name.encode('ascii', 'ignore').rstrip('/')
+        
+        self.ngnms_login = {'ngnms_user': ngnms_info.get('User'),
+                             'ngnms_password': ngnms_info.get('Password')}
+        self.ngnms_info = ngnms_info
+
+#        self.ngnms_host = config.get('NGNMS AUTH', 'host')
+#         self.ngnms_login = {'ngnms_user': config.get('NGNMS AUTH', 'user'),
+#                             'ngnms_password': config.get('NGNMS AUTH', 'password')}
 #         self.ngnms_info = ngnms_info
 
-        self.ngnms_host = config.get('NGNMS AUTH', 'host')
-        self.ngnms_login = {'ngnms_user': config.get('NGNMS AUTH', 'user'),
-                            'ngnms_password': config.get('NGNMS AUTH', 'password')}
         print 'step:\> Connecting to:', self.ngnms_host
-        print 'info:\> auth:', self.ngnms_login
-        self.ngnms_info = ngnms_info
+        print 'info:\> [user: {ngnms_user}] [password: {ngnms_password}]'.format(**self.ngnms_login)
 
     def connect(self):
         '''
         Connect to NGNMS server
         '''
-
         host_url = self.ngnms_host + '/login'
 
         c = pycurl.Curl()
