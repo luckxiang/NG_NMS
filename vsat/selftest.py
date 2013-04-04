@@ -199,7 +199,7 @@ class Selftest:
                 ngnms = biaspoint.Ngnms(**ngnms_info)
                 ngnms.set_ngnms_working_point(testcase)
 
-                print 'step:\> TODO: check ready ngnms working point!'
+                #print 'step:\> TODO: check ready ngnms working point!'
 
                 while counter <= number_of_tries:
                     print 'status: waitting vsat link up ...'

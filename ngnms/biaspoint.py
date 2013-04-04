@@ -18,7 +18,7 @@ class Ngnms:
         config = ConfigParser.RawConfigParser()
         config.read('configs/ngnms.cfg')
         self.working_point = {
-        'OB symbol rate'                : config.get('NGNMS OIDS', 'OB symbol rate'),
+        #'OB symbol rate'                : config.get('NGNMS OIDS', 'OB symbol rate'),
         'OB mode code'                  : config.get('NGNMS OIDS', 'OB mode code'),
         'Most Efficient MODCOD'           : config.get('NGNMS OIDS', 'Most Efficient MODCOD'),
         'RTN Channels Frequency Plan'   : config.get('NGNMS OIDS', 'RTN Channels Frequency Plan'),
