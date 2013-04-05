@@ -47,10 +47,10 @@ debug = {
 
         # range 300.000 - 60.000.000
         # default: 45000000
-        'For NE Symbol Rate ':
-            {'oid':'1.3.6.1.4.1.7352.3.36.4.16', 
-             'value':'60000000', 
-             'instance':'0'},
+#         'For NE Symbol Rate ':
+#             {'oid':'1.3.6.1.4.1.7352.3.36.4.16', 
+#              'value':'60000000', 
+#              'instance':'0'},
 
 #         # range 1.000.000 - 30.000.000
 #         # default: 27000000
@@ -73,10 +73,10 @@ debug = {
 
         # range 300.000 - 60.000.000
         # default: empty
-        'Source Symbol Rate ':
-            {'oid':'1.3.6.1.4.1.7352.3.36.4.19', 
-             'value':'60000000', 
-             'instance':'0'},
+#         'Source Symbol Rate ':
+#             {'oid':'1.3.6.1.4.1.7352.3.36.4.19', 
+#              'value':'60000000', 
+#              'instance':'0'},
 
         # range 1.000.000 - 30.000.000
         # default: empty

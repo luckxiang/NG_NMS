@@ -18,7 +18,7 @@ class Ngnms:
         config = ConfigParser.RawConfigParser()
         config.read('configs/ngnms.cfg')
         self.working_point = {
-        #'OB symbol rate'                : config.get('NGNMS OIDS', 'OB symbol rate'),
+        'OB symbol rate'                : config.get('NGNMS OIDS', 'OB symbol rate'),
         'OB mode code'                  : config.get('NGNMS OIDS', 'OB mode code'),
         'Most Efficient MODCOD'           : config.get('NGNMS OIDS', 'Most Efficient MODCOD'),
         'RTN Channels Frequency Plan'   : config.get('NGNMS OIDS', 'RTN Channels Frequency Plan'),
@@ -38,11 +38,6 @@ class Ngnms:
         self.ngnms_login = {'ngnms_user': ngnms_info.get('User'),
                              'ngnms_password': ngnms_info.get('Password')}
         self.ngnms_info = ngnms_info
-
-#        self.ngnms_host = config.get('NGNMS AUTH', 'host')
-#         self.ngnms_login = {'ngnms_user': config.get('NGNMS AUTH', 'user'),
-#                             'ngnms_password': config.get('NGNMS AUTH', 'password')}
-#         self.ngnms_info = ngnms_info
 
         print 'step:\> Connecting to:', self.ngnms_host
         print 'info:\> [user: {ngnms_user}] [password: {ngnms_password}]'.format(**self.ngnms_login)
@@ -163,6 +158,7 @@ class Ngnms:
             index = key.split('_')
             if self.working_point.get(index[0]) != None:
                 line = {}
+                if testcase.get(key) == '': continue
                 line['value'] = testcase.get(key)
                 line['oid'] = self.working_point.get(index[0])
                 if len(index) == 2:
@@ -182,14 +178,6 @@ class Ngnms:
                     modcod['instance'] = line.get('instance')
                     # adding most efficient modcod.
                     new_data.append(modcod)
-                # adding dynamic/static
-                if index[0] == 'RTN Channels Frequency Plan':
-                    ds = {}
-                    ds['oid'] = self.working_point.get('Dynamic/Static')
-                    ds['value'] = line.get('value')
-                    ds['instance'] = '1'
-                    # adding most efficient modcod.
-                    new_data.append(ds)
 
         # print table with old and new values.
         lenght = 99 

@@ -210,10 +210,10 @@ class Selftest:
                     stop_pattern = '>'
                     print 'info:\> %s' % command
                     vsat.grab(command, stop_pattern)
-
+ 
                     # wait ...
                     self.show_time_counter(5)
-                    
+                     
                     # rebooting vsat..
                     command = 'rsp board reset board'
                     print 'info:\> %s' % command
@@ -238,7 +238,7 @@ class Selftest:
                                 output['Number of IB retransmit packets'] = nr_of_retransmited_ib_pckts
                                 output['Number of transmitted OB packets'] = nr_of_transmited_ib_pckts
                                 output['Max IB bit rate'] = max_ob_bit_rate
-                                output['VSAT CPU'] = '%s|%s' % (cpu_ib, output.get('VSAT CPU'))
+                                output['VSAT CPU'] = '[%s]/[%s]' % (cpu_ib.strip('$'), output.get('VSAT CPU').strip('$'))
                             print 'status: %s -> done!' % ftptype
                             if ftptype != 'outbound': self.show_time_counter((duration/2) + 2)
                         break
