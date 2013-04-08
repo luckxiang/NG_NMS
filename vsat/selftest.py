@@ -232,6 +232,9 @@ class Selftest:
                             print 'step:\> %s -> start!' % ftptype
                             self.show_time_counter(duration/2)
                             output = vsat.get_stats()
+                            self.show_time_counter((duration/2) + 5)
+                            # insert returned pkts stats to output.
+                            output.update(vsat.get_pkts_stats())
                             if ftptype == 'inbound':
                                 nr_of_retransmited_ob_pckts = output['Number of OB retransmit packets']
                                 nr_of_transmited_ob_pckts = output['Number of transmitted OB packets']
@@ -243,7 +246,6 @@ class Selftest:
                                 output['Max IB bit rate'] = max_ob_bit_rate
                                 output['VSAT CPU'] = '[%s]/[%s]' % (cpu_ib.strip('$'), output.get('VSAT CPU').strip('$'))
                             print 'status: %s -> done!' % ftptype
-                            if ftptype != 'outbound': self.show_time_counter((duration/2) + 5)
                         break
                     else:
                         print 'INFO: VSAT not READY!'

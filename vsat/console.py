@@ -114,7 +114,28 @@ class Grab:
         tn.write(command + "\r\n")
         tn.read_until(stop_pattern, self.timeout)
         self.disconnect()
-        
+
+    def get_pkts_stats(self):
+        '''
+        Get pkts stats.
+        '''
+        output={}
+        command = 'bb stat'
+        stop_pattern = '''END Statistics for BB link'''
+        bb_stat = self.grab(command, stop_pattern)
+        for line in bb_stat.split('\n'):
+            if not line.strip():
+                continue
+            words = line.strip('\r\n')
+            words = words.split()
+            if words[0] == 'RETRANSMITTED':
+                output['Number of OB retransmit packets'] = words[1].lstrip('0') or 0
+                output['Number of IB retransmit packets'] = words[2].lstrip('0') or 0
+            if words[0] == 'INFORMATION':
+                output['Number of transmitted OB packets'] = words[1].lstrip('0') or 0
+                output['Number of received IB packets'] = words[2].lstrip('0') or 0
+        return output
+
     def get_stats(self):
         '''
         Get VSAT output statistics.
@@ -135,21 +156,6 @@ class Grab:
                     output['Max IB bit rate'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
                     output['Max OB bit rate'] = int(re.search(r'\d+', ob_bit_rate).group(0))
 
-            command = 'bb stat'
-            stop_pattern = '''END Statistics for BB link'''
-            bb_stat = self.grab(command, stop_pattern)
-            for line in bb_stat.split('\n'):
-                if not line.strip():
-                    continue
-                words = line.strip('\r\n')
-                words = words.split()
-                if words[0] == 'RETRANSMITTED':
-                    output['Number of OB retransmit packets'] = words[1].lstrip('0') or 0
-                    output['Number of IB retransmit packets'] = words[2].lstrip('0') or 0
-                if words[0] == 'INFORMATION':
-                    output['Number of transmitted OB packets'] = words[1].lstrip('0') or 0
-                    output['Number of received IB packets'] = words[2].lstrip('0') or 0
-                    
             command = 'rsp cpu get statistics'
             stop_pattern = '''>'''
             cpu_stats = self.grab(command, stop_pattern)
