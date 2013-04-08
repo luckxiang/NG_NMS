@@ -164,11 +164,11 @@ class Selftest:
                 vsatname = vsat_data.get('Name')
             break
 
-        # Checking VSAT, cicle if vsat bb link is down.
-        while not self.vsat_status(None, vsatname):
-            # waiting time is tries_timeout.
-            print 'status: waitting vsat link up ...'
-            self.show_time_counter(tries_timeout)
+#         # Checking VSAT, cicle if vsat bb link is down.
+#         while not self.vsat_status(None, vsatname):
+#             # waiting time is tries_timeout.
+#             print 'status: waitting vsat link up ...'
+#             self.show_time_counter(tries_timeout)
         
         result_data = {}
         for state in states_keys:
@@ -197,14 +197,16 @@ class Selftest:
                 # setting ngnms working point
                 testcase = cases[state][sheet][row]
                 ngnms = biaspoint.Ngnms(**ngnms_info)
-                ngnms.set_ngnms_working_point(testcase)
+                changed = ngnms.set_ngnms_working_point(testcase)
 
-                for nextstep in xrange(1,number_of_tries + 1):
-                    print 'status: waitting vsat link up ...'
+                print 'info:\> connecting to ... ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
+                vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
+
+                # setting param 34 and restarting board.
+                if changed:
+                    print 'OB symbol rate changed, waiting vsat up ...'
                     self.show_time_counter(tries_timeout)
 
-                    print 'info:\> connecting to ... ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
-                    vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
                     # changing 'rsp param set param 34' <ob_symbol_rate>
                     command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
                     stop_pattern = '>'
@@ -213,15 +215,19 @@ class Selftest:
  
                     # wait ...
                     self.show_time_counter(5)
-                     
+
                     # rebooting vsat..
                     command = 'rsp board reset board'
                     print 'info:\> %s' % command
                     stop_pattern = '>'
                     vsat.grab(command, stop_pattern)
+
+                for nextstep in xrange(1,number_of_tries + 1):
                     
+                    print 'step:\> nextstep -> ', nextstep
                     connected = vsat.connect()
                     link_status, message = vsat.check_bb()
+                    print 'status: %s' % message
                     if connected and link_status:
                         duration = int(cases[state][sheet][row].get('Test duration'))
                         for ftptype in ['inbound', 'outbound']:
@@ -243,7 +249,7 @@ class Selftest:
                             if ftptype != 'outbound': self.show_time_counter((duration/2) + 2)
                         break
                     else:
-                        print 'ERROR: VSAT not OK!'
+                        print 'INFO: VSAT not READY!'
                         self.show_time_counter(tries_timeout)
                 else:
                     print "info:\> Exceeded [%s] number of tries per test case!" % number_of_tries

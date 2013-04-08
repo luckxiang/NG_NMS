@@ -30,6 +30,7 @@ class Ngnms:
         #'IB number of ATM'              : config.get('NGNMS OIDS', 'IB number of ATM'),
         #'IB Preamble'                   : config.get('NGNMS OIDS', 'IB Preamble')
         }
+        self.ob_symbol_rate_oid = config.get('NGNMS OIDS', 'OB symbol rate')
 
         host_name = ngnms_info.get('URL')
         host_name = host_name.decode()
@@ -147,7 +148,7 @@ class Ngnms:
             # adding new debug data.
             for key in debug.get('lines').keys():
                 if key in ['For NE Symbol Rate', 'Alternate Symbol Rate', 'Source Symbol Rate']:
-                    debug.get('lines')[key]['value'] = testcase['OB symbol rate'].get('value')
+                    debug.get('lines')[key]['value'] = testcase['OB symbol rate']
                     new_data.append(debug.get('lines')[key])
                 else:
                     new_data.append(debug.get('lines')[key])
@@ -247,15 +248,23 @@ class Ngnms:
         
         # parse and update data.
         print 'step:\> changing values:'
-        ngnms_data = self.change_values(ngnms_data, testcase)
+        new_ngnms_data = self.change_values(ngnms_data, testcase)
 
-        ngnms_data = str(ngnms_data).replace("'", '"')
+        new_ngnms_data = str(new_ngnms_data).replace("'", '"')
 
         # TODO: put data to NGNMS
         try:
-            self.put_config('{url}/{id}'.format(**folder), ngnms_data)
+            self.put_config('{url}/{id}'.format(**folder), new_ngnms_data)
         except Exception as e:
             print e
+        
+        changed = True
+        for line in ngnms_data:
+            if (line.get('oid') == self.ob_symbol_rate_oid and 
+                line.get('value') == testcase('OB symbol rate')):
+                changed = False
+
+        return changed
 
     def check_ngnms(self):
         '''
