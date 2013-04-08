@@ -254,17 +254,18 @@ class Ngnms:
 
         # TODO: put data to NGNMS
         try:
-            self.put_config('{url}/{id}'.format(**folder), new_ngnms_data)
+            url = '{url}/{id}'.format(**folder)
+            self.put_config(url, new_ngnms_data)
         except Exception as e:
             print e
         
         changed = True
         for line in ngnms_data:
             if (line.get('oid') == self.ob_symbol_rate_oid and 
-                line.get('value') == testcase.git('OB symbol rate')):
+                line.get('value') == testcase.get('OB symbol rate')):
                 changed = False
 
-        return changed
+        return (changed, url, ngnms_data)
 
     def check_ngnms(self):
         '''

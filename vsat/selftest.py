@@ -194,7 +194,7 @@ class Selftest:
                 # setting ngnms working point
                 testcase = cases[state][sheet][row]
                 ngnms = biaspoint.Ngnms(**ngnms_info)
-                changed = ngnms.set_ngnms_working_point(testcase)
+                changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
 
                 print 'info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
                 vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
@@ -252,6 +252,10 @@ class Selftest:
                     print "info:\> Exceeded [%s] number of tries per test case!" % number_of_tries
                     continue
                 print
+
+                # change previous working point, only if data changed.
+                if changed: ngnms.put_config(url, ngnms_data)
+
                 print '-'*25,'TEST: %s' % current_case, '-'*24
                 result_data[state][row] = cases[state][sheet][row]
                 for key in header[sheet][0]:
