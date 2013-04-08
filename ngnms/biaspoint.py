@@ -18,7 +18,7 @@ class Ngnms:
         config = ConfigParser.RawConfigParser()
         config.read('configs/ngnms.cfg')
         self.working_point = {
-        'OB symbol rate'                : config.get('NGNMS OIDS', 'OB symbol rate'),
+        # 'OB symbol rate'                : config.get('NGNMS OIDS', 'OB symbol rate'),
         'OB mode code'                  : config.get('NGNMS OIDS', 'OB mode code'),
         'Most Efficient MODCOD'           : config.get('NGNMS OIDS', 'Most Efficient MODCOD'),
         'RTN Channels Frequency Plan'   : config.get('NGNMS OIDS', 'RTN Channels Frequency Plan'),
@@ -146,7 +146,11 @@ class Ngnms:
                     new_data.append(line)
             # adding new debug data.
             for key in debug.get('lines').keys():
-                new_data.append(debug.get('lines')[key])
+                if key in ['For NE Symbol Rate', 'Alternate Symbol Rate', 'Source Symbol Rate']:
+                    debug.get('lines')[key]['value'] = testcase['OB symbol rate'].get('value')
+                    new_data.append(debug.get('lines')[key])
+                else:
+                    new_data.append(debug.get('lines')[key])
         else:
             # get only old values.
             for line in ngnms_data:

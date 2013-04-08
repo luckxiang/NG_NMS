@@ -40,17 +40,17 @@ debug = {
 
 #         # range 300.000 - 30.000.000
 #         # default: 28000000
-#         'For NE Uplink Center Frequency ':
+#         'For NE Uplink Center Frequency':
 #             {'oid':'1.3.6.1.4.1.7352.3.36.4.15', 
 #              'value':'28000000', 
 #              'instance':'0'},
 
-        # range 300.000 - 60.000.000
-        # default: 45000000
-#         'For NE Symbol Rate ':
-#             {'oid':'1.3.6.1.4.1.7352.3.36.4.16', 
-#              'value':'60000000', 
-#              'instance':'0'},
+#         range 300.000 - 60.000.000
+#         default: 45000000
+        'For NE Symbol Rate':
+            {'oid':'1.3.6.1.4.1.7352.3.36.4.16', 
+             'value':'60000000', 
+             'instance':'0'},
 
 #         # range 1.000.000 - 30.000.000
 #         # default: 27000000
@@ -59,24 +59,24 @@ debug = {
 #         'value':'27000000', 
 #         'instance':'0'},
 
-#         # range 300.000 - 60.000.000
-#         # default: 45000000
-#         'Alternate Symbol Rate ':
-#             {'oid':'1.3.6.1.4.1.7352.3.36.4.14', 
-#              'value':'45000000', 
-#              'instance':'0'},
+        # range 300.000 - 60.000.000
+        # default: 45000000
+        'Alternate Symbol Rate':
+            {'oid':'1.3.6.1.4.1.7352.3.36.4.14', 
+             'value':'45000000', 
+             'instance':'0'},
 
         # range 3.000.000 - 30.000.000
         # default: empty
-        #'Source Uplink Center Frequency ':
+        #'Source Uplink Center Frequency':
         #    {'oid':'1.3.6.1.4.1.7352.3.36.4.18', 'value':'', 'instance':'0'},
 
-        # range 300.000 - 60.000.000
-        # default: empty
-#         'Source Symbol Rate ':
-#             {'oid':'1.3.6.1.4.1.7352.3.36.4.19', 
-#              'value':'60000000', 
-#              'instance':'0'},
+#         range 300.000 - 60.000.000
+#         default: empty
+        'Source Symbol Rate':
+            {'oid':'1.3.6.1.4.1.7352.3.36.4.19', 
+             'value':'60000000', 
+             'instance':'0'},
 
         # range 1.000.000 - 30.000.000
         # default: empty
