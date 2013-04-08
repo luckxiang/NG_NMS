@@ -95,6 +95,11 @@ class Grab:
         stop_pattern = '''>'''
         self.grab(command, stop_pattern)
         time.sleep(3)
+
+        command = 'bb clrstats'
+        stop_pattern = '''>'''
+        self.grab(command, stop_pattern)
+        time.sleep(3)
         
         if ftptype == 'inbound':
             command = 'ip selftest ftpup 1 %s' % duration
@@ -141,7 +146,7 @@ class Grab:
                     if words[0] == 'RETRANSMITTED':
                         output['Number of OB retransmit packets'] = words[1].lstrip('0') or 0
                         output['Number of IB retransmit packets'] = words[2].lstrip('0') or 0
-                    if words[0] == 'UNNUMBERED':
+                    if words[0] == 'INFORMATION':
                         output['Number of transmitted OB packets'] = words[1].lstrip('0') or 0
                         output['Number of received IB packets'] = words[2].lstrip('0') or 0
                         
