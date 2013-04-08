@@ -256,7 +256,9 @@ class Selftest:
                 print
 
                 # change previous working point, only if data changed.
-                if changed: ngnms.put_config(url, ngnms_data)
+                if changed:
+                    print 'step:\> changing to previous working point' 
+                    ngnms.put_config(url, ngnms_data)
 
                 print '-'*25,'TEST: %s' % current_case, '-'*24
                 result_data[state][row] = cases[state][sheet][row]
