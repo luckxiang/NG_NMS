@@ -261,7 +261,7 @@ class Ngnms:
         changed = True
         for line in ngnms_data:
             if (line.get('oid') == self.ob_symbol_rate_oid and 
-                line.get('value') == testcase('OB symbol rate')):
+                line.get('value') == testcase.git('OB symbol rate')):
                 changed = False
 
         return changed

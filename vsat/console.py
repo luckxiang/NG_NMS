@@ -100,7 +100,7 @@ class Grab:
         stop_pattern = '''>'''
         self.grab(command, stop_pattern)
         time.sleep(3)
-        
+
         if ftptype == 'inbound':
             command = 'ip selftest ftpup 1 %s' % duration
         elif ftptype == 'outbound':
@@ -119,50 +119,49 @@ class Grab:
         '''
         Get VSAT output statistics.
         '''
-        try:
-            if self.check_bb():
-                output = {}
-                command = 'bb link'
-                stop_pattern = '''*********** End BB Link'''
-                bb_link = self.grab(command, stop_pattern)
-                for line in bb_link.split('\n'):
-                    if not line.strip():
-                        continue
-                    iotraffic = re.match(r'^Current:.*$', line.strip('\r\n'))
-                    if iotraffic:
-                        iotraffic = iotraffic.group(0)
-                        ib_bit_rate, ob_bit_rate = iotraffic.split('.')[0:2]
-                        output['Max IB bit rate'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
-                        output['Max OB bit rate'] = int(re.search(r'\d+', ob_bit_rate).group(0))
 
-                command = 'bb stat'
-                stop_pattern = '''END Statistics for BB link'''
-                bb_stat = self.grab(command, stop_pattern)
-                for line in bb_stat.split('\n'):
-                    if not line.strip():
-                        continue
-                    words = line.strip('\r\n')
-                    words = words.split()
-                    if words[0] == 'RETRANSMITTED':
-                        output['Number of OB retransmit packets'] = words[1].lstrip('0') or 0
-                        output['Number of IB retransmit packets'] = words[2].lstrip('0') or 0
-                    if words[0] == 'INFORMATION':
-                        output['Number of transmitted OB packets'] = words[1].lstrip('0') or 0
-                        output['Number of received IB packets'] = words[2].lstrip('0') or 0
-                        
-                command = 'rsp cpu get statistics'
-                stop_pattern = '''>'''
-                cpu_stats = self.grab(command, stop_pattern)
-                for line in cpu_stats.split('\n'):
-                    if not line.strip():
-                        continue
-                    cpu_load = re.match(r'^CPU utilization.*$', line.strip('\r\n'))
-                    if cpu_load:
-                        cpu_load = cpu_load.group(0)
-                        cpu_value = re.search(r'\$\d+\$', cpu_load)
-                        output['VSAT CPU'] = cpu_value.group(0)
-                
-                return output
+        try:
+            output = {}
+            command = 'bb link'
+            stop_pattern = '''*********** End BB Link'''
+            bb_link = self.grab(command, stop_pattern)
+            for line in bb_link.split('\n'):
+                if not line.strip():
+                    continue
+                iotraffic = re.match(r'^Current:.*$', line.strip('\r\n'))
+                if iotraffic:
+                    iotraffic = iotraffic.group(0)
+                    ib_bit_rate, ob_bit_rate = iotraffic.split('.')[0:2]
+                    output['Max IB bit rate'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
+                    output['Max OB bit rate'] = int(re.search(r'\d+', ob_bit_rate).group(0))
+
+            command = 'bb stat'
+            stop_pattern = '''END Statistics for BB link'''
+            bb_stat = self.grab(command, stop_pattern)
+            for line in bb_stat.split('\n'):
+                if not line.strip():
+                    continue
+                words = line.strip('\r\n')
+                words = words.split()
+                if words[0] == 'RETRANSMITTED':
+                    output['Number of OB retransmit packets'] = words[1].lstrip('0') or 0
+                    output['Number of IB retransmit packets'] = words[2].lstrip('0') or 0
+                if words[0] == 'INFORMATION':
+                    output['Number of transmitted OB packets'] = words[1].lstrip('0') or 0
+                    output['Number of received IB packets'] = words[2].lstrip('0') or 0
+                    
+            command = 'rsp cpu get statistics'
+            stop_pattern = '''>'''
+            cpu_stats = self.grab(command, stop_pattern)
+            for line in cpu_stats.split('\n'):
+                if not line.strip():
+                    continue
+                cpu_load = re.match(r'^CPU utilization.*$', line.strip('\r\n'))
+                if cpu_load:
+                    cpu_load = cpu_load.group(0)
+                    cpu_value = re.search(r'\$\d+\$', cpu_load)
+                    output['VSAT CPU'] = cpu_value.group(0)
+            return output
         except Exception as e:
             print "%s" % e
 
