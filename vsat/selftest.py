@@ -132,7 +132,6 @@ class Selftest:
         Running test.
         '''
         header, states, cases = testcases
-        number_of_tries = 2
         # force just TESTCASES sheet.
         sheet = 'TESTCASES'
         # Status change to True when exist data to save.
@@ -149,6 +148,13 @@ class Selftest:
                 ngnms_info = cases['enabled']['HUB'][hub]
             break
 
+        # getting testcase0, initial working point.
+        for state in states.keys():
+            for row in states[state][sheet]:
+                if row[1] == 1:
+                    testcase0 = row
+                    break
+
         # show ngnms network tree.
         self.check(state = None, device = 'hub', vsatname = None)
 
@@ -164,7 +170,7 @@ class Selftest:
                 vsatname = vsat_data.get('Name')
             break
 
-        # Checking VSAT, cicle if vsat bb link is down.
+        # Checking VSAT
         self.vsat_status(None, vsatname)
 
         result_data = {}
@@ -203,16 +209,13 @@ class Selftest:
                 if changed:
                     print 'status: OB symbol rate changed, waiting vsat up ...'
                     self.show_time_counter(10)
-
                     # changing 'rsp param set param 34' <ob_symbol_rate>
                     command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
                     stop_pattern = '>'
                     print 'info:\> %s' % command
                     vsat.grab(command, stop_pattern)
- 
                     # wait ...
                     self.show_time_counter(5)
-
                     # rebooting vsat..
                     command = 'rsp board reset board'
                     print 'info:\> %s' % command
@@ -255,11 +258,6 @@ class Selftest:
                     continue
                 print
 
-                # change previous working point, only if data changed.
-                if changed:
-                    print 'step:\> changing to previous working point' 
-                    ngnms.put_config(url, ngnms_data)
-
                 print '-'*25,'TEST: %s' % current_case, '-'*24
                 result_data[state][row] = cases[state][sheet][row]
                 for key in header[sheet][0]:
@@ -278,7 +276,12 @@ class Selftest:
                 print '-'*60
                 print
 
-        # saving data to file
+
+        # changing to initial working point.
+        print 'step:\> changing to initial working point' 
+        ngnms.set_ngnms_working_point(testcase0)
+
+        # saving data to excel file
         if status:
             print
             print "info:\> Saving result to [%s] excel file!" % output_xlfile

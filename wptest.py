@@ -84,68 +84,43 @@ def main(argv=None):
 
         # default state.
         state = 'enabled'
+
+        # set disabled value.
         if options.disabled:
             state = 'disabled'
 
+        # change states if name provided.
+        if options.name != None:
+            states = ['enabled', 'disabled']
+        else:
+            states = [state]
         # check hub.
         if options.device == 'hub':
             selftest.check(xlfile, state, options.device)
-
         # check vsat.
         elif options.device == 'vsat':
-            if options.name != None:
-                states = ['enabled', 'disabled']
-            else:
-                states = [state]
             for state in states:
                 selftest.check(xlfile, state, options.device, options.name)
-
+        # show all enabled and disabled.
         elif options.info == 'all':
             states = [state]
             selftest.show(xlfile, None, None, *states)
-
         # show hub info.
         elif options.info == 'hub':
-            if options.name != None:
-                states = ['enabled', 'disabled']
-            else:
-                states = [state]
-                
             selftest.show(xlfile, upper(options.info), options.name, *states)
-
         # show vsat info.
         elif options.info == 'vsat':
-            if options.name != None:
-                states = ['enabled', 'disabled']
-            else:
-                states = [state]
-
             selftest.show(xlfile, upper(options.info), options.name, *states)
-        
         # show tests info.
         elif options.info == 'test':
-            if options.name != None:
-                states = ['enabled', 'disabled']
-            else:
-                states = [state]
-            try:
-                selftest.show(xlfile, 'TESTCASES', options.name, *states)
-            except Exception as e:
-                print e
-
+            selftest.show(xlfile, 'TESTCASES', options.name, *states)
         # run tests.
         elif options.run:
-            if options.name != None:
-                states = ['enabled', 'disabled']
-            else:
-                states = [state]
             selftest.run(xlfile, states, options.name)
         else:
             print 
             print "Help: %s -h|--help" % program_name
             print
-
-
 
         # ============ END MAIN BODY =============== #
     except Exception, e:
