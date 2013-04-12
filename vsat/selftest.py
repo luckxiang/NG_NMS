@@ -8,6 +8,7 @@ import time
 from vsat import console
 from string import upper
 from ngnms import biaspoint
+import sys
 
 output_xlfile = 'data/output.xls'
 class Selftest:
@@ -149,10 +150,11 @@ class Selftest:
             break
 
         # getting testcase0, initial working point.
+        testcase0 = {}
         for state in states.keys():
             for row in states[state][sheet]:
-                if row[1] == 1:
-                    testcase0 = row
+                if int(states[state][sheet][row][1]) == 1:
+                    testcase0 = cases[state][sheet][row]
                     break
 
         # show ngnms network tree.
@@ -251,7 +253,7 @@ class Selftest:
                             print 'status: %s -> done!' % ftptype
                         break
                     else:
-                        print 'INFO: VSAT not READY!'
+                        print 'info:\> VSAT not READY!'
                         self.show_time_counter(tries_timeout)
                 else:
                     print "info:\> Exceeded [%s] number of tries per test case!" % number_of_tries
@@ -287,6 +289,9 @@ class Selftest:
             print "info:\> Saving result to [%s] excel file!" % output_xlfile
             print 
             self.save_row_to_excel(header[sheet][0], result_data)
+        else:
+            print "No data to save! Exiting."
+            sys.exit()
 
     def save_row_to_excel(self, header, output):
         '''
