@@ -252,7 +252,7 @@ class Ngnms:
 
         new_ngnms_data = str(new_ngnms_data).replace("'", '"')
 
-        # TODO: put data to NGNMS
+        # put data to NGNMS
         try:
             url = '{url}/{id}'.format(**folder)
             self.put_config(url, new_ngnms_data)

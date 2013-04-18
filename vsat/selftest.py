@@ -9,8 +9,22 @@ from vsat import console
 from string import upper
 from ngnms import biaspoint
 import sys
+import os.path
 
 output_xlfile = 'data/output.xls'
+if os.path.isfile(output_xlfile):
+    print "info:\> deleting old %s" % output_xlfile
+    while True:
+        try:
+            os.remove(output_xlfile)
+        except Exception as e:
+            print e
+            # file open, close it first
+            print
+            print 'Please close file first [%s], then continue: ' % output_xlfile,
+            raw_input('-> [ENTER]')
+            continue
+
 class Selftest:
     '''
     Run selftest mode for VSAT.
@@ -182,8 +196,9 @@ class Selftest:
             print 'H'*60
             print
             
-            result_data[state] = {}
             for row in sorted(states[state][sheet]):
+                # storing just current row.
+                result_data[state] = {}
                 current_case = states[state][sheet][row][1]
 
                 # adjusting selecting test case.
@@ -259,7 +274,6 @@ class Selftest:
                     print "info:\> Exceeded [%s] number of tries per test case!" % number_of_tries
                     continue
                 print
-
                 print '-'*25,'TEST: %s' % current_case, '-'*24
                 result_data[state][row] = cases[state][sheet][row]
                 for key in header[sheet][0]:
@@ -272,26 +286,22 @@ class Selftest:
                         print '-'*25,'OUTPUT: %s' % current_case, '-'*24
                         print
                     print '{0:38} = {1:30}'.format(key, str(cases[state][sheet][row][key]))
-                    # Check if we have data to save
-                    status = True
                 print
                 print '-'*60
                 print
-
+                # saving data to excel file.
+                print "info:\> Saving result to [%s] excel file!" % output_xlfile
+                self.save_row_to_excel(header[sheet][0], result_data)
 
         # changing to initial working point.
         print 'step:\> changing to initial working point' 
         ngnms.set_ngnms_working_point(testcase0)
 
-        # saving data to excel file
-        if status:
-            print
-            print "info:\> Saving result to [%s] excel file!" % output_xlfile
-            print 
-            self.save_row_to_excel(header[sheet][0], result_data)
-        else:
-            print "No data to save! Exiting."
-            sys.exit()
+        # greetings 
+        print
+        print '-'*60
+        print "\n\t\tGood job!\n\t\tCongratulations! @};-\n\t\tWell done!\n"
+        print '-'*60
 
     def save_row_to_excel(self, header, output):
         '''
@@ -301,6 +311,8 @@ class Selftest:
         from xlutils.copy import copy
         from xlwt import easyxf
 
+        if os.path.isfile(output_xlfile):
+            self.xlfile = output_xlfile
         rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
         wb = copy(rb)
         styleEnabled = easyxf('font: name Times New Roman;'
@@ -337,14 +349,6 @@ class Selftest:
                 print '\nSUCCESS!: Successfully saved data to file: [%s]!\n' % output_xlfile
                 print 'H'*60
                 break
-
-        # Success! We are the beast from the beasts,
-        # In the blackest than blackest and deeper source code forest! 
-        # NOTE: Joke! :p /* I just finished this project */
-        print
-        print '-'*60
-        print "\n\t\tGood job!\n\t\tCongratulations! @};-\n\t\tWell done!\n"
-        print '-'*60
 
 def show(xlfile, sheet=None, name = None, *state):
     '''
