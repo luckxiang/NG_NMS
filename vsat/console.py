@@ -165,8 +165,8 @@ class Grab:
             if iotraffic:
                 iotraffic = iotraffic.group(0)
                 ib_bit_rate, ob_bit_rate = iotraffic.split('.')[0:2]
-                output['Max IB bit rate (kbps)'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
-                output['Max OB bit rate (kbps)'] = int(re.search(r'\d+', ob_bit_rate).group(0))
+                output['Max IB bit rate [kbps]'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
+                output['Max OB bit rate [kbps]'] = int(re.search(r'\d+', ob_bit_rate).group(0))
         # get stats.
         return output
 

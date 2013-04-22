@@ -250,12 +250,12 @@ class Selftest:
                             if ftptype == 'inbound':
                                 nr_of_retransmited_ob_pckts = output['Number of OB retransmit packets']
                                 nr_of_transmited_ob_pckts = output['Number of transmitted OB packets']
-                                max_ob_bit_rate = output['Max IB bit rate (kbps)']
+                                max_ob_bit_rate = output['Max IB bit rate [kbps]']
                                 cpu_ib = output.get('VSAT CPU')
                             else:
                                 output['Number of OB retransmit packets'] = nr_of_retransmited_ob_pckts
                                 output['Number of transmitted OB packets'] = nr_of_transmited_ob_pckts
-                                output['Max IB bit rate (kbps)'] = max_ob_bit_rate
+                                output['Max IB bit rate [kbps]'] = max_ob_bit_rate
                                 output['VSAT CPU [IB] [OB]'] = '[%s]/[%s]' % (cpu_ib.strip('$'), output.get('VSAT CPU').strip('$'))
                             print 'status: %s -> done!' % ftptype
                         break
@@ -273,7 +273,7 @@ class Selftest:
                     time.sleep(0.1)
                     if key in output.keys():
                         cases[state][sheet][row][key] = output[key]
-                    if key == 'Max IB bit rate (kbps)':
+                    if key == 'Max IB bit rate [kbps]':
                         print
                         print '-'*25,'OUTPUT: %s' % current_case, '-'*24
                         print
