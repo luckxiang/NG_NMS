@@ -230,6 +230,7 @@ class Selftest:
                     print 'info:\> %s' % command
                     stop_pattern = '>'
                     vsat.grab(command, stop_pattern)
+                    self.show_time_counter(20)
 
                 for nextstep in xrange(1,number_of_tries + 1):
                     print 'step:\> nextstep -> ', nextstep
