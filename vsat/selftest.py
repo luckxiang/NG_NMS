@@ -208,10 +208,14 @@ class Selftest:
                 print 'info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
                 vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
 
+                # waiting
+                print 'info:\> waiting vsat up ...'
+                self.show_time_counter(10)
+
                 # setting param 34 and restarting board.
                 if changed:
                     print 'status: OB symbol rate changed, waiting vsat up ...'
-                    self.show_time_counter(10)
+
                     # changing 'rsp param set param 34' <ob_symbol_rate>
                     command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
                     stop_pattern = '>'
