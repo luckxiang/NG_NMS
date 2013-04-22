@@ -210,7 +210,7 @@ class Selftest:
 
                 # waiting
                 print 'info:\> waiting vsat up ...'
-                self.show_time_counter(10)
+                self.show_time_counter(20)
 
                 # setting param 34 and restarting board.
                 if changed:
@@ -293,7 +293,7 @@ class Selftest:
             print 'status: OB symbol rate changed, waiting vsat up ...'
             self.show_time_counter(10)
             # changing 'rsp param set param 34' <ob_symbol_rate>
-            command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
+            command = 'rsp param set param 34 %s' % testcase0.get('OB symbol rate')
             stop_pattern = '>'
             print 'info:\> %s' % command
             vsat.grab(command, stop_pattern)
