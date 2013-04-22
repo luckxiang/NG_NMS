@@ -223,7 +223,7 @@ class Selftest:
                     print 'info:\> %s' % command
                     vsat.grab(command, stop_pattern)
                     # wait ...
-                    self.show_time_counter(5)
+                    self.show_time_counter(10)
                     # rebooting vsat..
                     command = 'rsp board reset board'
                     print 'info:\> %s' % command

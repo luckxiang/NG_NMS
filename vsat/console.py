@@ -145,7 +145,7 @@ class Grab:
             if cpu_load:
                 cpu_load = cpu_load.group(0)
                 cpu_value = re.search(r'\$\d+\$', cpu_load)
-                output['VSAT CPU'] = cpu_value.group(0)
+                output['VSAT CPU [IB] [0B]'] = cpu_value.group(0)
         # get stats.
         return output
 
@@ -165,8 +165,8 @@ class Grab:
             if iotraffic:
                 iotraffic = iotraffic.group(0)
                 ib_bit_rate, ob_bit_rate = iotraffic.split('.')[0:2]
-                output['Max IB bit rate'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
-                output['Max OB bit rate'] = int(re.search(r'\d+', ob_bit_rate).group(0))
+                output['Max IB bit rate (kbps)'] = int(re.search(r'\d+', ib_bit_rate).group(0)) 
+                output['Max OB bit rate (kbps)'] = int(re.search(r'\d+', ob_bit_rate).group(0))
         # get stats.
         return output
 
