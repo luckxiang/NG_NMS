@@ -184,11 +184,10 @@ class Selftest:
             print upper(state).rjust(30)
             print 'H'*60
             print
-
+            result_data[state] = {}
             for row in sorted(states[state][sheet]):
                 # storing just current row.
                 current_case = states[state][sheet][row][1]
-                result_data[state] = {}
                 # adjusting selecting test case.
                 if sheet == 'TESTCASES': 
                     current_case = int(current_case)
@@ -320,13 +319,10 @@ class Selftest:
         from xlutils.copy import copy
         from xlwt import easyxf
 
-        # saving data to output.
-        if os.path.isfile(output_xlfile):
-            rb = open_workbook(output_xlfile, formatting_info=1, on_demand=True)
-        else:
-            rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
+        rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
 
         wb = copy(rb)
+
         styleEnabled = easyxf('font: name Times New Roman;'
                'borders: left thin, right thick, top thin, bottom thin;'
                'pattern: pattern solid, fore_colour light_green;'
