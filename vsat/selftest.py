@@ -256,7 +256,7 @@ class Selftest:
                                 output['Number of OB retransmit packets'] = nr_of_retransmited_ob_pckts
                                 output['Number of transmitted OB packets'] = nr_of_transmited_ob_pckts
                                 output['Max IB bit rate [kbps]'] = max_ob_bit_rate
-                                output['VSAT CPU [IB] [OB]'] = '[%s]/[%s]' % (cpu_ib.strip('$'), output.get('VSAT CPU').strip('$'))
+                                output['VSAT CPU [IB] [OB]'] = '[%s]/[%s]' % (cpu_ib.strip('$'), output.get('VSAT CPU [IB] [OB]').strip('$'))
                             print 'status: %s -> done!' % ftptype
                         break
                     else:
