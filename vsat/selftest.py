@@ -11,6 +11,8 @@ from ngnms import biaspoint
 import os.path
 
 output_xlfile = 'data/output.xls'
+if os.path.isfile(output_xlfile):
+    os.remove(output_xlfile)
 
 class Selftest:
     '''
@@ -182,11 +184,11 @@ class Selftest:
             print upper(state).rjust(30)
             print 'H'*60
             print
-            result_data[state] = {}
+
             for row in sorted(states[state][sheet]):
                 # storing just current row.
                 current_case = states[state][sheet][row][1]
-
+                result_data[state] = {}
                 # adjusting selecting test case.
                 if sheet == 'TESTCASES': 
                     current_case = int(current_case)
@@ -279,10 +281,9 @@ class Selftest:
                 print
                 print '-'*60
                 print
-
-        # saving data to excel file.
-        print "info:\> Saving result to [%s] excel file!" % output_xlfile
-        self.save_row_to_excel(header[sheet][0], result_data)
+                # saving data to excel file.
+                print "info:\> Saving result to [%s] excel file!" % output_xlfile
+                self.save_row_to_excel(header[sheet][0], result_data)
 
         # changing to initial working point.
         print 'step:\> changing to initial working point' 
@@ -318,7 +319,12 @@ class Selftest:
         from xlutils.copy import copy
         from xlwt import easyxf
 
-        rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
+        # saving data to output.
+        if os.path.isfile(output_xlfile):
+            rb = open_workbook(output_xlfile, formatting_info=1, on_demand=True)
+        else:
+            rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
+
         wb = copy(rb)
         styleEnabled = easyxf('font: name Times New Roman;'
                'borders: left thin, right thick, top thin, bottom thin;'
