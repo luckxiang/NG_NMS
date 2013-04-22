@@ -251,7 +251,7 @@ class Selftest:
                                 nr_of_retransmited_ob_pckts = output['Number of OB retransmit packets']
                                 nr_of_transmited_ob_pckts = output['Number of transmitted OB packets']
                                 max_ob_bit_rate = output['Max IB bit rate [kbps]']
-                                cpu_ib = output.get('VSAT CPU')
+                                cpu_ib = output.get('VSAT CPU [IB] [OB]')
                             else:
                                 output['Number of OB retransmit packets'] = nr_of_retransmited_ob_pckts
                                 output['Number of transmitted OB packets'] = nr_of_transmited_ob_pckts
