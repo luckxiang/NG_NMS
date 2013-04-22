@@ -145,7 +145,7 @@ class Grab:
             if cpu_load:
                 cpu_load = cpu_load.group(0)
                 cpu_value = re.search(r'\$\d+\$', cpu_load)
-                output['VSAT CPU [IB] [0B]'] = cpu_value.group(0)
+                output['VSAT CPU [IB] [OB]'] = cpu_value.group(0)
         # get stats.
         return output
 
