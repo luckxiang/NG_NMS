@@ -76,7 +76,7 @@ class Grab:
             print 'step:\> Checking link status!'
             link_status = False
             for line in output.split('\r'):
-                if 'UP' in line.split():
+                if 'UP' in line.split() and 'Links' in line.split():
                     link_status = line.strip().rstrip('.')
                     print 'status:',link_status
                     # return link_status and bb link message.

@@ -8,22 +8,9 @@ import time
 from vsat import console
 from string import upper
 from ngnms import biaspoint
-import sys
 import os.path
 
 output_xlfile = 'data/output.xls'
-if os.path.isfile(output_xlfile):
-    print "info:\> deleting old %s" % output_xlfile
-    while True:
-        try:
-            os.remove(output_xlfile)
-        except Exception as e:
-            print e
-            # file open, close it first
-            print
-            print 'Please close file first [%s], then continue: ' % output_xlfile,
-            raw_input('-> [ENTER]')
-            continue
 
 class Selftest:
     '''
@@ -195,10 +182,9 @@ class Selftest:
             print upper(state).rjust(30)
             print 'H'*60
             print
-            
+            result_data[state] = {}
             for row in sorted(states[state][sheet]):
                 # storing just current row.
-                result_data[state] = {}
                 current_case = states[state][sheet][row][1]
 
                 # adjusting selecting test case.
@@ -289,14 +275,31 @@ class Selftest:
                 print
                 print '-'*60
                 print
-                # saving data to excel file.
-                print "info:\> Saving result to [%s] excel file!" % output_xlfile
-                self.save_row_to_excel(header[sheet][0], result_data)
+
+        # saving data to excel file.
+        print "info:\> Saving result to [%s] excel file!" % output_xlfile
+        self.save_row_to_excel(header[sheet][0], result_data)
 
         # changing to initial working point.
         print 'step:\> changing to initial working point' 
-        ngnms.set_ngnms_working_point(testcase0)
+        changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase0)
 
+        # setting param 34 and restarting board.
+        if changed:
+            print 'status: OB symbol rate changed, waiting vsat up ...'
+            self.show_time_counter(10)
+            # changing 'rsp param set param 34' <ob_symbol_rate>
+            command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
+            stop_pattern = '>'
+            print 'info:\> %s' % command
+            vsat.grab(command, stop_pattern)
+            # wait ...
+            self.show_time_counter(5)
+            # rebooting vsat..
+            command = 'rsp board reset board'
+            print 'info:\> %s' % command
+            stop_pattern = '>'
+            vsat.grab(command, stop_pattern)
         # greetings 
         print
         print '-'*60
@@ -311,8 +314,6 @@ class Selftest:
         from xlutils.copy import copy
         from xlwt import easyxf
 
-        if os.path.isfile(output_xlfile):
-            self.xlfile = output_xlfile
         rb = open_workbook(self.xlfile, formatting_info=1, on_demand=True)
         wb = copy(rb)
         styleEnabled = easyxf('font: name Times New Roman;'
