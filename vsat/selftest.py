@@ -313,22 +313,38 @@ class Selftest:
         print 'step:\> changing to initial working point' 
         changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase0)
 
-        # setting param 34 and restarting board.
-        if changed:
-            print 'status: OB symbol rate changed, waiting vsat up ...'
+        def init_vsat(*vsat_info):
+            '''
+            Set vsat SR to default
+            '''
+            vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
+            vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
+            print vsatname, '- status: OB symbol rate changed, waiting vsat up ...'
             self.show_time_counter(10)
             # changing 'rsp param set param 34' <ob_symbol_rate>
             command = 'rsp param set param 34 %s' % testcase0.get('OB symbol rate')
             stop_pattern = '>'
-            print 'info:\> %s' % command
+            print vsatname, '- info:\> %s' % command
             vsat.grab(command, stop_pattern)
             # wait ...
             self.show_time_counter(5)
             # rebooting vsat..
             command = 'rsp board reset board'
-            print 'info:\> %s' % command
+            print vsatname, '- info:\> %s' % command
             stop_pattern = '>'
             vsat.grab(command, stop_pattern)
+
+        # setting param 34 and restarting board.
+        if changed:
+            for vsatname in vsats.keys():
+                tvsat[vsatname] = Thread(target = init_vsat, args = vsats.get(vsatname))
+            for vsatname in vsats.keys():
+                tvsat[vsatname].start()
+                time.sleep(0.3)
+            for vsatname in vsats.keys():
+                tvsat[vsatname].join()
+                
+
         # greetings 
         print
         print '-'*60
