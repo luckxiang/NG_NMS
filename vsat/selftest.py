@@ -137,7 +137,7 @@ class Selftest:
         for vsat in cases['enabled']['VSAT'].keys():
             vsat_data = cases['enabled']['VSAT'][vsat]
             vsatname = vsat_data.get('Name')
-            thread_vsat = Thread(target = run, args = (testcases, state, testname, vsatname,))
+            thread_vsat = Thread(target = self.run, args = (testcases, state, testname, vsatname,))
             thread_vsat.start()
             
 
