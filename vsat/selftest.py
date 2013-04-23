@@ -293,10 +293,11 @@ class Selftest:
                 # saving data to excel file.
                 output_xlfile = '%s_output.xls' % vsatname.replace(' ', '_')
                 output_dir = 'data/output'
-                if os.path.isfile(os.path.join(output_dir, output_xlfile)):
-                    os.remove(os.path.join(output_dir, output_xlfile))
-                print "info:\> Saving result to [%s] excel file!" % output_xlfile
-                self.save_row_to_excel(header[sheet][0], result_data, output_xlfile)
+                output_file = os.path.join(output_dir, output_xlfile)
+                if os.path.isfile(output_file):
+                    os.remove(output_file)
+                print "info:\> Saving result to [%s] excel file!" % output_file
+                self.save_row_to_excel(header[sheet][0], result_data, output_file)
 
         # changing to initial working point.
         print 'step:\> changing to initial working point' 
