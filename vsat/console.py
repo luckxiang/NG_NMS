@@ -73,7 +73,7 @@ class Grab:
             
             output = self.grab(command, stop_pattern)
             print
-            print 'step:\> Checking link status!'
+            print 'step:\> Checking link status!\n'
             link_status = False
             for line in output.split('\r'):
                 if 'UP' in line.split() and 'Links' in line.split():

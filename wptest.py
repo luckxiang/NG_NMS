@@ -112,7 +112,7 @@ def main(argv=None):
             selftest.show(xlfile, 'TESTCASES', options.name, *states)
         # run tests.
         elif options.run:
-            selftest.run_thread(xlfile, states, options.name)
+            selftest.run(xlfile, states, options.name)
         else:
             print 
             print "Help: %s -h|--help" % program_name
