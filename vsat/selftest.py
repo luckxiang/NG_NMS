@@ -8,11 +8,8 @@ import time
 from vsat import console
 from string import upper
 from ngnms import biaspoint
+from threading import Thread
 import os.path
-
-output_xlfile = 'data/output.xls'
-if os.path.isfile(output_xlfile):
-    os.remove(output_xlfile)
 
 class Selftest:
     '''
@@ -131,7 +128,20 @@ class Selftest:
             time.sleep(1)
         print
 
-    def run(self, testcases, state = None, name = None):
+    def run_thread(self, testcases, state = None, testname = None):
+        '''
+        Run vsat get stats on thread
+        '''
+        header, states, cases = testcases
+        # getting active VSAT.
+        for vsat in cases['enabled']['VSAT'].keys():
+            vsat_data = cases['enabled']['VSAT'][vsat]
+            vsatname = vsat_data.get('Name')
+            thread_vsat = Thread(target = run, args = (testcases, state, testname, vsatname,))
+            thread_vsat.start()
+            
+
+    def run(self, testcases, state = None, testname = None, vsatname = None):
         '''
         Running test.
         '''
@@ -161,18 +171,17 @@ class Selftest:
                     break
 
         # show ngnms network tree.
-        self.check(state = None, device = 'hub', vsatname = None)
+        self.check(state = None, device = 'hub')
 
-        # getting first active VSAT.
+        # getting active VSAT.
         for vsat in cases['enabled']['VSAT'].keys():
-            if states['enabled']['VSAT'][vsat][0] != '':
-                vsat_data = cases['enabled']['VSAT'][vsat]
+            vsat_data = cases['enabled']['VSAT'][vsat]
+            if vsat_data.get('Name') == vsatname:
                 vsat_ip = vsat_data.get('Console IP')
                 vsat_port = int(vsat_data.get('Console PORT'))
                 vsat_timeout = int(vsat_data.get('Connection timeout'))
                 tries_timeout = int(vsat_data.get('Tries timeout'))
                 number_of_tries = int(vsat_data.get('Number of tries'))
-                vsatname = vsat_data.get('Name')
             break
 
         # Checking VSAT
@@ -191,7 +200,7 @@ class Selftest:
                 # adjusting selecting test case.
                 if sheet == 'TESTCASES': 
                     current_case = int(current_case)
-                if name != None and '%s' % name != '%s' % current_case:
+                if testname != None and '%s' % testname != '%s' % current_case:
                     print '{0}: {1}'.format(sheet, current_case)
                     continue
                 else:
@@ -282,8 +291,11 @@ class Selftest:
                 print '-'*60
                 print
                 # saving data to excel file.
+                output_xlfile = '%s_output.xls' % vsatname.replace(' ', '_')
+                if os.path.isfile(output_xlfile):
+                    os.remove(output_xlfile)
                 print "info:\> Saving result to [%s] excel file!" % output_xlfile
-                self.save_row_to_excel(header[sheet][0], result_data)
+                self.save_row_to_excel(header[sheet][0], result_data, output_xlfile)
 
         # changing to initial working point.
         print 'step:\> changing to initial working point' 
@@ -311,7 +323,7 @@ class Selftest:
         print "\n\t\tGood job!\n\t\tCongratulations! @};-\n\t\tWell done!\n"
         print '-'*60
 
-    def save_row_to_excel(self, header, output):
+    def save_row_to_excel(self, header, result_data, output_xlfile):
         '''
         Save result to excel file.
         '''
@@ -331,15 +343,15 @@ class Selftest:
                'borders: left thin, right thick, top thin, bottom thin;'
                'pattern: pattern solid, fore_colour pale_blue;'
                'alignment: horiz center, vert center')
-        for state in output.keys():
+        for state in result_data.keys():
             # Set row style.
             if state == 'enabled':
                 style = styleEnabled
             elif state == 'disabled':
                 style = styleDisabled
-            for row in output[state].keys():
+            for row in result_data[state].keys():
                 for cell in header[32:]:
-                        wb.get_sheet(1).write(row, header.index(cell), output[state][row].get(cell), style)
+                        wb.get_sheet(1).write(row, header.index(cell), result_data[state][row].get(cell), style)
 
         # Check if file is closed.
         while True:
@@ -373,13 +385,21 @@ def check(xlfile, state = None, device = None, name = None):
     ngnms = Selftest(xlfile)
     ngnms.check(state, device, name)
     
-def run(xlfile, state = None, name = None):
+def run(xlfile, state = None, testname = None):
     '''
     Run testcase(s}.
     '''
     ngnms = Selftest(xlfile)
     testcases = ngnms.get_testcases()
-    ngnms.run(testcases, state, name)
+    ngnms.run(testcases, state, testname)
+
+def run_thread(xlfile, state = None, testname = None):
+    '''
+    Run threaded vsat tests.
+    '''
+    ngnms = Selftest(xlfile)
+    testcases = ngnms.get_testcases()
+    ngnms.run_thread(testcases, state, testname)
 
 if __name__ == '__main__':
     '''
