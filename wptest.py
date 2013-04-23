@@ -56,7 +56,6 @@ def main(argv=None):
         parser.add_option('-s', '--show', dest='info', type='choice', choices=['all', 'hub', 'vsat', 'test'], help='''show [all, hub, vsat, test]'s info.''')
         parser.add_option('-d', '--disabled', dest='disabled', action='store_true', default=False, help='''show disabled rows only.''')
         parser.add_option('-i', '--in-file', dest='infile', default='data/demo.xls', help='''testcases input file [default: data/demo.xls]''')
-        parser.add_option('-o', '--out-file', dest='outfile', default='data/output.xls', help='''save result to file [default: data/output.xls]''')
         parser.add_option('-r', '--run', dest='run', action='store_true', default=False, help='run one or [default:enabled] test cases')
         
         # set defaults
@@ -78,9 +77,6 @@ def main(argv=None):
             print e
             print
             sys.exit()
-
-        # outfile.
-        selftest.output_xlfile = options.outfile
 
         # default state.
         state = 'enabled'

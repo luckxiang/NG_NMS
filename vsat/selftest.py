@@ -292,8 +292,9 @@ class Selftest:
                 print
                 # saving data to excel file.
                 output_xlfile = '%s_output.xls' % vsatname.replace(' ', '_')
-                if os.path.isfile(output_xlfile):
-                    os.remove(output_xlfile)
+                output_dir = 'data/output'
+                if os.path.isfile(os.path.join(output_dir, output_xlfile)):
+                    os.remove(os.path.join(output_dir, output_xlfile))
                 print "info:\> Saving result to [%s] excel file!" % output_xlfile
                 self.save_row_to_excel(header[sheet][0], result_data, output_xlfile)
 
