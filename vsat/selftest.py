@@ -319,8 +319,7 @@ class Selftest:
             '''
             vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
             vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
-            print vsatname, '- status: OB symbol rate changed, waiting vsat up ...'
-            self.show_time_counter(10)
+            print vsatname, '- status: default vsat symbol rate'
             # changing 'rsp param set param 34' <ob_symbol_rate>
             command = 'rsp param set param 34 %s' % testcase0.get('OB symbol rate')
             stop_pattern = '>'
