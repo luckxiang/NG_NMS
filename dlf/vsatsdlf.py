@@ -7,8 +7,21 @@ Created on May 27, 2013
 from vsat import console
 import re
 from itertools import izip
+from ConfigParser import SafeConfigParser
 
-def get_output():
+def change_dlf_ini(section, **channels):
+        '''
+        Changing DLF parameters file.
+        '''
+        parser = SafeConfigParser()
+        parser.read('../configs/dlf.ini')
+        for channel, value in channels.items():
+            print 'Changing: %s = %s' % (channel, value)
+            parser.set(section, channel, value)
+        with open('../configs/dlf.ini', 'w') as fp:
+            parser.write(fp)
+
+def get_vsat_channels():
     tnvsat = console.Grab('192.168.140.76', 1014, 3)
     command = 'rsp pwr_loop get telem'
     stop_pattern = 'abc123'
@@ -29,5 +42,9 @@ def get_output():
     for line in izip(channels_keys, channels_values):
         print line
 if __name__ == '__main__':
-    get_output()
+    get_vsat_channels()
+    channels = {}
+    channels['INB2'] = '22'
+    section = 'DefaultsChng'
+    change_dlf_ini(section, **channels)
     pass
