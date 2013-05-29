@@ -8,8 +8,8 @@ from vsat import console
 import re
 from itertools import izip
 from ConfigParser import SafeConfigParser
-
-from dlf.dlftcp import *
+from dlf.dlfserial import *
+import time
 
 def change_dlf_ini(section = 'DefaultsChng', **channels):
         '''
@@ -18,7 +18,7 @@ def change_dlf_ini(section = 'DefaultsChng', **channels):
         parser = SafeConfigParser()
         parser.read('../configs/dlf.ini')
         for channel, value in channels.items():
-            print 'Changing: %s = %s' % (channel, value)
+            print 'status:\> changing: %s = %s' % (channel, value)
             parser.set(section, channel, value)
         with open('../configs/dlf.ini', 'w') as fp:
             parser.write(fp)
@@ -38,7 +38,11 @@ def get_vsat_channels(vsat_ip, vsat_port, timeout):
         line = line.strip('\r').strip('\t')
         if 'target' in line:
             channels_keys.append(line.strip(':'))
-            channels_values.append(re.findall('\d+.\d+', line)[0])
+            pattern = re.findall('\d+.\d+', line)
+            if pattern: 
+                channels_values.append(re.findall('\d+.\d+', line)[0])
+            else:
+                channels_values.append('next')
         if 'TS Id' in line:
             channels_keys.append(line)
         if 'Total Power' in line:
@@ -55,50 +59,69 @@ def dlf_controller(channel_number, channel_name, **vsat):
     '''
     DLF controller.
     '''
-    # getting all vsat channels.
-    all_channels = get_vsat_channels(**vsat)
-    ref_ch = all_channels[0][1]
-
-    # getting only trf channels
-    trf_channels = []
-    for channel in all_channels:
-        print channel
-        if 'TRF' in channel[0]:
-            trf_channels.append(channel[1])
     
-    stop = False
-    value = 63
-    while not stop:
-        this_ch = trf_channels[channel_number]
+    # cycle until get needed channel.
+    value = 10
+    while True:
+        print
+        # changing ini file values.
+        ini_channels = {}
+        ini_channels[channel_name] = str(value)
+        change_dlf_ini(**ini_channels)
+        
+        # send data to DLF.
+        data = Dlf()
+        data.DLF_Set_Defaults()
+        time.sleep(20)
+        # getting all vsat channels.
+        all_channels = get_vsat_channels(**vsat)
+        # getting referince value.
+        ref_ch = all_channels[0][1]
+        
+        # cycle until channel set.
+        while ref_ch == 'next':
+            # getting all vsat channels.
+            all_channels = get_vsat_channels(**vsat)
+            # getting referince value.
+            ref_ch = all_channels[0][1]
+            seconds = 10
+            print 'info:\> wait next [%d] sec' % seconds
+            time.sleep(seconds)
+        
+        # getting only trf channels
+        trf_channels = []
+        for channel in all_channels:
+            if 'TRF' in channel[0]:
+                trf_channels.append(channel[1])
+
         # handle first channel.
+        this_ch = trf_channels[channel_number]
+        print 'status:\> trf_channels:', trf_channels, 'ref_ch:', ref_ch 
+        
         if channel_number == 0:
+            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2
+            print 'status:\> first channel:', channel_number
             next_ch = trf_channels[channel_number + 1]
             if ref_ch > this_ch and ref_ch < next_ch:
-                stop = True
+                print 'status:\> finished!'
+                break
         
-        # handle channels between first and last channels.
-        if channel_number != 0 and channel_number != len(trf_channels):
-            prev_ch = trf_channels[channel_number - 1]
+        # handle bounded channels.
+        if channel_number != 0 and channel_number != len(trf_channels)-1:
+            value += int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0))
+            print 'status:\> bounded channel:', channel_number
             next_ch = trf_channels[channel_number + 1]
-            if ref_ch > prev_ch and ref_ch > this_ch and ref_ch < next_ch:
-                stop = True
+            if ref_ch > this_ch and ref_ch < next_ch:
+                print 'status:\> finished!'
+                break
         
         # handle last channel.
-        if channel_number == len(trf_channels):
+        if channel_number == len(trf_channels)-1:
+            value += int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0))
+            print 'status:\> last channel:', channel_number
             if ref_ch > this_ch:
-                stop = True
-        
-        # changing ini file values.
-        value -= 5
-        channels = dict(channel_name = value)
-        change_dlf_ini(**channels)
-
-        # send data to DLF.
-        data = DlfTcp()
-        data.DLF_Set_Defaults()
-        
-
-
+                print 'status:\> finished!'
+                break
 
 if __name__ == '__main__':
     '''
@@ -106,13 +129,9 @@ if __name__ == '__main__':
     '''
     vsat = dict(vsat_ip = '192.168.140.76', vsat_port = 1014, timeout = 3)
     
-    dlf_controller(1, **vsat)
-    
+    for channel_number in reversed(range(3)):
+        channel_name = 'INB4'
+        dlf_controller(channel_number, channel_name, **vsat)
         
-    channels = {}
-    channels['INB2'] = '22'
-    section = 'DefaultsChng'
-    change_dlf_ini(section, **channels)
-    
     pass
 

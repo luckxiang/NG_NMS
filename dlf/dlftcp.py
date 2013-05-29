@@ -9,7 +9,7 @@ from ConfigParser import SafeConfigParser
 import socket
 import sys
 
-class DlfTcp(object):
+class Dlf(object):
     '''
     DLF class: connect and setup device.
     '''
@@ -41,6 +41,7 @@ class DlfTcp(object):
         data = ''
         for section_name in ['DefaultsChng', 'DefaultsCnst']:
             for name, value in parser.items(section_name):
+                print name, value
                 buff = parser.get('ATT_Def', name).split(',')
                 value = int(value)
                 data1 = "%s%s%s" % (buff[0], self.DLF_Get_Att_Val(value/2), '0D')
@@ -65,5 +66,5 @@ class DlfTcp(object):
 
 if __name__ == "__main__":
     
-    data = DlfTcp()
+    data = Dlf()
     data.DLF_Set_Defaults()

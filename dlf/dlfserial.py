@@ -8,7 +8,7 @@ import serial
 import binascii
 from ConfigParser import SafeConfigParser
 
-class DlfSerial(object):
+class Dlf(object):
     '''
     DLF class: connect and setup device.
     '''
@@ -35,9 +35,8 @@ class DlfSerial(object):
         ser = serial.Serial()
         ser.baudrate = 19200
         ser.port = "COM1"
-        print ser
+        print 'status:\> sending data over serial:', ser.port
         ser.open()
-        print 'status:\> serial open status:', ser.isOpen()
         
         parser = SafeConfigParser()
         parser.read('../configs/dlf.ini')
@@ -54,9 +53,8 @@ class DlfSerial(object):
                 ser.write(binascii.unhexlify(data))
         ser.write(binascii.unhexlify("400D")) 
         ser.close()
-        print 'status:\> done!'
 
 if __name__ == "__main__":
     
-    data = DlfSerial()
+    data = Dlf()
     data.DLF_Set_Defaults()
