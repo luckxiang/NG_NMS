@@ -56,26 +56,6 @@ class DlfSerial(object):
         ser.close()
         print 'status:\> done!'
 
-# import binascii
-# import socket
-# import struct
-# import sys
-# #CreateaTCP/IPsocket
-# sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# server_address=('localhost',10000)
-# sock.connect(server_address)
-# values=(1,'ab',2.7)
-# packer=struct.Struct('I2sf')
-# packed_data=packer.pack(*values)
-# print 'values=',values
-# try:
-#     #Senddata
-#     print>>sys.stderr,'sending %r'%binascii.hexlify(packed_data)
-#     sock.sendall(packed_data)
-# finally:
-#     print>>sys.stderr,'closing socket'
-# sock.close()
-
 if __name__ == "__main__":
     
     data = DlfSerial()
