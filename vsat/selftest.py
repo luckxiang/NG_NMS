@@ -174,7 +174,9 @@ class Selftest:
             number_of_tries = int(vsat_data.get('Number of tries'))
             vsatname = vsat_data.get('Name')
             vsat_channel = vsat_data.get('Channel Name')
-            vsats[vsat_data.get('Name')] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname, vsat_channel) 
+            channel_number = vsat_data.get('Channel Number')
+            vsats[vsat_data.get('Name')] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, 
+                                            number_of_tries, vsatname, vsat_channel, channel_number) 
 
         # Checking VSAT
         for vsatname in vsats.keys():
@@ -209,9 +211,10 @@ class Selftest:
                 changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
                 
                 # setting DLF device for each VSAT.
-                for channel_number, vsatname in izip(count(0), vsats.keys()):
+                for vsatname in vsats.keys():
                     vsat = vsats[vsatname]
-                    channel_name = vsat[-1]
+                    channel_name = vsat[-2]
+                    channel_number = vsat[-1]
                     vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
                     vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout)
                     print '-'*60

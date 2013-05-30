@@ -82,8 +82,9 @@ def dlf_controller(channel_number, channel_name, **vsat):
         # getting only trf channels
         trf_channels = []
         for channel in all_channels:
-            if 'TRF' in channel[0]:
-                trf_channels.append(channel[1])
+#             if 'TRF' in channel[0]:
+#                 trf_channels.append(channel[1])
+            trf_channels.append(channel[1])
 
         # handle first channel.
         this_ch = float(trf_channels[channel_number])
