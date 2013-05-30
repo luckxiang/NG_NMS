@@ -208,7 +208,7 @@ class Selftest:
                 ngnms = biaspoint.Ngnms(**ngnms_info)
                 changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
                 
-                # setting DLF device.
+                # setting DLF device for each VSAT.
                 for channel_number, vsatname in izip(count(0), vsats.keys()):
                     vsat = vsats[vsatname]
                     channel_name = vsat[-1]
