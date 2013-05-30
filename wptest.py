@@ -58,7 +58,7 @@ def main(argv=None):
         parser.add_option('-d', '--disabled', dest='disabled', action='store_true', default=False, help='''show disabled rows only.''')
         parser.add_option('-i', '--in-file', dest='infile', default='data/demo.xls', help='''testcases input file [default: data/demo.xls]''')
         parser.add_option('-r', '--run', dest='run', action='store_true', default=False, help='run one or [default:enabled] test cases')
-        parser.add_option('--dlf', dest='dlf', type='choice', choices=['show', 'check', 'set', 'bias'], help='''dlf state [show, check, set, bias]''')
+        parser.add_option('--dlf', dest='dlf', type='choice', choices=['show', 'check', 'set', 'setup'], help='''dlf state [show, check, set, setup]''')
         
         # set defaults
         # parser.set_defaults(infile="test.xls")
@@ -125,7 +125,7 @@ def main(argv=None):
         elif options.dlf == 'set':
             vsatdlf.dlf_set()
         # setup dlf.
-        elif options.dlf == 'bias':
+        elif options.dlf == 'setup':
             vsatdlf.dlf_setup()
         else:
             print 
