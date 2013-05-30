@@ -161,7 +161,7 @@ class Selftest:
                     break
 
         # show ngnms network tree.
-        #self.check(state = None, device = 'hub')
+        self.check(state = None, device = 'hub')
 
         # getting active VSAT.
         vsats = {}
