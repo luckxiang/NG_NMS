@@ -8,16 +8,24 @@ from vsat import console
 import re
 from itertools import izip
 from ConfigParser import SafeConfigParser
-from dlf.dlfserial import *
 import time
-import sys
+
+parser = SafeConfigParser()
+parser.read('configs/dlf.ini')
+serial = parser.getint('Connect', 'serial')
+
+print
+if serial:
+    from dlf.dlfserial import *
+    print 'status:\> connection over SERIAL!'
+else:
+    from dlf.dlftcp import *
+    print 'status:\> connection over TCP!'
 
 def change_dlf_ini(section = 'DefaultsChng', **channels):
         '''
         Changing DLF ini file parameters.
         '''
-        parser = SafeConfigParser()
-        parser.read('configs/dlf.ini')
         for channel, value in channels.items():
             print 'status:\> changing: %s = %s' % (channel, value)
             parser.set(section, channel, value)
@@ -147,9 +155,6 @@ def dlf_show():
     '''
     Show DLF ini file parameters.
     '''
-    parser = SafeConfigParser()
-    parser.read('configs/dlf.ini')
-
     for section_name in ['Connect', 'Action', 'DefaultsComp', 'DefaultsChng', 'DefaultsCnst']:
         print
         print '[%s]' % section_name
@@ -160,10 +165,7 @@ def dlf_check():
     '''
     Check DLF connection.
     '''
-    parser = SafeConfigParser()
-    parser.read('configs/dlf.ini')
-    
-    if parser.getint('Connect', 'serial'):
+    if serial:
         ser = serial.Serial()
         ser.baudrate = parser.getint('Connect', 'serial_baudrate')
         ser.port = parser.get('Connect', 'serial_port')

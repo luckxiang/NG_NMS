@@ -189,7 +189,7 @@ class Selftest:
             channels_list.append((vsat[-1], vsatname))
 
         '''JUST for testing'''
-#         # setting DLF device for each VSAT.
+        # setting DLF device for each VSAT.
 #         for vsatname in vsats.keys():
 #             vsat = vsats[vsatname]
 #             channel_name = vsat[-2]
@@ -200,7 +200,7 @@ class Selftest:
 #             print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
 #             print '-'*60
 #             vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
-# 
+#  
 #         sys.exit()
         '''END just for testing'''
         

@@ -9,6 +9,12 @@ from ConfigParser import SafeConfigParser
 import socket
 import sys
 
+parser = SafeConfigParser()
+parser.read('configs/dlf.ini')
+tcp_ip = parser.get('Connect', 'tcp_ip')
+tcp_port = parser.getint('Connect', 'tcp_port')
+server_address=(tcp_ip, tcp_port)
+
 class Dlf(object):
     '''
     DLF class: connect and setup device.
@@ -33,15 +39,11 @@ class Dlf(object):
         '''
         Testing serial communication
         '''
-        
-        server_address=('192.168.140.76', 1001)
-        parser = SafeConfigParser()
-        parser.read('../configs/dlf.ini')
-
         data = ''
+        print 'status:\> connection over TCP!'
         for section_name in ['DefaultsChng', 'DefaultsCnst']:
             for name, value in parser.items(section_name):
-                print name, value
+                #print name, value
                 buff = parser.get('ATT_Def', name).split(',')
                 value = int(value)
                 data1 = "%s%s%s" % (buff[0], self.DLF_Get_Att_Val(value/2), '0D')
@@ -57,8 +59,8 @@ class Dlf(object):
         
         try:
             # Sending data
-            print >> sys.stderr,'hex: %r' % binascii.hexlify(data)
-            print >> sys.stderr,'bin: %r' % data
+            #print >> sys.stderr,'hex: %r' % binascii.hexlify(data)
+            #print >> sys.stderr,'bin: %r' % data
             sock.sendall(data)
         finally:
             print >> sys.stderr,'status:\> done! -> closing socket'
@@ -68,11 +70,6 @@ class Dlf(object):
         '''
         Testing serial communication
         '''
-        
-        server_address=('192.168.140.76', 1001)
-        parser = SafeConfigParser()
-        parser.read('../configs/dlf.ini')
-
         data = ''
         temp = []
         for section_name in ['DefaultsComp']:
@@ -102,3 +99,4 @@ if __name__ == "__main__":
     
     data = Dlf()
     data.DLF_Set_Up()
+    data.DLF_Set_Defaults()
