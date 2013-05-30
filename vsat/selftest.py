@@ -161,7 +161,7 @@ class Selftest:
                     break
 
         # show ngnms network tree.
-        self.check(state = None, device = 'hub')
+        #self.check(state = None, device = 'hub')
 
         # getting active VSAT.
         vsats = {}
@@ -181,7 +181,29 @@ class Selftest:
         # Checking VSAT
         for vsatname in vsats.keys():
             self.vsat_status(None, vsatname)
+        
+        # all channels list:
+        channels_list = []
+        for vsatname in vsats.keys():
+            vsat = vsats[vsatname]
+            channels_list.append((vsat[-1], vsatname))
 
+        '''JUST for testing'''
+#         # setting DLF device for each VSAT.
+#         for vsatname in vsats.keys():
+#             vsat = vsats[vsatname]
+#             channel_name = vsat[-2]
+#             channel_number = vsat[-1]
+#             vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
+#             vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout) 
+#             print '-'*60
+#             print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
+#             print '-'*60
+#             vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
+# 
+#         sys.exit()
+        '''END just for testing'''
+        
         result_data = {}
         for state in states_keys:
             print 'H'*60
@@ -216,11 +238,11 @@ class Selftest:
                     channel_name = vsat[-2]
                     channel_number = vsat[-1]
                     vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
-                    vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout)
+                    vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout) 
                     print '-'*60
                     print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
                     print '-'*60
-                    vsatdlf.dlf_controller(channel_number, channel_name, **vsat_param)
+                    vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
                 
                 """ == START: Thread function definition=== """
                 def run_thread(*vsat_info):

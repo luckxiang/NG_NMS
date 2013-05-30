@@ -10,6 +10,7 @@ from itertools import izip
 from ConfigParser import SafeConfigParser
 from dlf.dlfserial import *
 import time
+import sys
 
 def change_dlf_ini(section = 'DefaultsChng', **channels):
         '''
@@ -55,13 +56,14 @@ def get_vsat_channels(vsat_ip, vsat_port, timeout):
     # return values for available channels.
     return channels
 
-def dlf_controller(channel_number, channel_name, **vsat):
+def dlf_controller(channel_number, channel_name, *channels, **vsat):
     '''
     DLF controller.
     '''
     
     # cycle until get needed channel.
     value = 10
+    channel_number = int(channel_number)
     while True:
         print
         # getting all vsat channels.
@@ -82,12 +84,27 @@ def dlf_controller(channel_number, channel_name, **vsat):
         # getting only trf channels
         trf_channels = []
         for channel in all_channels:
-#             if 'TRF' in channel[0]:
-#                 trf_channels.append(channel[1])
-            trf_channels.append(channel[1])
-
+            if 'TRF' in channel[0]:
+                trf_channels.append(channel[1])
+        
+        try:
+            for ch_num, vsatname in channels:
+                trf_channels[int(ch_num)]
+        except Exception as e:
+            print 'status:\> error:',e
+            print 'status:\> VSAT: [%s]' % vsatname, 'with [channel_number = %s]' % ch_num, 'exceeded maximum number of TRF channels: [0..%s]' % (len(trf_channels) - 1)
+            print
+            for line in all_channels:
+                if 'TRF' in line[0]:
+                    print 'status:\> --- TRF ---:', line
+                else:
+                    print 'status:\>', line
+            sys.exit()
+            
+        
         # handle first channel.
         this_ch = float(trf_channels[channel_number])
+        
         print 'status:\> trf_channels:', trf_channels, 'ref_ch:', ref_ch 
         
         if channel_number == 0:
