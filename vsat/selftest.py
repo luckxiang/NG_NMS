@@ -10,6 +10,8 @@ from string import upper
 from ngnms import biaspoint
 from threading import Thread
 import os.path
+from dlf import vsatdlf
+from itertools import izip, count
 
 class Selftest:
     '''
@@ -170,7 +172,8 @@ class Selftest:
             tries_timeout = int(vsat_data.get('Tries timeout'))
             number_of_tries = int(vsat_data.get('Number of tries'))
             vsatname = vsat_data.get('Name')
-            vsats[vsat_data.get('Name')] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname) 
+            vsat_channel = vsat_data.get('Channel Name')
+            vsats[vsat_data.get('Name')] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname, vsat_channel) 
 
         # Checking VSAT
         for vsatname in vsats.keys():
@@ -203,6 +206,14 @@ class Selftest:
                 testcase = cases[state][sheet][row]
                 ngnms = biaspoint.Ngnms(**ngnms_info)
                 changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
+                
+                # setting DLF device.
+                for channel_number, vsatname in izip(count(0), vsats.keys()):
+                    vsat = vsats[vsatname]
+                    channel_name = vsat[-1]
+                    vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
+                    vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout)
+                    vsatdlf.dlf_controller(channel_number, channel_name, **vsat_param)
                 
                 """ == START: Thread function definition=== """
                 def run_thread(*vsat_info):
