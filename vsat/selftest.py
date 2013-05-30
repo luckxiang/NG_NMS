@@ -12,6 +12,7 @@ from threading import Thread
 import os.path
 from dlf import vsatdlf
 from itertools import izip, count
+import sys
 
 class Selftest:
     '''
@@ -213,6 +214,9 @@ class Selftest:
                     channel_name = vsat[-1]
                     vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
                     vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout)
+                    print '-'*60
+                    print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
+                    print '-'*60
                     vsatdlf.dlf_controller(channel_number, channel_name, **vsat_param)
                 
                 """ == START: Thread function definition=== """

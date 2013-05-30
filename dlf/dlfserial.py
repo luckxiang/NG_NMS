@@ -46,14 +46,14 @@ class Dlf(object):
             for name, value in parser.items(section_name):
                 buff = parser.get('ATT_Def', name).split(',')
                 value = int(value)
-                print name, '=', value,
+                #print name, '=', value,
                 data = "%s%s%s" % (buff[0], self.DLF_Get_Att_Val(value/2), '0D')
-                print data,
+                #print data,
                 ser.write(binascii.unhexlify(data))
                 data = "%s%s%s" % (buff[1], self.DLF_Get_Att_Val(value-(value/2)), '0D')
-                print data
+                #print data
                 ser.write(binascii.unhexlify(data))
-        print "400D"
+        #print "400D"
         ser.write(binascii.unhexlify("400D")) 
         ser.close()
         
