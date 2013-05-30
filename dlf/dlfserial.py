@@ -32,29 +32,56 @@ class Dlf(object):
         '''
         Testing serial communication
         '''
-        ser = serial.Serial()
-        ser.baudrate = 19200
-        ser.port = "COM1"
-        print 'status:\> sending data over serial:', ser.port
-        ser.open()
         
         parser = SafeConfigParser()
-        parser.read('../configs/dlf.ini')
+        parser.read('configs/dlf.ini')
+        
+        ser = serial.Serial()
+        ser.baudrate = parser.getint('Connect', 'serial_baudrate')
+        ser.port = parser.get('Connect', 'serial_port')
+        print 'status:\> sending data over serial:', ser.port
+        ser.open()
 
         for section_name in ['DefaultsChng', 'DefaultsCnst']:
             for name, value in parser.items(section_name):
                 buff = parser.get('ATT_Def', name).split(',')
                 value = int(value)
                 data = "%s%s%s" % (buff[0], self.DLF_Get_Att_Val(value/2), '0D')
-                #print data
+                print data
                 ser.write(binascii.unhexlify(data))
                 data = "%s%s%s" % (buff[1], self.DLF_Get_Att_Val(value-(value/2)), '0D')
-                #print data
+                print data
                 ser.write(binascii.unhexlify(data))
+        print "400D"
         ser.write(binascii.unhexlify("400D")) 
+        ser.close()
+        
+    def DLF_Set_Up(self):
+        '''
+        Testing serial communication
+        '''
+        
+        parser = SafeConfigParser()
+        parser.read('configs/dlf.ini')
+        
+        ser = serial.Serial()
+        ser.baudrate = parser.getint('Connect', 'serial_baudrate')
+        ser.port = parser.get('Connect', 'serial_port')
+        print 'status:\> sending data over serial:', ser.port
+        ser.open()
+
+        for section_name in ['DefaultsComp']:
+            for name, value in parser.items(section_name):
+                buff = parser.get('ATT_Def', name + value).split(',')
+                buff = ''.join(buff)
+                print name, '=', value, '->', buff
+                data = binascii.unhexlify(buff)
+                ser.write(data)
+                ser.write(data)
+                ser.write(binascii.unhexlify('400D'))
         ser.close()
 
 if __name__ == "__main__":
     
     data = Dlf()
-    data.DLF_Set_Defaults()
+    data.DLF_Set_Up()

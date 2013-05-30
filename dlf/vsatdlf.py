@@ -16,11 +16,11 @@ def change_dlf_ini(section = 'DefaultsChng', **channels):
         Changing DLF ini file parameters.
         '''
         parser = SafeConfigParser()
-        parser.read('../configs/dlf.ini')
+        parser.read('configs/dlf.ini')
         for channel, value in channels.items():
             print 'status:\> changing: %s = %s' % (channel, value)
             parser.set(section, channel, value)
-        with open('../configs/dlf.ini', 'w') as fp:
+        with open('configs/dlf.ini', 'w') as fp:
             parser.write(fp)
 
 def get_vsat_channels(vsat_ip, vsat_port, timeout):
@@ -125,16 +125,72 @@ def dlf_controller(channel_number, channel_name, **vsat):
         data.DLF_Set_Defaults()
         time.sleep(20)
         
+def dlf_show():
+    '''
+    Show DLF ini file parameters.
+    '''
+    parser = SafeConfigParser()
+    parser.read('configs/dlf.ini')
+
+    for section_name in ['Connect', 'Action', 'DefaultsComp', 'DefaultsChng', 'DefaultsCnst']:
+        print
+        print '[%s]' % section_name
+        for name, value in parser.items(section_name):
+            print name, '=', value
+            
+def dlf_check():
+    '''
+    Check DLF connection.
+    '''
+    parser = SafeConfigParser()
+    parser.read('configs/dlf.ini')
+    
+    if parser.getint('Connect', 'serial'):
+        ser = serial.Serial()
+        ser.baudrate = parser.getint('Connect', 'serial_baudrate')
+        ser.port = parser.get('Connect', 'serial_port')
+        ser.open()
+        print
+        print 'status:\>', ser
+        print 'status:\> checking serial port:', ser.port
+        print 'status:\> port open:', ser.isOpen()
+        print 'status:\> closing port:', ser.port
+        ser.close()
+        print 'status:\> port open:', ser.isOpen()
+    else:
+        print
+        print 'TODO: tcp connection'
+
+
+def dlf_set():
+    '''
+    Set DLF Defaults.
+    '''
+    print 'status:\> setting DLF defaults.'
+    data = Dlf()
+    data.DLF_Set_Defaults()
+    print 'status:\> finished!'
+
+def dlf_setup():
+    '''
+    Set DLF Defaults.
+    '''
+    print
+    print 'status:\> setting DLF defaults.'
+    data = Dlf()
+    data.DLF_Set_Up()
+    print 'status:\> finished!'
 
 if __name__ == '__main__':
     '''
     Main program.
     '''
-    vsat = dict(vsat_ip = '192.168.140.76', vsat_port = 1014, timeout = 3)
+#     vsat = dict(vsat_ip = '192.168.140.76', vsat_port = 1014, timeout = 3)
+#     
+#     for channel_number in range(3):
+#         channel_name = 'INB4'
+#         dlf_controller(channel_number, channel_name, **vsat)
     
-    for channel_number in range(3):
-        channel_name = 'INB4'
-        dlf_controller(channel_number, channel_name, **vsat)
-        
+    dlf_show()
     pass
 

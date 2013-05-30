@@ -19,6 +19,7 @@ import os
 from vsat import selftest
 from optparse import OptionParser
 from string import upper
+from dlf import vsatdlf
 
 __all__ = []
 __version__ = 0.1
@@ -57,6 +58,7 @@ def main(argv=None):
         parser.add_option('-d', '--disabled', dest='disabled', action='store_true', default=False, help='''show disabled rows only.''')
         parser.add_option('-i', '--in-file', dest='infile', default='data/demo.xls', help='''testcases input file [default: data/demo.xls]''')
         parser.add_option('-r', '--run', dest='run', action='store_true', default=False, help='run one or [default:enabled] test cases')
+        parser.add_option('--dlf', dest='dlf', type='choice', choices=['show', 'check', 'set', 'bias'], help='''dlf state [show, check, set, bias]''')
         
         # set defaults
         # parser.set_defaults(infile="test.xls")
@@ -113,6 +115,18 @@ def main(argv=None):
         # run tests.
         elif options.run:
             selftest.run(xlfile, states, options.name)
+        # show dlf ini file parameters.
+        elif options.dlf == 'show':
+            vsatdlf.dlf_show()
+        # check dlf.
+        elif options.dlf == 'check':
+            vsatdlf.dlf_check()
+        # set dlf.
+        elif options.dlf == 'set':
+            vsatdlf.dlf_set()
+        # setup dlf.
+        elif options.dlf == 'bias':
+            vsatdlf.dlf_setup()
         else:
             print 
             print "Help: %s -h|--help" % program_name
