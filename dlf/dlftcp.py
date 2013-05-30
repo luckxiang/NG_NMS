@@ -64,7 +64,41 @@ class Dlf(object):
             print >> sys.stderr,'status:\> done! -> closing socket'
         sock.close()
 
+    def DLF_Set_Up(self):
+        '''
+        Testing serial communication
+        '''
+        
+        server_address=('192.168.140.76', 1001)
+        parser = SafeConfigParser()
+        parser.read('../configs/dlf.ini')
+
+        data = ''
+        temp = []
+        for section_name in ['DefaultsComp']:
+            for name, value in parser.items(section_name):
+                print name, '=', value
+                buff = parser.get('ATT_Def', name + value).split(',')
+                buff = ''.join(buff)
+                temp.append(buff)
+        temp = ''.join(temp)
+        data = binascii.unhexlify(temp)
+
+        #CreateaTCP/IPsocket
+        sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(server_address)
+        
+        try:
+            # Sending data
+            print >> sys.stderr,'hex: %r' % binascii.hexlify(data)
+            print >> sys.stderr,'bin: %r' % data
+            sock.sendall(data)
+            sock.sendall(data)
+        finally:
+            print >> sys.stderr,'status:\> done! -> closing socket'
+        sock.close()
+
 if __name__ == "__main__":
     
     data = Dlf()
-    data.DLF_Set_Defaults()
+    data.DLF_Set_Up()
