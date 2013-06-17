@@ -97,20 +97,9 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
                 trf_channels.append(channel[1])
                 trf_channels_param.append(channel[0])
 
-        try:
-            for ch_num, vsatname in channels:
-                trf_channels[int(ch_num)]
-        except Exception as e:
-            print 'status:\> error:',e
-            print 'status:\> VSAT: [%s]' % vsatname, 'with [channel_number = %s]' % ch_num, 'exceeded maximum number of TRF channels: [0..%s]' % (len(trf_channels) - 1)
-            print
-            for line in all_channels:
-                if 'TRF' in line[0]:
-                    print 'status:\> --- TRF ---:', line
-                else:
-                    print 'status:\>', line
-            sys.exit()
-            
+        # Channel number is set to last trf channel.
+        if channel_number > len(trf_channels):
+            channel_number = len(trf_channels) - 1
         
         # handle first channel.
         this_ch = float(trf_channels[channel_number])
@@ -118,30 +107,30 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
         print 'status:\> trf_channels:', trf_channels, 'ref_ch:', ref_ch 
         
         if channel_number == 0:
-            value += int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)) - 3
+            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2 + 2
             print 'status:\> first channel:', channel_number
             next_ch = float(trf_channels[channel_number + 1])
             if ref_ch > this_ch and ref_ch < next_ch:
                 print 'status:\> finished!'
-                return dict(vsat_port = trf_channels_param[channel_number])
+                return trf_channels_param[channel_number]
         
         # handle bounded channels.
         if channel_number != 0 and channel_number != len(trf_channels)-1:
-            value += int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)) - 1
+            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2 + 2
             print 'status:\> bounded channel:', channel_number
             next_ch = float(trf_channels[channel_number + 1])
             if ref_ch > this_ch and ref_ch < next_ch:
                 print 'status:\> finished!'
-                return dict(vsat_port = trf_channels_param[channel_number])
+                return trf_channels_param[channel_number]
         
         # handle last channel.
         if channel_number == len(trf_channels)-1:
-            value += int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)) + 1
+            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2 + 2
             print 'status:\> last channel:', channel_number
             if ref_ch > this_ch:
                 print 'status:\> finished!'
-                return dict(vsat_port = trf_channels_param[channel_number])
-        
+                return trf_channels_param[channel_number]
+
         print
         # changing ini file values.
         ini_channels = {}
@@ -151,7 +140,9 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
         # send data to DLF.
         data = Dlf()
         data.DLF_Set_Defaults()
-        time.sleep(20)
+        seconds = 20
+        print 'status:\> wait [%d] sec' % seconds
+        time.sleep(seconds)
         
 def dlf_show():
     '''

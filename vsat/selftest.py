@@ -344,7 +344,7 @@ class Selftest:
                 tvsat = {}
                 for vsatname in vsats.keys():
                     print "start:\> thread for vsat: %s" % vsatname
-                    tvsat[vsatname] = Thread(target = run_thread, args = vsats.get(vsatname))
+                    tvsat[vsatname] = Thread(target = run_thread, args = vsats.get(vsatname)[:-2])
                 # start threads.
                 for vsatname in vsats.keys():
                     tvsat[vsatname].start()
@@ -380,10 +380,10 @@ class Selftest:
         # setting param 34 and restarting board.
         if changed:
             for vsatname in vsats.keys():
-                tvsat[vsatname] = Thread(target = init_vsat, args = vsats.get(vsatname))
+                tvsat[vsatname] = Thread(target = init_vsat, args = vsats.get(vsatname)[:-2])
             for vsatname in vsats.keys():
                 tvsat[vsatname].start()
-                time.sleep(0.3)
+                time.sleep(1)
             for vsatname in vsats.keys():
                 tvsat[vsatname].join()
                 
