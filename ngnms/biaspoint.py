@@ -255,7 +255,7 @@ class Ngnms:
         # put data to NGNMS
         try:
             url = '{url}/{id}'.format(**folder)
-            self.put_config(url, new_ngnms_data)
+            #self.put_config(url, new_ngnms_data)
         except Exception as e:
             print e
         

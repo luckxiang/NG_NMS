@@ -242,7 +242,8 @@ class Selftest:
                     print '-'*60
                     print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
                     print '-'*60
-                    vsat_channels.update(vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param))
+                    vsat_channels[vsat_port]=vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
+                print vsat_channels
 
                 """ == START: Thread function definition=== """
                 def run_thread(*vsat_info):
@@ -317,7 +318,8 @@ class Selftest:
                     for key in header[sheet][0]:
                         # Adding info into Channel column.
                         if key == 'Channel':
-                            cases[state][sheet][row][key] = vsat_channels[vsat_port]
+                            print 'status:\> vsat port, channnel:', vsat_port, vsat_channels.get(vsat_port)
+                            cases[state][sheet][row][key] = vsat_channels.get(vsat_port)
                         # print step to screen.
                         time.sleep(0.1)
                         if key in output.keys():
