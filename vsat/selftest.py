@@ -63,8 +63,7 @@ class Selftest:
             break
         ngnms = biaspoint.Ngnms(**ngnms_info)
         ngnms.check_ngnms()
-        
-        
+
     def vsat_status(self, state = None, vsatname = None):
         '''
         Check vsat.
@@ -181,29 +180,29 @@ class Selftest:
         # Checking VSAT
         for vsatname in vsats.keys():
             self.vsat_status(None, vsatname)
-        
+
         # all channels list:
         channels_list = []
         for vsatname in vsats.keys():
             vsat = vsats[vsatname]
             channels_list.append((vsat[-1], vsatname))
 
-        '''JUST for testing'''
-        # setting DLF device for each VSAT.
-#         for vsatname in vsats.keys():
-#             vsat = vsats[vsatname]
-#             channel_name = vsat[-2]
-#             channel_number = vsat[-1]
-#             vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
-#             vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout) 
-#             print '-'*60
-#             print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
-#             print '-'*60
-#             vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
-#  
-#         sys.exit()
-        '''END just for testing'''
-        
+#         '''JUST for testing'''
+        #setting DLF device for each VSAT.
+#          for vsatname in vsats.keys():
+#              vsat = vsats[vsatname]
+#              channel_name = vsat[-2]
+#              channel_number = vsat[-1]
+#              vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
+#              vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout) 
+#              print '-'*60
+#              print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
+#              print '-'*60
+#              vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
+#    
+#          sys.exit()
+#         '''END just for testing'''
+
         result_data = {}
         for state in states_keys:
             print 'H'*60
@@ -233,6 +232,7 @@ class Selftest:
                 changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
                 
                 # setting DLF device for each VSAT.
+                vsat_channels = {}
                 for vsatname in vsats.keys():
                     vsat = vsats[vsatname]
                     channel_name = vsat[-2]
@@ -242,8 +242,8 @@ class Selftest:
                     print '-'*60
                     print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
                     print '-'*60
-                    vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
-                
+                    vsat_channels.update(vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param))
+
                 """ == START: Thread function definition=== """
                 def run_thread(*vsat_info):
                     '''
@@ -276,7 +276,7 @@ class Selftest:
                         vsat.grab(command, stop_pattern)
                         self.show_time_counter(60)
     
-                    for nextstep in xrange(1,number_of_tries + 1):
+                    for nextstep in xrange(1, number_of_tries + 1):
                         print vsatname, '- step:\> nextstep -> %d' % nextstep
                         # connect to vsat.
                         connected = vsat.connect()
@@ -311,9 +311,13 @@ class Selftest:
                         print vsatname, '- info:\> Exceeded [%s] number of tries per test case!' % number_of_tries
                         return
                     print
+                    # printing ready data to output
                     print '-'*25,'TEST: %s' % current_case, '-'*24
                     result_data[state][row] = cases[state][sheet][row]
                     for key in header[sheet][0]:
+                        # Adding info into Channel column.
+                        if key == 'Channel':
+                            cases[state][sheet][row][key] = vsat_channels[vsat_port]
                         # print step to screen.
                         time.sleep(0.1)
                         if key in output.keys():
@@ -418,7 +422,7 @@ class Selftest:
                 style = styleDisabled
             for row in result_data[state].keys():
                 for cell in header[32:]:
-                        wb.get_sheet(1).write(row, header.index(cell), result_data[state][row].get(cell), style)
+                    wb.get_sheet(1).write(row, header.index(cell), result_data[state][row].get(cell), style)
 
         # Check if file is closed.
         while True:

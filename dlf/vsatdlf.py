@@ -78,7 +78,7 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
         all_channels = get_vsat_channels(**vsat)
         # getting referince value.
         ref_ch = float(all_channels[0][1])
-        
+
         # cycle until channel set.
         while not ref_ch:
             # getting all vsat channels.
@@ -91,10 +91,12 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
         
         # getting only trf channels
         trf_channels = []
+        trf_channels_param = []
         for channel in all_channels:
             if 'TRF' in channel[0]:
                 trf_channels.append(channel[1])
-        
+                trf_channels_param.append(channel[0])
+
         try:
             for ch_num, vsatname in channels:
                 trf_channels[int(ch_num)]
@@ -121,7 +123,7 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
             next_ch = float(trf_channels[channel_number + 1])
             if ref_ch > this_ch and ref_ch < next_ch:
                 print 'status:\> finished!'
-                break
+                return dict(vsat_port = trf_channels_param[channel_number])
         
         # handle bounded channels.
         if channel_number != 0 and channel_number != len(trf_channels)-1:
@@ -130,7 +132,7 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
             next_ch = float(trf_channels[channel_number + 1])
             if ref_ch > this_ch and ref_ch < next_ch:
                 print 'status:\> finished!'
-                break
+                return dict(vsat_port = trf_channels_param[channel_number])
         
         # handle last channel.
         if channel_number == len(trf_channels)-1:
@@ -138,7 +140,7 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
             print 'status:\> last channel:', channel_number
             if ref_ch > this_ch:
                 print 'status:\> finished!'
-                break
+                return dict(vsat_port = trf_channels_param[channel_number])
         
         print
         # changing ini file values.
@@ -179,7 +181,7 @@ def dlf_check():
         print 'status:\> port open:', ser.isOpen()
     else:
         print
-        print 'TODO: tcp connection'
+
 
 
 def dlf_set():
@@ -210,7 +212,6 @@ if __name__ == '__main__':
 #     for channel_number in range(3):
 #         channel_name = 'INB4'
 #         dlf_controller(channel_number, channel_name, **vsat)
-    
     dlf_show()
     pass
 
