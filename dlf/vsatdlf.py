@@ -17,10 +17,8 @@ serial = parser.getint('Connect', 'serial')
 print
 if serial:
     from dlf.dlfserial import *
-    print 'status:\> connection over SERIAL!'
 else:
     from dlf.dlftcp import *
-    print 'status:\> connection over TCP!'
 
 def change_dlf_ini(section = 'DefaultsChng', **channels):
         '''
@@ -107,25 +105,27 @@ def dlf_controller(channel_number, channel_name, *channels, **vsat):
         print 'status:\> trf_channels:', trf_channels, 'ref_ch:', ref_ch 
         
         if channel_number == 0:
-            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2 + 2
+            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2
             print 'status:\> first channel:', channel_number
             next_ch = float(trf_channels[channel_number + 1])
-            if ref_ch > this_ch and ref_ch < next_ch:
+            stop_ch_db = (next_ch - this_ch)/2.0 + this_ch
+            if ref_ch > this_ch and ref_ch < next_ch and ref_ch <= stop_ch_db:
                 print 'status:\> finished!'
                 return trf_channels_param[channel_number]
         
         # handle bounded channels.
         if channel_number != 0 and channel_number != len(trf_channels)-1:
-            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2 + 2
+            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2
             print 'status:\> bounded channel:', channel_number
             next_ch = float(trf_channels[channel_number + 1])
-            if ref_ch > this_ch and ref_ch < next_ch:
+            stop_ch_db = (next_ch - this_ch)/2.0 + this_ch
+            if ref_ch > this_ch and ref_ch < next_ch and ref_ch <= stop_ch_db:
                 print 'status:\> finished!'
                 return trf_channels_param[channel_number]
         
         # handle last channel.
         if channel_number == len(trf_channels)-1:
-            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2 + 2
+            value += (int(round(float(ref_ch), 0)) - int(round(float(this_ch), 0)))/2
             print 'status:\> last channel:', channel_number
             if ref_ch > this_ch:
                 print 'status:\> finished!'
