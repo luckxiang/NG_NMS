@@ -18,7 +18,7 @@ class Selftest:
     '''
     Run selftest mode for VSAT.
     '''
-    
+
     data = None
 
     def __init__(self,xlfile):
