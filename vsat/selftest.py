@@ -220,6 +220,9 @@ class Selftest:
                 ngnms = biaspoint.Ngnms(**ngnms_info)
                 changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
                 
+                # checking vsat's bb up.
+                # TODO: check_vsat_bb.
+                
                 # setting DLF device for each VSAT.
                 vsat_channels = {}
                 for vsatname in vsats.keys():
@@ -327,7 +330,7 @@ class Selftest:
                     output_file = os.path.join(output_dir, output_xlfile)
                     if os.path.isfile(output_file):
                         os.remove(output_file)
-                    logging.debug('- info:\> Saving result to [%s] excel file!' % output_file)
+                    logging.debug('info:\> Saving result to [%s] excel file!' % output_file)
                     self.save_row_to_excel(header[sheet][0], result_data, output_file)
                 """ === END: Thread function ==="""
 
@@ -335,7 +338,7 @@ class Selftest:
                 tvsat = {}
                 for vsatname in vsats.keys():
                     print "start:\> thread for vsat: %s" % vsatname
-                    tvsat[vsatname] = Thread(target = run_thread, args = vsats.get(vsatname)[:-2])
+                    tvsat[vsatname] = Thread(name = vsatname, target = run_thread, args = vsats.get(vsatname)[:-2])
                 # start threads.
                 for vsatname in vsats.keys():
                     tvsat[vsatname].start()
@@ -348,27 +351,29 @@ class Selftest:
         print 'step:\> changing to initial working point' 
         changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase0)
 
+        # restoring vsats SR from testcase0 (default).
         def init_vsat(*vsat_info):
             '''
-            Set vsat SR to default
+            Set vsat SR to default, testcase0
             '''
             vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
             vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
-            print vsatname, '- status: default vsat symbol rate'
+            logging.debug('status:\> default vsat symbol rate')
             # changing 'rsp param set param 34' <ob_symbol_rate>
             command = 'rsp param set param 34 %s' % testcase0.get('OB symbol rate')
             stop_pattern = '>'
-            print vsatname, '- info:\> %s' % command
+            logging.debug('info:\> %s' % command)
             vsat.grab(command, stop_pattern)
             # wait ...
             self.show_time_counter(5)
             # rebooting vsat..
             command = 'rsp board reset board'
-            print vsatname, '- info:\> %s' % command
+            logging.debug('info:\> %s' % command)
             stop_pattern = '>'
             vsat.grab(command, stop_pattern)
 
-        # setting param 34 and restarting board.
+        # setting param 34 and restarting board
+        # using function: init_vsat from above.
         if changed:
             for vsatname in vsats.keys():
                 tvsat[vsatname] = Thread(name = vsatname, target = init_vsat, args = vsats.get(vsatname)[:-2])
