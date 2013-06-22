@@ -13,6 +13,11 @@ import os.path
 from dlf import vsatdlf
 from itertools import izip, count
 import sys
+import logging
+
+FORMAT = '%(asctime)s (%(threadName)-8s) %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT,)
+
 
 class Selftest:
     '''
@@ -236,42 +241,42 @@ class Selftest:
                     '''
                     # getting vsat info.
                     vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
-                    print vsatname, '- info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout)
+                    logging.debug('info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout))
                     vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
     
                     # waiting
-                    print vsatname, '- info:\> waiting vsat up ...'
+                    logging.debug('info:\> waiting vsat up ...')
                     self.show_time_counter(20)
     
                     # setting param 34 and restarting board.
                     if changed:
-                        print vsatname, '- status: OB symbol rate changed, waiting vsat up ...'
+                        logging.debug('status: OB symbol rate changed, waiting vsat up ...')
     
                         # changing 'rsp param set param 34' <ob_symbol_rate>
                         command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
                         stop_pattern = '>'
-                        print vsatname, '- info:\> %s' % command
+                        logging.debug('info:\> %s' % command)
                         vsat.grab(command, stop_pattern)
                         # wait ...
                         self.show_time_counter(10)
                         # rebooting vsat..
                         command = 'rsp board reset board'
-                        print vsatname, '- info:\> %s' % command
+                        logging.debug('info:\> %s' % command)
                         stop_pattern = '>'
                         vsat.grab(command, stop_pattern)
                         self.show_time_counter(60)
     
                     for nextstep in xrange(1, number_of_tries + 1):
-                        print vsatname, '- step:\> nextstep -> %d' % nextstep
+                        logging.debug('step:\> nextstep -> %d' % nextstep)
                         # connect to vsat.
                         connected = vsat.connect()
                         link_status, message = vsat.check_bb()
-                        print vsatname, '- status: %s' % message
+                        logging.debug('status: %s' % message)
                         if connected and link_status:
                             duration = int(cases[state][sheet][row].get('Test duration'))
                             for ftptype in ['inbound', 'outbound']:
                                 vsat.ftp_selftest(ftptype, duration)
-                                print vsatname, '- step:\> %s -> start!' % ftptype
+                                logging.debug('step:\> %s -> start!' % ftptype)
                                 self.show_time_counter(duration/2)
                                 output = vsat.get_stats()
                                 self.show_time_counter((duration/2) + 5)
@@ -287,42 +292,42 @@ class Selftest:
                                     output['Number of transmitted OB packets'] = nr_of_transmited_ob_pckts
                                     output['Max IB bit rate [kbps]'] = max_ob_bit_rate
                                     output['VSAT CPU [IB] [OB]'] = '[%s]/[%s]' % (cpu_ib.strip('$'), output.get('VSAT CPU [IB] [OB]').strip('$'))
-                                print vsatname, '- status: %s -> done!' % ftptype
+                                logging.debug('status: %s -> done!' % ftptype)
                             break
                         else:
-                            print vsatname, '- info:\> VSAT not READY!'
+                            logging.debug('info:\> VSAT not READY!')
                             self.show_time_counter(tries_timeout)
                     else:
-                        print vsatname, '- info:\> Exceeded [%s] number of tries per test case!' % number_of_tries
+                        logging.debug('info:\> Exceeded [%s] number of tries per test case!' % number_of_tries)
                         return
-                    print
+                    logging.debug('')
                     # printing ready data to output
-                    print '-'*25,'TEST: %s' % current_case, '-'*24
+                    logging.debug('-'*25,'TEST: %s' % current_case, '-'*24)
                     result_data[state][row] = cases[state][sheet][row]
                     for key in header[sheet][0]:
                         # Adding info into Channel column.
                         if key == 'Channel':
-                            print 'status:\> vsat port, channnel:', vsat_port, vsat_channels.get(vsat_port)
+                            logging.debug('status:\> vsat port, channnel:', vsat_port, vsat_channels.get(vsat_port))
                             cases[state][sheet][row][key] = vsat_channels.get(vsat_port)
                         # print step to screen.
                         time.sleep(0.1)
                         if key in output.keys():
                             cases[state][sheet][row][key] = output[key]
                         if key == 'Max IB bit rate [kbps]':
-                            print
-                            print '-'*25,'OUTPUT: %s' % current_case, '-'*24
-                            print
-                        print '{0:38} = {1:30}'.format(key, str(cases[state][sheet][row][key]))
-                    print
-                    print '-'*60
-                    print
+                            logging.debug('')
+                            logging.debug('-'*25,'OUTPUT: %s' % current_case, '-'*24)
+                            logging.debug('')
+                        logging.debug('{0:38} = {1:30}'.format(key, str(cases[state][sheet][row][key])))
+                    logging.debug('')
+                    logging.debug('-'*60)
+                    logging.debug('')
                     # saving data to excel file.
                     output_xlfile = '%s_output.xls' % vsatname.replace(' ', '_')
                     output_dir = 'data/output'
                     output_file = os.path.join(output_dir, output_xlfile)
                     if os.path.isfile(output_file):
                         os.remove(output_file)
-                    print vsatname, '- info:\> Saving result to [%s] excel file!' % output_file
+                    logging.debug('- info:\> Saving result to [%s] excel file!' % output_file)
                     self.save_row_to_excel(header[sheet][0], result_data, output_file)
                 """ === END: Thread function ==="""
 
@@ -366,7 +371,7 @@ class Selftest:
         # setting param 34 and restarting board.
         if changed:
             for vsatname in vsats.keys():
-                tvsat[vsatname] = Thread(target = init_vsat, args = vsats.get(vsatname)[:-2])
+                tvsat[vsatname] = Thread(name = vsatname, target = init_vsat, args = vsats.get(vsatname)[:-2])
             for vsatname in vsats.keys():
                 tvsat[vsatname].start()
                 time.sleep(1)
