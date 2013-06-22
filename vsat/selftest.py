@@ -221,8 +221,79 @@ class Selftest:
                 changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
                 
                 # checking vsat's bb up.
-                # TODO: check_vsat_bb.
-                
+                def check_vsat_bb(*vsat_info):
+                    '''
+                    Setting vsat bb, and SR, reset board if needed.
+                    '''
+                    # getting vsat info.
+                    vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
+                    logging.debug('info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout))
+                    vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
+                    # waiting
+                    logging.debug('info:\> waiting vsat up ...')
+                    self.show_time_counter(20)
+    
+                    # setting param 34 and restarting board.
+                    if changed:
+                        logging.debug('status: OB symbol rate changed, waiting vsat up ...')
+    
+                        # changing 'rsp param set param 34' <ob_symbol_rate>
+                        command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
+                        stop_pattern = '>'
+                        logging.debug('info:\> %s' % command)
+                        vsat.grab(command, stop_pattern)
+                        # wait ...
+                        self.show_time_counter(10)
+                        # rebooting vsat..
+                        command = 'rsp board reset board'
+                        logging.debug('info:\> %s' % command)
+                        stop_pattern = '>'
+                        vsat.grab(command, stop_pattern)
+                        wait_time = 60
+                        self.show_time_counter(wait_time)
+                    
+                    # checking vsat_bb.
+                    for nextstep in xrange(1, number_of_tries + 1):
+                        logging.debug('step:\> nextstep -> %d' % nextstep)
+                        # connect to vsat.
+                        connected = vsat.connect()
+                        link_status, message = vsat.check_bb()
+                        logging.debug('status: %s' % message)
+                        
+                        # rebooting vsat if tried half number of tries.
+                        if nextstep == (number_of_tries + 1)/2:
+                            # rebooting vsat..
+                            command = 'rsp board reset board'
+                            logging.debug('info:\> %s' % command)
+                            stop_pattern = '>'
+                            vsat.grab(command, stop_pattern)
+                            wait_time = 60
+                            self.show_time_counter(wait_time)
+                            
+                        # checking if VSAT is ready: bb link up.
+                        if connected and link_status:
+                            logging.debug('status:\> VSAT Ready!')
+                            break
+                        else:
+                            logging.debug('info:\> VSAT not READY!')
+                            self.show_time_counter(tries_timeout)
+                    else:
+                        logging.debug('info:\> Exceeded [%s] number of tries per test case!' % number_of_tries)
+                        sys.exit()
+
+                # create threads for check_vsat_bb.
+                th_vsat = {}
+                for vsatname in vsats.keys():
+                    print "start:\> thread for vsat: %s" % vsatname
+                    th_vsat[vsatname] = Thread(name = vsatname, target = check_vsat_bb, args = vsats.get(vsatname)[:-2])
+                # start threads.
+                for vsatname in vsats.keys():
+                    th_vsat[vsatname].start()
+                    time.sleep(0.3)
+                # join threads with main program.
+                for vsatname in vsats.keys():
+                    th_vsat[vsatname].join()
+                                                        
                 # setting DLF device for each VSAT.
                 vsat_channels = {}
                 for vsatname in vsats.keys():
@@ -246,29 +317,7 @@ class Selftest:
                     vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
                     logging.debug('info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout))
                     vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
-    
-                    # waiting
-                    logging.debug('info:\> waiting vsat up ...')
-                    self.show_time_counter(20)
-    
-                    # setting param 34 and restarting board.
-                    if changed:
-                        logging.debug('status: OB symbol rate changed, waiting vsat up ...')
-    
-                        # changing 'rsp param set param 34' <ob_symbol_rate>
-                        command = 'rsp param set param 34 %s' % testcase.get('OB symbol rate')
-                        stop_pattern = '>'
-                        logging.debug('info:\> %s' % command)
-                        vsat.grab(command, stop_pattern)
-                        # wait ...
-                        self.show_time_counter(10)
-                        # rebooting vsat..
-                        command = 'rsp board reset board'
-                        logging.debug('info:\> %s' % command)
-                        stop_pattern = '>'
-                        vsat.grab(command, stop_pattern)
-                        self.show_time_counter(60)
-    
+   
                     for nextstep in xrange(1, number_of_tries + 1):
                         logging.debug('step:\> nextstep -> %d' % nextstep)
                         # connect to vsat.
@@ -334,7 +383,7 @@ class Selftest:
                     self.save_row_to_excel(header[sheet][0], result_data, output_file)
                 """ === END: Thread function ==="""
 
-                # create threads.
+                # create threads for run_thread.
                 tvsat = {}
                 for vsatname in vsats.keys():
                     print "start:\> thread for vsat: %s" % vsatname
