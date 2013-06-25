@@ -131,7 +131,7 @@ class Selftest:
         Show time counter.
         '''
         for second in xrange(1,time_interval+1):
-            print 'step:\> Please wait {0} sec: [{1}]\r'.format(time_interval, second),
+            logging.debug('step:\> Please wait {0} sec: [{1}]\r'.format(time_interval, second))
             time.sleep(1)
         print
 
@@ -279,7 +279,6 @@ class Selftest:
                             self.show_time_counter(tries_timeout)
                     else:
                         logging.debug('info:\> Exceeded [%s] number of tries per test case!' % number_of_tries)
-                        sys.exit()
 
                 # create threads for check_vsat_bb.
                 th_vsat = {}

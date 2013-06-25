@@ -171,7 +171,7 @@ def dlf_check():
         ser.close()
         print 'status:\> port open:', ser.isOpen()
     else:
-        print
+        print 'status:\> connection over TCP:', parser.get('Connect', 'TCP_IP'), parser.get('Connect', 'TCP_PORT')
 
 
 
