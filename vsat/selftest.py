@@ -181,7 +181,6 @@ class Selftest:
             channel_number = vsat_data.get('Channel Number')
             vsats[vsat_port] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, 
                                             number_of_tries, vsat_channel, channel_number) 
-        print 'status:\> DLF done!\n'
 
         # Checking VSAT
         for vsat_port in vsats.keys():
