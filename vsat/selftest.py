@@ -132,7 +132,7 @@ class Selftest:
         Show time counter.
         '''
         for second in xrange(1,time_interval+1):
-            logging.debug('step:\> Please wait {0} sec: [{1}]\r'.format(time_interval, second))
+            print 'step:\> Please wait {0} sec: [{1}]\r'.format(time_interval, second),
             time.sleep(1)
         print
 
@@ -181,6 +181,7 @@ class Selftest:
             channel_number = vsat_data.get('Channel Number')
             vsats[vsat_port] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, 
                                             number_of_tries, vsat_channel, channel_number) 
+        print 'status:\> DLF done!\n'
 
         # Checking VSAT
         for vsat_port in vsats.keys():
@@ -297,7 +298,6 @@ class Selftest:
                 # start threads.
                 for vsat_port in vsats.keys():
                     th_vsat[vsat_port].start()
-                    time.sleep(0.3)
                 # join threads with main program.
                 for vsat_port in vsats.keys():
                     th_vsat[vsat_port].join()
@@ -406,7 +406,6 @@ class Selftest:
                 # start threads.
                 for vsat_port in vsats.keys():
                     tvsat[vsat_port].start()
-                    time.sleep(0.3)
                 # join threads with main program.
                 for vsat_port in vsats.keys():
                     tvsat[vsat_port].join()
@@ -443,7 +442,6 @@ class Selftest:
                 tvsat[vsat_port] = Thread(name = vsat_port, target = init_vsat, args = vsats.get(vsat_port)[:-2])
             for vsat_port in vsats.keys():
                 tvsat[vsat_port].start()
-                time.sleep(1)
             for vsat_port in vsats.keys():
                 tvsat[vsat_port].join()
                 
@@ -496,9 +494,9 @@ class Selftest:
                     raw_input('-> [ENTER]')
                     continue
                 print
-                print 'H'*60
-                print '\nSUCCESS!: Successfully saved data to file: [%s]!\n' % output_xlfile
-                print 'H'*60
+                logging.debug('H'*60)
+                logging.debug('SUCCESS!: Successfully saved data to file: [%s]!' % output_xlfile)
+                logging.debug('H'*60)
                 break
 
 def show(xlfile, sheet=None, name = None, *state):
