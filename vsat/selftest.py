@@ -14,6 +14,7 @@ from dlf import vsatdlf
 from itertools import izip, count
 import sys
 import logging
+from copy import deepcopy
 
 FORMAT = '%(asctime)s (%(threadName)-8s) %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=FORMAT,)
@@ -46,11 +47,11 @@ class Selftest:
         '''
         self.data.display(testcases, sheet, name, *state);
 
-    def check(self, state = None, device = None, vsatname = None):
+    def check(self, state = None, device = None, vsat_port = None):
         '''
         Check device availability.
         '''
-        if device == 'vsat': self.vsat_status(state, vsatname)
+        if device == 'vsat': self.vsat_status(state, vsat_port)
         if device == 'hub': self.check_ngnms()
 
     def check_ngnms(self):
@@ -69,7 +70,7 @@ class Selftest:
         ngnms = biaspoint.Ngnms(**ngnms_info)
         ngnms.check_ngnms()
 
-    def vsat_status(self, state = None, vsatname = None):
+    def vsat_status(self, state = None, vsat_port = None):
         '''
         Check vsat.
         '''
@@ -88,7 +89,7 @@ class Selftest:
         print 'H'*60
         for host in vsats:
             vsat = vsats[host]
-            if vsatname != None and vsatname != vsat[1]:
+            if vsat_port != None and str(vsat_port) != vsat[1]:
                 print '{0:5}: {1:10}'.format(sheet, vsat[1])
                 continue
             print '-'*60
@@ -165,7 +166,7 @@ class Selftest:
                     break
 
         # show ngnms network tree.
-        self.check(state = None, device = 'hub')
+        #self.check(state = None, device = 'hub')
 
         # getting active VSAT.
         vsats = {}
@@ -176,29 +177,36 @@ class Selftest:
             vsat_timeout = int(vsat_data.get('Connection timeout'))
             tries_timeout = int(vsat_data.get('Tries timeout'))
             number_of_tries = int(vsat_data.get('Number of tries'))
-            vsatname = vsat_data.get('Name')
             vsat_channel = vsat_data.get('Channel Name')
             channel_number = vsat_data.get('Channel Number')
-            vsats[vsat_data.get('Name')] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, 
-                                            number_of_tries, vsatname, vsat_channel, channel_number) 
+            vsats[vsat_port] = (vsat_ip, vsat_port, vsat_timeout, tries_timeout, 
+                                            number_of_tries, vsat_channel, channel_number) 
 
         # Checking VSAT
-        for vsatname in vsats.keys():
-            self.vsat_status(None, vsatname)
+        for vsat_port in vsats.keys():
+            self.vsat_status(None, vsat_port)
 
         # all channels list:
         channels_list = []
-        for vsatname in vsats.keys():
-            vsat = vsats[vsatname]
-            channels_list.append((vsat[-1], vsatname))
+        for vsat_port in vsats.keys():
+            vsat = vsats[vsat_port]
+            channels_list.append((vsat[-1], vsat_port))
 
+        # creating result_data for each vsat.
         result_data = {}
+        for vsat_port in vsats.keys():
+            result_data[vsat_port] = {}
+
         for state in states_keys:
             print 'H'*60
             print upper(state).rjust(30)
             print 'H'*60
             print
-            result_data[state] = {}
+
+            # creating resutl_data for states per vsat.
+            for vsat_port in vsats.keys():
+                result_data[vsat_port][state] = {}
+
             for row in sorted(states[state][sheet]):
                 # storing just current row.
                 current_case = states[state][sheet][row][1]
@@ -218,7 +226,8 @@ class Selftest:
                 # setting ngnms working point
                 testcase = cases[state][sheet][row]
                 ngnms = biaspoint.Ngnms(**ngnms_info)
-                changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
+                #changed, url, ngnms_data = ngnms.set_ngnms_working_point(testcase)
+                changed = False
                 
                 # checking vsat's bb up.
                 def check_vsat_bb(*vsat_info):
@@ -226,7 +235,7 @@ class Selftest:
                     Setting vsat bb, and SR, reset board if needed.
                     '''
                     # getting vsat info.
-                    vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
+                    vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries = vsat_info
                     logging.debug('info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout))
                     vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
                     # waiting
@@ -282,30 +291,29 @@ class Selftest:
 
                 # create threads for check_vsat_bb.
                 th_vsat = {}
-                for vsatname in vsats.keys():
-                    print "start:\> thread for vsat: %s" % vsatname
-                    th_vsat[vsatname] = Thread(name = vsatname, target = check_vsat_bb, args = vsats.get(vsatname)[:-2])
+                for vsat_port in vsats.keys():
+                    print "start:\> thread for vsat: %s" % vsat_port
+                    th_vsat[vsat_port] = Thread(name = vsat_port, target = check_vsat_bb, args = vsats.get(vsat_port)[:-2])
                 # start threads.
-                for vsatname in vsats.keys():
-                    th_vsat[vsatname].start()
+                for vsat_port in vsats.keys():
+                    th_vsat[vsat_port].start()
                     time.sleep(0.3)
                 # join threads with main program.
-                for vsatname in vsats.keys():
-                    th_vsat[vsatname].join()
+                for vsat_port in vsats.keys():
+                    th_vsat[vsat_port].join()
                                                         
                 # setting DLF device for each VSAT.
                 vsat_channels = {}
-                for vsatname in vsats.keys():
-                    vsat = vsats[vsatname]
+                for vsat_port in vsats.keys():
+                    vsat = vsats[vsat_port]
                     channel_name = vsat[-2]
                     channel_number = vsat[-1]
                     vsat_ip, vsat_port, vsat_timeout = vsat[0:3]
                     vsat_param = dict(vsat_ip=vsat_ip, vsat_port=vsat_port, timeout=vsat_timeout) 
                     print '-'*60
-                    print upper(vsatname).rjust(15), ':', vsat_ip, ':', vsat_port
+                    print str(vsat_port).rjust(15), ':', vsat_ip, ':', vsat_port
                     print '-'*60
                     vsat_channels[vsat_port]=vsatdlf.dlf_controller(channel_number, channel_name, *channels_list, **vsat_param)
-                print vsat_channels
 
                 """ == START: Thread function definition=== """
                 def run_thread(*vsat_info):
@@ -313,10 +321,10 @@ class Selftest:
                     Run vsat thread
                     '''
                     # getting vsat info.
-                    vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
+                    vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries = vsat_info
                     logging.debug('info:\> connecting: -> ip:{0} port:{1} timeout:{2}'.format(vsat_ip, vsat_port, vsat_timeout))
                     vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
-   
+                    
                     for nextstep in xrange(1, number_of_tries + 1):
                         logging.debug('step:\> nextstep -> %d' % nextstep)
                         # connect to vsat.
@@ -330,6 +338,7 @@ class Selftest:
                                 logging.debug('step:\> %s -> start!' % ftptype)
                                 self.show_time_counter(duration/2)
                                 output = vsat.get_stats()
+                                output['Channel'] = vsat_channels.get(vsat_port)
                                 self.show_time_counter((duration/2) + 5)
                                 # insert returned pkts stats to output.
                                 output.update(vsat.get_pkts_stats())
@@ -351,49 +360,56 @@ class Selftest:
                     else:
                         logging.debug('info:\> Exceeded [%s] number of tries per test case!' % number_of_tries)
                         return
-                    logging.debug('')
                     # printing ready data to output
-                    logging.debug('-'*25,'TEST: %s' % current_case, '-'*24)
-                    result_data[state][row] = cases[state][sheet][row]
+                    logging.debug('%s TEST: %s %s' % ('-'*24, current_case, '-'*24))
+                    result_data[vsat_port][state][row] = deepcopy(cases[state][sheet][row])
+                    #logging.debug('%s %s', id(cases[state][sheet][row]), id(result_data[vsat_port][state][row]))
                     for key in header[sheet][0]:
-                        # Adding info into Channel column.
-                        if key == 'Channel':
-                            logging.debug('status:\> vsat port, channnel:', vsat_port, vsat_channels.get(vsat_port))
-                            cases[state][sheet][row][key] = vsat_channels.get(vsat_port)
                         # print step to screen.
                         time.sleep(0.1)
                         if key in output.keys():
-                            cases[state][sheet][row][key] = output[key]
+                            result_data[vsat_port][state][row][key] = output[key]
                         if key == 'Max IB bit rate [kbps]':
-                            logging.debug('')
-                            logging.debug('-'*25,'OUTPUT: %s' % current_case, '-'*24)
-                            logging.debug('')
-                        logging.debug('{0:38} = {1:30}'.format(key, str(cases[state][sheet][row][key])))
+                            logging.debug('%s OUTPUT: %s %s' % ('-'*24, current_case, '-'*24))
+                        logging.debug('{0:38} = {1:30}'.format(key, str(result_data[vsat_port][state][row][key])))
                     logging.debug('')
                     logging.debug('-'*60)
                     logging.debug('')
                     # saving data to excel file.
-                    output_xlfile = '%s_output.xls' % vsatname.replace(' ', '_')
+                    output_xlfile = '%s_output.xls' % vsat_port
                     output_dir = 'data/output'
                     output_file = os.path.join(output_dir, output_xlfile)
-                    if os.path.isfile(output_file):
-                        os.remove(output_file)
+                    
+                    # Check if file is closed.
+                    while True:
+                        try:
+                            if os.path.isfile(output_file):
+                                os.remove(output_file)
+                        except Exception as e:
+                            print e
+                            # file already exists, try again
+                            print
+                            print 'Please close file first [%s], then continue: ' % output_file,
+                            raw_input('-> [ENTER]')
+                            continue
+                        break
+
                     logging.debug('info:\> Saving result to [%s] excel file!' % output_file)
-                    self.save_row_to_excel(header[sheet][0], result_data, output_file)
+                    self.save_row_to_excel(header[sheet][0], result_data[vsat_port], output_file)
                 """ === END: Thread function ==="""
 
                 # create threads for run_thread.
                 tvsat = {}
-                for vsatname in vsats.keys():
-                    print "start:\> thread for vsat: %s" % vsatname
-                    tvsat[vsatname] = Thread(name = vsatname, target = run_thread, args = vsats.get(vsatname)[:-2])
+                for vsat_port in vsats.keys():
+                    print "start:\> thread for vsat: %s" % vsat_port
+                    tvsat[vsat_port] = Thread(name = vsat_port, target = run_thread, args = vsats.get(vsat_port)[:-2])
                 # start threads.
-                for vsatname in vsats.keys():
-                    tvsat[vsatname].start()
+                for vsat_port in vsats.keys():
+                    tvsat[vsat_port].start()
                     time.sleep(0.3)
                 # join threads with main program.
-                for vsatname in vsats.keys():
-                    tvsat[vsatname].join()
+                for vsat_port in vsats.keys():
+                    tvsat[vsat_port].join()
 
         # changing to initial working point.
         print 'step:\> changing to initial working point' 
@@ -404,7 +420,7 @@ class Selftest:
             '''
             Set vsat SR to default, testcase0
             '''
-            vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries, vsatname = vsat_info
+            vsat_ip, vsat_port, vsat_timeout, tries_timeout, number_of_tries = vsat_info
             vsat = console.Grab(vsat_ip, vsat_port, vsat_timeout)
             logging.debug('status:\> default vsat symbol rate')
             # changing 'rsp param set param 34' <ob_symbol_rate>
@@ -423,13 +439,13 @@ class Selftest:
         # setting param 34 and restarting board
         # using function: init_vsat from above.
         if changed:
-            for vsatname in vsats.keys():
-                tvsat[vsatname] = Thread(name = vsatname, target = init_vsat, args = vsats.get(vsatname)[:-2])
-            for vsatname in vsats.keys():
-                tvsat[vsatname].start()
+            for vsat_port in vsats.keys():
+                tvsat[vsat_port] = Thread(name = vsat_port, target = init_vsat, args = vsats.get(vsat_port)[:-2])
+            for vsat_port in vsats.keys():
+                tvsat[vsat_port].start()
                 time.sleep(1)
-            for vsatname in vsats.keys():
-                tvsat[vsatname].join()
+            for vsat_port in vsats.keys():
+                tvsat[vsat_port].join()
                 
 
         # greetings 
