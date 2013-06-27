@@ -288,6 +288,8 @@ class Selftest:
                             self.show_time_counter(tries_timeout)
                     else:
                         logging.debug('info:\> Exceeded [%s] number of tries per test case!' % number_of_tries)
+                        # removing not activated vsat.
+                        del vsats[vsat_port]
 
                 # create threads for check_vsat_bb.
                 th_vsat = {}
@@ -301,7 +303,12 @@ class Selftest:
                 # join threads with main program.
                 for vsat_port in vsats.keys():
                     th_vsat[vsat_port].join()
-                                                        
+                                              
+                # checking vsats state.
+                if not vsats:
+                    # continue to next testcase if vsats has no vsat.
+                    continue
+
                 # setting DLF device for each VSAT.
                 vsat_channels = {}
                 for vsat_port in vsats.keys():
