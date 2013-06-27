@@ -297,6 +297,7 @@ class Selftest:
                 # start threads.
                 for vsat_port in vsats.keys():
                     th_vsat[vsat_port].start()
+                    time.sleep(0.3)
                 # join threads with main program.
                 for vsat_port in vsats.keys():
                     th_vsat[vsat_port].join()
@@ -405,6 +406,7 @@ class Selftest:
                 # start threads.
                 for vsat_port in vsats.keys():
                     tvsat[vsat_port].start()
+                    time.sleep(0.3)
                 # join threads with main program.
                 for vsat_port in vsats.keys():
                     tvsat[vsat_port].join()
@@ -441,6 +443,7 @@ class Selftest:
                 tvsat[vsat_port] = Thread(name = vsat_port, target = init_vsat, args = vsats.get(vsat_port)[:-2])
             for vsat_port in vsats.keys():
                 tvsat[vsat_port].start()
+                time.sleep(0.3)
             for vsat_port in vsats.keys():
                 tvsat[vsat_port].join()
                 
