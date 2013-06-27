@@ -269,6 +269,14 @@ class Selftest:
                         link_status, message = vsat.check_bb()
                         logging.debug('status: %s' % message)
                         
+                        # checking if VSAT is ready: bb link up.
+                        if connected and link_status:
+                            logging.debug('status:\> VSAT Ready!')
+                            break
+                        else:
+                            logging.debug('info:\> VSAT not READY!')
+                            self.show_time_counter(tries_timeout)
+                            
                         # rebooting vsat if tried half number of tries.
                         if nextstep == (number_of_tries + 1)/2:
                             # rebooting vsat..
@@ -278,14 +286,6 @@ class Selftest:
                             vsat.grab(command, stop_pattern)
                             wait_time = 60
                             self.show_time_counter(wait_time)
-                            
-                        # checking if VSAT is ready: bb link up.
-                        if connected and link_status:
-                            logging.debug('status:\> VSAT Ready!')
-                            break
-                        else:
-                            logging.debug('info:\> VSAT not READY!')
-                            self.show_time_counter(tries_timeout)
                     else:
                         logging.debug('info:\> Exceeded [%s] number of tries per test case!' % number_of_tries)
                         # removing not activated vsat.
