@@ -16,9 +16,8 @@ import sys
 import logging
 from copy import deepcopy
 
-FORMAT = '%(asctime)s (%(threadName)-8s) %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT,)
-
+FORMAT = '[%(levelname)s] %(asctime)s (%(threadName)-8s) %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT, datefmt='%m/%d/%Y %I:%M:%S %p', filename='logs/output.log', filemode='w')
 
 class Selftest:
     '''

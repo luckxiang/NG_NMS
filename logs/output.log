@@ -1,0 +1,240 @@
+[DEBUG] 06/28/2013 11:11:36 AM (10024   ) info:\> connecting: -> ip:172.17.11.233 port:10024 timeout:10
+[DEBUG] 06/28/2013 11:11:36 AM (10024   ) info:\> waiting vsat up ...
+[DEBUG] 06/28/2013 11:11:36 AM (10025   ) info:\> connecting: -> ip:172.17.11.233 port:10025 timeout:10
+[DEBUG] 06/28/2013 11:11:36 AM (10025   ) info:\> waiting vsat up ...
+[DEBUG] 06/28/2013 11:11:56 AM (10024   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:11:56 AM (10025   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:12:09 AM (10024   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:12:09 AM (10024   ) status:\> VSAT Ready!
+[DEBUG] 06/28/2013 11:12:09 AM (10025   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:12:09 AM (10025   ) status:\> VSAT Ready!
+[DEBUG] 06/28/2013 11:12:29 AM (10024   ) info:\> connecting: -> ip:172.17.11.233 port:10024 timeout:10
+[DEBUG] 06/28/2013 11:12:29 AM (10024   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:12:30 AM (10025   ) info:\> connecting: -> ip:172.17.11.233 port:10025 timeout:10
+[DEBUG] 06/28/2013 11:12:30 AM (10025   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:12:42 AM (10024   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:12:43 AM (10025   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:12:49 AM (10024   ) step:\> inbound -> start!
+[DEBUG] 06/28/2013 11:12:49 AM (10025   ) step:\> inbound -> start!
+[DEBUG] 06/28/2013 11:13:18 AM (10024   ) status: inbound -> done!
+[DEBUG] 06/28/2013 11:13:18 AM (10025   ) status: inbound -> done!
+[DEBUG] 06/28/2013 11:13:24 AM (10024   ) step:\> outbound -> start!
+[DEBUG] 06/28/2013 11:13:25 AM (10025   ) step:\> outbound -> start!
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) status: outbound -> done!
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) ------------------------ TEST: 2 ------------------------
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) Active                                 = X                             
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) Test Nr.                               = 2                             
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) OB symbol rate                         = 30000000                      
+[DEBUG] 06/28/2013 11:13:54 AM (10025   ) status: outbound -> done!
+[DEBUG] 06/28/2013 11:13:54 AM (10025   ) ------------------------ TEST: 2 ------------------------
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) OB mode code                           = QPSK 3/4                      
+[DEBUG] 06/28/2013 11:13:54 AM (10025   ) Active                                 = X                             
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) RTN Channels Frequency Plan            = STATIC                        
+[DEBUG] 06/28/2013 11:13:54 AM (10025   ) Test Nr.                               = 2                             
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) IB symbol rate_1                       = 1024                          
+[DEBUG] 06/28/2013 11:13:54 AM (10025   ) OB symbol rate                         = 30000000                      
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) IB symbol rate_2                       = 256                           
+[DEBUG] 06/28/2013 11:13:54 AM (10025   ) OB mode code                           = QPSK 3/4                      
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) IB symbol rate_3                       =                               
+[DEBUG] 06/28/2013 11:13:54 AM (10025   ) RTN Channels Frequency Plan            = STATIC                        
+[DEBUG] 06/28/2013 11:13:54 AM (10024   ) IB symbol rate_4                       =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB symbol rate_1                       = 1024                          
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) IB mode code_1                         = 8PSK 3/4                      
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB symbol rate_2                       = 256                           
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) IB mode code_2                         = QPSK 1/2                      
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB symbol rate_3                       =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) IB mode code_3                         =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB symbol rate_4                       =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) IB mode code_4                         =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB mode code_1                         = 8PSK 3/4                      
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) Number of Channels_1                   = 1                             
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB mode code_2                         = QPSK 1/2                      
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) Number of Channels_2                   = 1                             
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB mode code_3                         =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) Number of Channels_3                   =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) IB mode code_4                         =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) Number of Channels_4                   =                               
+[DEBUG] 06/28/2013 11:13:55 AM (10025   ) Number of Channels_1                   = 1                             
+[DEBUG] 06/28/2013 11:13:55 AM (10024   ) Dynamic/Static_1                       = STATIC                        
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Number of Channels_2                   = 1                             
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Dynamic/Static_2                       = STATIC                        
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Number of Channels_3                   =                               
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Dynamic/Static_3                       =                               
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Number of Channels_4                   =                               
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Dynamic/Static_4                       =                               
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Dynamic/Static_1                       = STATIC                        
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Symbol Rate_1.1                        = 1024                          
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Dynamic/Static_2                       = STATIC                        
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Symbol Rate_1.2                        = 256                           
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Dynamic/Static_3                       =                               
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Symbol Rate_2.1                        = 128                           
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Dynamic/Static_4                       =                               
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Symbol Rate_2.2                        = 768                           
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Symbol Rate_1.1                        = 1024                          
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Symbol Rate_3.1                        =                               
+[DEBUG] 06/28/2013 11:13:56 AM (10025   ) Symbol Rate_1.2                        = 256                           
+[DEBUG] 06/28/2013 11:13:56 AM (10024   ) Symbol Rate_3.2                        =                               
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) Symbol Rate_2.1                        = 128                           
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) Symbol Rate_4.1                        =                               
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) Symbol Rate_2.2                        = 768                           
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) Symbol Rate_4.2                        =                               
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) Symbol Rate_3.1                        =                               
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) IB Preamble                            = 96/128                        
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) Symbol Rate_3.2                        =                               
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) IB Number of ATM                       = 2                             
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) Symbol Rate_4.1                        =                               
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) Test duration                          = 20                            
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) Symbol Rate_4.2                        =                               
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) ------------------------ OUTPUT: 2 ------------------------
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) Max IB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) IB Preamble                            = 96/128                        
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) Max OB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) IB Number of ATM                       = 2                             
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) VSAT CPU [IB] [OB]                     = [13]/[13]                     
+[DEBUG] 06/28/2013 11:13:57 AM (10025   ) Test duration                          = 20                            
+[DEBUG] 06/28/2013 11:13:57 AM (10024   ) Number of transmitted OB packets       = 0                             
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) ------------------------ OUTPUT: 2 ------------------------
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) Max IB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) Number of received IB packets          = 2                             
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) Max OB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) Number of OB retransmit packets        = 0                             
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) VSAT CPU [IB] [OB]                     = [10]/[10]                     
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) Channel                                = TS Id:3  TRF 2-ATM QPSK 3/4 1024000 Sps
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) 
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) ------------------------------------------------------------
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) 
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) info:\> Saving result to [data/output\10024_output.xls] excel file!
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) Number of transmitted OB packets       = 0                             
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) Number of received IB packets          = 0                             
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) SUCCESS!: Successfully saved data to file: [data/output\10024_output.xls]!
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) Number of OB retransmit packets        = 0                             
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) Channel                                = TS Id:0  TRF 2-ATM QPSK 1/2 256000 Sps
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) 
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) ------------------------------------------------------------
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) 
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) info:\> Saving result to [data/output\10025_output.xls] excel file!
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) SUCCESS!: Successfully saved data to file: [data/output\10025_output.xls]!
+[DEBUG] 06/28/2013 11:13:58 AM (10025   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) info:\> connecting: -> ip:172.17.11.233 port:10024 timeout:10
+[DEBUG] 06/28/2013 11:13:58 AM (10024   ) info:\> waiting vsat up ...
+[DEBUG] 06/28/2013 11:13:59 AM (10025   ) info:\> connecting: -> ip:172.17.11.233 port:10025 timeout:10
+[DEBUG] 06/28/2013 11:13:59 AM (10025   ) info:\> waiting vsat up ...
+[DEBUG] 06/28/2013 11:14:18 AM (10024   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:14:19 AM (10025   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:14:31 AM (10024   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:14:31 AM (10024   ) status:\> VSAT Ready!
+[DEBUG] 06/28/2013 11:14:32 AM (10025   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:14:32 AM (10025   ) status:\> VSAT Ready!
+[DEBUG] 06/28/2013 11:14:52 AM (10024   ) info:\> connecting: -> ip:172.17.11.233 port:10024 timeout:10
+[DEBUG] 06/28/2013 11:14:52 AM (10024   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:14:52 AM (10025   ) info:\> connecting: -> ip:172.17.11.233 port:10025 timeout:10
+[DEBUG] 06/28/2013 11:14:52 AM (10025   ) step:\> nextstep -> 1
+[DEBUG] 06/28/2013 11:15:05 AM (10024   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:15:05 AM (10025   ) status: Total Backbone Links UP = 1
+[DEBUG] 06/28/2013 11:15:11 AM (10024   ) step:\> inbound -> start!
+[DEBUG] 06/28/2013 11:15:12 AM (10025   ) step:\> inbound -> start!
+[DEBUG] 06/28/2013 11:15:40 AM (10024   ) status: inbound -> done!
+[DEBUG] 06/28/2013 11:15:41 AM (10025   ) status: inbound -> done!
+[DEBUG] 06/28/2013 11:15:47 AM (10024   ) step:\> outbound -> start!
+[DEBUG] 06/28/2013 11:15:47 AM (10025   ) step:\> outbound -> start!
+[DEBUG] 06/28/2013 11:16:16 AM (10024   ) status: outbound -> done!
+[DEBUG] 06/28/2013 11:16:16 AM (10024   ) ------------------------ TEST: 3 ------------------------
+[DEBUG] 06/28/2013 11:16:16 AM (10024   ) Active                                 = x                             
+[DEBUG] 06/28/2013 11:16:16 AM (10024   ) Test Nr.                               = 3                             
+[DEBUG] 06/28/2013 11:16:16 AM (10024   ) OB symbol rate                         = 45000000                      
+[DEBUG] 06/28/2013 11:16:16 AM (10025   ) status: outbound -> done!
+[DEBUG] 06/28/2013 11:16:16 AM (10025   ) ------------------------ TEST: 3 ------------------------
+[DEBUG] 06/28/2013 11:16:16 AM (10024   ) OB mode code                           = QPSK 1/2                      
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) Active                                 = x                             
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) RTN Channels Frequency Plan            = STATIC                        
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) Test Nr.                               = 3                             
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB symbol rate_1                       = 256                           
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) OB symbol rate                         = 45000000                      
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB symbol rate_2                       = 512                           
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) OB mode code                           = QPSK 1/2                      
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB symbol rate_3                       =                               
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) RTN Channels Frequency Plan            = STATIC                        
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB symbol rate_4                       =                               
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) IB symbol rate_1                       = 256                           
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB mode code_1                         = 8PSK 4/5                      
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) IB symbol rate_2                       = 512                           
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB mode code_2                         = QPSK 2/3                      
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) IB symbol rate_3                       =                               
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB mode code_3                         =                               
+[DEBUG] 06/28/2013 11:16:17 AM (10025   ) IB symbol rate_4                       =                               
+[DEBUG] 06/28/2013 11:16:17 AM (10024   ) IB mode code_4                         =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) IB mode code_1                         = 8PSK 4/5                      
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Number of Channels_1                   = 1                             
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) IB mode code_2                         = QPSK 2/3                      
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Number of Channels_2                   = 1                             
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) IB mode code_3                         =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Number of Channels_3                   =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) IB mode code_4                         =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Number of Channels_4                   =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) Number of Channels_1                   = 1                             
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Dynamic/Static_1                       = STATIC                        
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) Number of Channels_2                   = 1                             
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Dynamic/Static_2                       = STATIC                        
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) Number of Channels_3                   =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Dynamic/Static_3                       =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) Number of Channels_4                   =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Dynamic/Static_4                       =                               
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) Dynamic/Static_1                       = STATIC                        
+[DEBUG] 06/28/2013 11:16:18 AM (10024   ) Symbol Rate_1.1                        = 2048                          
+[DEBUG] 06/28/2013 11:16:18 AM (10025   ) Dynamic/Static_2                       = STATIC                        
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) Symbol Rate_1.2                        = 256                           
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Dynamic/Static_3                       =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) Symbol Rate_2.1                        = 128                           
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Dynamic/Static_4                       =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) Symbol Rate_2.2                        = 768                           
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Symbol Rate_1.1                        = 2048                          
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) Symbol Rate_3.1                        =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Symbol Rate_1.2                        = 256                           
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) Symbol Rate_3.2                        =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Symbol Rate_2.1                        = 128                           
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) Symbol Rate_4.1                        =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Symbol Rate_2.2                        = 768                           
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) Symbol Rate_4.2                        =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Symbol Rate_3.1                        =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) IB Preamble                            = 96/128                        
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Symbol Rate_3.2                        =                               
+[DEBUG] 06/28/2013 11:16:19 AM (10024   ) IB Number of ATM                       = 2                             
+[DEBUG] 06/28/2013 11:16:19 AM (10025   ) Symbol Rate_4.1                        =                               
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) Test duration                          = 20                            
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) Symbol Rate_4.2                        =                               
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) ------------------------ OUTPUT: 3 ------------------------
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) Max IB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) IB Preamble                            = 96/128                        
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) Max OB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) IB Number of ATM                       = 2                             
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) VSAT CPU [IB] [OB]                     = [13]/[13]                     
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) Test duration                          = 20                            
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) Number of transmitted OB packets       = 0                             
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) ------------------------ OUTPUT: 3 ------------------------
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) Max IB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) Number of received IB packets          = 2                             
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) Max OB bit rate [kbps]                 = 0                             
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) Number of OB retransmit packets        = 0                             
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) VSAT CPU [IB] [OB]                     = [10]/[10]                     
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) Channel                                = TS Id:3  TRF 2-ATM QPSK 3/4 1024000 Sps
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) 
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) ------------------------------------------------------------
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) 
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) info:\> Saving result to [data/output\10024_output.xls] excel file!
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) Number of transmitted OB packets       = 0                             
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) SUCCESS!: Successfully saved data to file: [data/output\10024_output.xls]!
+[DEBUG] 06/28/2013 11:16:20 AM (10024   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+[DEBUG] 06/28/2013 11:16:20 AM (10025   ) Number of received IB packets          = 0                             
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) Number of OB retransmit packets        = 0                             
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) Channel                                = TS Id:0  TRF 2-ATM QPSK 1/2 256000 Sps
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) 
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) ------------------------------------------------------------
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) 
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) info:\> Saving result to [data/output\10025_output.xls] excel file!
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) SUCCESS!: Successfully saved data to file: [data/output\10025_output.xls]!
+[DEBUG] 06/28/2013 11:16:21 AM (10025   ) HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
