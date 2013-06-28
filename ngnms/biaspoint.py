@@ -3,6 +3,12 @@ import cStringIO
 import ConfigParser
 import sys
 from time import sleep
+import logging
+
+FORMAT = '[%(levelname)s] %(asctime)s %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT, datefmt='%m/%d/%Y %I:%M:%S %p', filename='logs/output.log', filemode='w')
+
+logging.debug('Changing ngnms working point.')
 
 line_print_speed = 0.2
 
@@ -186,9 +192,9 @@ class Ngnms:
 
         # print table with old and new values.
         lenght = 99 
-        print '-'*lenght
-        print '|   {0:^30}   |   {1:^12} |   {2:^15}   |   {3:^15}   |'.format('OID', 'Instance', 'Old', 'New')
-        print '-'*lenght
+        logging.debug('-'*lenght)
+        logging.debug('|   {0:^30}   |   {1:^12} |   {2:^15}   |   {3:^15}   |'.format('OID', 'Instance', 'Old', 'New'))
+        logging.debug('-'*lenght)
         for line in new_data:
             for item in ngnms_data:
                 if line.get('oid') == item.get('oid') and line.get('instance') == item.get('instance'): 
@@ -196,10 +202,10 @@ class Ngnms:
                     break
                 else:
                     old_data = '-'
-            print '|   {0:30}   |   {1:12} |   {2:15}   |   {3:15}   |'.format(line.get('oid'), line.get('instance'), old_data, line.get('value'))
+            logging.debug('|   {0:30}   |   {1:12} |   {2:15}   |   {3:15}   |'.format(line.get('oid'), line.get('instance'), old_data, line.get('value')))
             # line print speet do stdout.
             sleep(0.1)
-        print '-'*lenght
+        logging.debug('-'*lenght)
 
         return new_data
 
