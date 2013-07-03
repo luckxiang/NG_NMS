@@ -95,7 +95,7 @@ class Selftest:
             print "-- %s : %s --".rjust(30) % (vsat[1], upper(state))
             print '-'*60
             for key, value in zip(header, vsats[host]):
-                print "{0:20} = {1:20}".format(key, str(value))
+                print "{0:.<20} = {1:20}".format(key, str(value))
             ip = vsat[header.index('Console IP')]
             port = int(vsat[header.index('Console PORT')])
             connection_timeout = int(vsat[header.index('Connection timeout')])
