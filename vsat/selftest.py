@@ -377,7 +377,7 @@ class Selftest:
                             result_data[vsat_port][state][row][key] = output[key]
                         if key == 'Max IB bit rate [kbps]':
                             logging.debug('%s OUTPUT: %s %s' % ('-'*24, current_case, '-'*24))
-                        logging.debug('{0:38} = {1:30}'.format(key, str(result_data[vsat_port][state][row][key])))
+                        logging.debug('{0:.<38} = {1:30}'.format(key, str(result_data[vsat_port][state][row][key])))
                     logging.debug('')
                     logging.debug('-'*60)
                     logging.debug('')
