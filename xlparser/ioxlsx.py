@@ -71,6 +71,6 @@ class Xlsx:
 
 if __name__ == "__main__":
     
-    data = Xlsx('../data/test.xlsx')
+    data = Xlsx('../data/demo.xls')
     data.logger = True
     data.get_testcases()

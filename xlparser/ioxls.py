@@ -155,7 +155,7 @@ class Xls:
                     print upper('%s : %s : %s' % (sheet, current_case, state)).rjust(38)
                     print '-'*60
                     for key, value in zip(header[sheet][0], states[state][sheet][row]):
-                        print '{0:40} = {1:20}'.format(key, str(value))
+                        print '{0:.<40} = {1:20}'.format(key, str(value))
                     print '-'*60
 
 if __name__ == "__main__":
